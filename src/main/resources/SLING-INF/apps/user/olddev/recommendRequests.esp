@@ -1,0 +1,312 @@
+<html>
+<head>
+<%
+
+//load("includes/header.esp");
+var currentNodeProvided = ((typeof currentNode != "undefined"));
+
+%>
+<link href="<%=request.getContextPath()%>/wro/common.css" rel="stylesheet" type="text/css" />
+
+<script src="<%=request.getContextPath()%>/wro/common.js"></script>
+<style type="text/css">
+	.content_5{width:248px;margin:0 auto;}
+	.ui-tabs .ui-tabs-nav li{ white-space:normal ! important;}
+	#tabs .ui-tabs-panel, #tabs1 .ui-tabs-panel, #tabs.ui-tabs .ui-tabs-nav li a, #tabs1.ui-tabs .ui-tabs-nav li a{float: none !important; }	
+	.ui-tabs .ui-tabs-nav li a{float: none !important;}		
+    .friendList.ui-tabs.tab-big .profile-user-thumb{margin-right: 0px !important;}
+    #tabs{float: none !important;}
+    .friendList.search-result ul:first-child{ margin-left: 2px !important;}
+    .friendList.ui-tabs.tab-big .ui-tabs-nav li{width: 99% !important;}
+    .friendList.search-result.ui-tabs .ui-tabs-nav li{margin:0 0 20px 0 !important;}
+    .section-tab{margin:5px 0px 0px 10px; padding:0px; display:table;}
+    .section-tab li{background:#D2D2D2;float:left; margin:0px 5px; list-style:none; border:1px solid #ccc; border-bottom:none; -webkit-border-radius: 10px 10px 0px 0px; -moz-border-radius: 10px 10px 0px 0px; border-radius: 10px 10px 0px 0px;}
+    .section-tab li.selected, .section-tab li:hover{background:#FFFFFF;}
+    .section-tab li a{text-decoration:none; color:#333; padding:5px; display:block;}    
+    .request-tab{background: none repeat scroll 0 0 white;border-radius: 3px 3px 3px 3px;float: none;height: 100%; position: absolute;width: 100%;} 
+</style>
+<script>
+    
+    function tabChange(obj,divId){
+        $(".tabIdN").hide();
+        $(".tab").removeClass("selected");
+        $(obj).parent("li").addClass("selected");
+        $("#"+divId+"").show();
+    }
+    
+	$(window).load(function(){
+		
+		$('#next').click(function() {
+		    $('.current').removeClass('current').hide()
+		        .next().show().addClass('current');
+		    if ($('.current').hasClass('last')) {
+		        $('#next').attr('disabled', true);
+		    }
+		    $('#prev').attr('disabled', null);
+		});
+		
+		$('#prev').click(function() {
+		    $('.current').removeClass('current').hide()
+		        .prev().show().addClass('current');
+		    if ($('.current').hasClass('first')) {
+		        $('#prev').attr('disabled', true);
+		    }
+		    $('#next').attr('disabled', null);
+		});
+	});
+$(function() { 
+        $(".message-overflow").hover(
+            function () {
+                $(this).next().next('a').hide();
+            },
+            function () {
+                $(this).next().next('a').show();
+            });
+    });
+</script>
+<script>
+	function acceptFrienRequest(url,id){
+	
+		var userId=document.getElementById("userId").value;
+		var friendValue=document.getElementById("friendGet"+id).value;
+		var friendMessage=document.getElementById("friendMessage"+id).value;
+		var friendType=document.getElementById("friendType"+id).value;
+		
+		var data='userId='+userId+'&friend='+friendValue+'&friendMessage='+friendMessage+'&friendType='+friendType;
+		
+		$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				  success: function(){
+				//  alert(data);
+				  	document.getElementById("accept"+id).style.display='none';
+				  	document.getElementById("acceptRequest"+id).style.display='block';
+				  }
+				
+			});
+	
+	}
+	
+	function acceptGroupRequest(url,group,userId,id){
+      	var data='userId='+userId+'&groupName='+group+'&accept=yes';
+      	
+      	$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				 
+				  success: function(){
+				 
+				  	document.getElementById("groupRequest"+id).style.display='none';
+				  	document.getElementById("groupJoined"+id).style.display='block';
+				  }
+				
+			});
+      }  
+
+</script>
+</head>
+<body>
+<ul class="section-tab">
+  <li class="selected tab"><a href="javascript:void(0);" onclick="tabChange(this,'recommend')">Recommendation</a></li>
+  <li class="tab" ><a href="javascript:void(0);" onclick="tabChange(this,'2')">Connection</a></li>
+  <li class="tab"><a href="javascript:void(0);" onclick="tabChange(this,'3')">Group</a></li>
+</ul>
+<div class="request-tab" >
+<div id="recommend" class="tabIdN">
+<div>
+<%var countRecommend=0;	  
+	  	if(currentNode.hasNode("Recommendation")){
+			   		if(currentNode.getNode("Recommendation").hasNode("Reciever")){
+					  	var recommendNode=currentNode.getNode("Recommendation").getNode("Reciever").getNodes();
+					  	for(i in recommendNode){
+					  		var recommendJobNode=recommendNode[i].getNodes();
+					  		for( j in recommendJobNode){
+					  			
+						  		if(recommendJobNode[j].pending=='pending'){
+						  			countRecommend++;
+						  		}
+					  		}
+					  	}
+					 }
+				}%>
+	<strong>You have <%=countRecommend%> Recommendation Request</strong>		 
+</div>
+<div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+
+<%
+var recommendNode;
+var userNode;
+var recommendToNode;
+var recommendTypeNode;
+var count=0;
+
+if(currentNode.hasNode("Recommendation")){
+	if(currentNode.getNode("Recommendation").hasNode("Reciever")){
+		recommendNode=currentNode.getNode("Recommendation").getNode("Reciever").getNodes();
+		for(i in recommendNode){
+			var size=countRecommend;
+				recommendTypeNode=recommendNode[i].getNodes();
+				for(j in recommendTypeNode){
+						userNode=currentNode.session.getRootNode().getNode("content/user").getNode(recommendTypeNode[j].userId);
+							if(recommendTypeNode[j].pending=='pending'){
+							%>
+									<li class="ui-state-default ui-corner-top" style="height:99px;">
+							     		  <div class="profile-user-thumb">
+								     		 <% if(userNode.hasProperty("profileImage")){
+								               %>
+													<img src="<%=userNode.profileImage%>" width="40" height="60"  />
+								            <%}else{  %>
+								                     <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="40" height="60"  /> 
+								            <%}%>
+										  </div>
+										  <div  class="content_5"> 
+								  				<strong><%=userNode.name%> </strong> says Can you endorsed me for <%=recommendTypeNode[j].requestType?recommendTypeNode[j].requestType:""%> ?
+												<br />
+												<div class="message-overflow" ><span>Message :</span>
+												 <%=recommendTypeNode[j].message?recommendTypeNode[j].message:""%></div><br />
+												 <a target="_blank"class="custom-button"  href="<%=request.getContextPath()%>/servlet/recommendation/show.write?userId=
+															<%=request.getParameter("userId")%>&title=<%=recommendNode[i].getName()+"/"+recommendTypeNode[j].getName()%>">Write recommendation</a>			
+										  </div>
+									</li>
+							
+	<%}}}
+}}%>
+</ul></div>
+</div>
+<div id="2" class="tabIdN" style="display:none;">
+	<div>
+			
+			 <%var countFriend=0;	  
+			 
+			  	if(currentNode.hasNode("connection") && currentNode.getNode("connection") 
+			  			&& currentNode.getNode("connection").getNode("friend").hasNodes()){
+				  	var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+				  	for(i in connectionNode){
+				  		if(connectionNode[i].request=='pending' && connectionNode[i].requestType=='reciever' ){
+				  			countFriend++;
+				  		}
+				  	}
+				 }%>
+			<strong>You have <%=countFriend%> Friend Request</strong>		 
+	</div>
+	<div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+	   	<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+			<%
+			if(currentNode.hasNode("connection") && currentNode.getNode("connection").hasNode("friend") 
+				  			&& currentNode.getNode("connection").getNode("friend").hasNodes()){
+			var count=0;
+			var friend=currentNode.getNode("connection").getNode("friend").getNodes();
+			var size=countFriend;
+			for(i in friend){
+				
+				if(friend[i].request=='pending' && friend[i].requestType=='reciever' ){
+					var name=friend[i].getName();
+					var node=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(name);
+			          %>                 
+					<li class="ui-state-default ui-corner-top" style="height:auto;">
+					     <div class="profile-user-thumb">
+					     <%
+					     	if(node.hasProperty("profileImage")){
+					                           %>
+					                           		<img src="<%=node.profileImage%>" width="40" height="60"  />
+					           <%}else{  %>
+					                 		<img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="40" height="60"  /> 
+					                 <%}%>
+					      </div>
+					   <div  class="content_5">                      
+						<strong><%=node.name%></strong> wanted to connect you as a
+						 <%=friend[i].friendType%><br>
+						 
+						<div class="message-overflow">
+							<span>Message :</span>
+								<%=friend[i].friendMessage?friend[i].friendMessage:""%>
+						</div>  <br>
+					<div id="accept<%=i%>" style="display:block;">
+					<form  action="">
+					<input type="hidden" name="userId" id="userId" value="<%=request.getParameter("userId")%>" />
+					<input type="hidden" name="friend" id="friendGet<%=i%>" value="<%=friend[i].getName()%>" />
+					<input type="hidden" name="friendMessage" id="friendMessage<%=i%>" value="<%=friend[i].friendMessage%>" />
+					<input type="hidden" name="friendType" id="friendType<%=i%>" value="<%=friend[i].friendType%>" />
+					<a href="javascript:void(0);" class="custom-button"
+							 onclick="acceptFrienRequest('<%=request.getContextPath()%>/servlet/friend/show.accept','<%=i%>')">
+				    Accept</a>
+					<a href="javascript:void(0);" class="custom-button" >Cancel</a>
+					</form>
+					</div>
+					<div id="acceptRequest<%=i%>" style="display:none;">
+						Accepted
+					</div>
+					
+					
+					</div>
+					</li>
+				
+				<% count++;}}} %>
+		
+		</ul>
+	</div>
+</div>
+
+<div id="3" class="tabIdN" style="display:none;">
+	<div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+					<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+	<%
+	if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupRequests") 
+		  			&& currentNode.getNode("Groups").getNode("GroupRequests").hasNodes()){
+	
+	var group=currentNode.getNode("Groups").getNode("GroupRequests").getNodes();
+	var userRequests;
+	var userName;
+	for(i in group){
+		
+		var groupName=group[i].getName();
+		var groupNode=currentNode.session.getRootNode().getNode("content").getNode("group").getNode(groupName);
+		if(group[i].hasNodes())
+		{
+			userRequests=group[i].getNodes();
+			for(j in userRequests){
+				userName=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(userRequests[j].getName());
+				%>
+					<li class="ui-state-default ui-corner-top" style="height:58px;">
+					     <div class="profile-user-thumb">
+					     <%
+					     	if(userName.hasProperty("profileImage")){
+					                           %>
+					                           		<img src="<%=userName.profileImage%>" width="36" height="40"  />
+					           <%}else{  %>
+					                 		<img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="36" height="40"  /> 
+					                 <%}%>
+					      </div>
+					   <div  class="content_5">                      
+							<strong><%=userName.name+" "%></strong> requested to join group 
+							 <span><%=groupNode.groupName?groupNode.groupName:""%></span><br>
+						</div>
+						<div id="groupRequest<%=j%>" style="display:block;">
+						 	<a href="javascript:void(0);" class="custom-button"
+						 		 onclick="acceptGroupRequest('<%=request.getContextPath()%>/servlet/group/show.addMember',
+						 		 				'<%=groupName%>',
+						 		 				'<%=userName.getName()%>','<%=j%>')">Accept Request</a>
+						 	</div>
+						 	<div id="groupJoined<%=j%>" style="display:none;">
+								<strong><span>Added</span></strong>
+							</div>	
+					</li>
+				
+			
+		
+		<%}}}}else{
+		  out.println("No Group Request");
+		} %>
+	
+	</ul>
+	</div>
+	
+	
+	
+	</div>
+</div>
+</body>
+</html>

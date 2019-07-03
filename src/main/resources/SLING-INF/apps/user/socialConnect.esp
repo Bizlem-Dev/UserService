@@ -1,0 +1,151 @@
+<html>
+<head>
+<script>
+    $(function(){
+    <%/*if(currentNode.hasNode("NetworkProvider")){%>
+        <%if(currentNode.getNode("NetworkProvider").hasNode("Linkedin")){%>
+            $.ajax({
+                type: 'POST',
+                url : '<%=request.getContextPath()%>/servlet/social/service.getLinkedinData',
+                data : 'userId=<%=request.getParameter("userId")%>',
+                success: function(data){
+                     var obj = jQuery.parseJSON(data);
+                     $("#linkedinConnectId").attr('href','http://www.linkedin.com/profile/view?id='+obj.linkedinId);
+                    $("#linkedinId").html("<strong>"+obj.count+"</strong> friends");
+                } 
+            });
+        <%}%>
+        <%if(currentNode.getNode("NetworkProvider").hasNode("Twitter")){%>
+        $.ajax({
+            type: 'POST',
+            url : '<%=request.getContextPath()%>/servlet/social/service.getTwitterData',
+            data : 'userId=<%=request.getParameter("userId")%>',
+            success: function(data){
+                var obj = jQuery.parseJSON(data);
+                $("#twitteConnectId").attr('href','http://twitter.com/'+obj.twitterId);   
+                $("#twitterId").html("<strong>"+obj.follower_count+"</strong> followers, <strong>"+obj.following_count+"</strong> following");   
+            } 
+        });
+        <%}%>
+        <%if(currentNode.getNode("NetworkProvider").hasNode("Facebook")){%>
+        $.ajax({
+            type: 'POST',
+            url : '<%=request.getContextPath()%>/servlet/social/service.getFacebookData',
+            data : 'userId=<%=request.getParameter("userId")%>',
+            success: function(data){
+                var obj = $.parseJSON(data);
+                $("#facebookConnectId").attr('href','http://facebook.com/'+obj.facebookId);
+                $("#fbId").html("<strong>"+obj.count+"</strong> friends");
+            } 
+        });
+      <%}*/%>  
+    });
+    
+    function addFollow(followingId,userId){
+        var data="following="+followingId+"&follower="+userId;
+        $.ajax({
+            type: 'POST',
+            url : '<%=request.getContextPath()%>/servlet/social/messages.follow',
+            data: data,
+            success: function(){
+               $("#followerId").text(parseInt($("#followerId").text())+1);
+               $("#socialMessageId").remove();
+            } 
+        });
+    }
+    
+    function setOAuth(value){
+        if(value=='twitter'){
+            var selectedValues= window.showModalDialog('<%=request.getContextPath()%>/servlet/social/messages.oauthSet', 'Twitter Connect', 'dialogHeight=600px;dialogWidth=600px');
+            window.location.reload();            
+        }else if(value=='linkedin'){
+            var selectedValues= window.showModalDialog('<%=request.getContextPath()%>/servlet/social/service.getLinkedinToken', 'Linkedin Connect', 'dialogHeight=600px;dialogWidth=600px');
+            window.location.reload(); 
+        }else if(value=='facebook'){
+            var selectedValues= window.showModalDialog('<%=request.getContextPath()%>/servlet/social/service.getFacebookToken', 'Facebook Connect', 'dialogHeight=600px;dialogWidth=600px');
+            window.location.reload(); 
+        
+        }
+    }
+    
+</script>
+
+</head>
+<body>
+
+<%
+var linkedin = request.getAttribute("linkedin");
+var twitter = request.getAttribute("twitter");
+var facebook = request.getAttribute("facebook");
+%>
+<div class="inner-btn-box">
+  <div class="box-icon twitter"></div>
+  <%if(request.getRemoteUser().replace("@","_")!=(request.getParameter("userId")+"")){%>
+    <div class="right-icon add-friend">+ <span><a id="twitteConnectId" target="_blank" href="<%=!twitter.isEmpty()?"http://twitter.com/"+twitter.get("screen_name")+"":""%>">Follow Me</a></span></div>
+  <%}else{%>
+    <div class="right-icon"><img src="<%=request.getContextPath()%>/apps/user/css/images/icon_setting.png" border="0" onclick="setOAuth('twitter');" /></div>
+  <%}%>
+  <div class="icon-text" id="twitterId" ><strong></strong><%=!twitter.isEmpty()?twitter.get("follower_count")+"":""%> followers, <strong><%=!twitter.isEmpty()?twitter.get("following_count")+"":""%></strong> following</div>
+ </div>
+
+<div class="inner-btn-box">
+  <div class="box-icon facebook"></div>
+  <%if(request.getRemoteUser().replace("@","_")!=(request.getParameter("userId")+"")){%>
+  <div class="right-icon add-friend">+ <span><a id="facebookConnectId" target="_blank" href="<%=!facebook.isEmpty()?"http://facebook.com/"+facebook.get("facebookId")+"":"#"%>">Add Friend</a></span></div>
+  <%}else{%>
+  <div class="right-icon"><img src="<%=request.getContextPath()%>/apps/user/css/images/icon_setting.png" onclick="setOAuth('facebook');" border="0" /></div>
+  <%}%>
+  <div class="icon-text" id="fbId"><%=!facebook.isEmpty()?facebook.get("contact")+"":""%> friends</div>
+</div>
+
+
+<div class="inner-btn-box">
+  <div class="box-icon linkedin"></div>
+  <%if(request.getRemoteUser().replace("@","_")!=(request.getParameter("userId")+"")){%>
+  <div class="right-icon add-friend">+ <span><a id="linkedinConnectId" target="_blank" href="<%=!linkedin.isEmpty()?"http://www.linkedin.com/profile/view?id="+linkedin.get("linkedinId")+"":"#"%>">Connect</a></span></div>
+  <%}else{%>
+  <div class="right-icon"><img src="<%=request.getContextPath()%>/apps/user/css/images/icon_setting.png" onclick="setOAuth('linkedin');" border="0" /></div>
+  <%}%>
+  <div class="icon-text" id="linkedinId"><%=!linkedin.isEmpty()?linkedin.get("contact")+"":""%> friends</div>
+</div>
+<%if(currentNode.hasProperty("socialMessagingId")){
+    var socialNode = currentNode.session.getNode("/content/socialMessenger/socialMessagingId/"+currentNode.getProperty("socialMessagingId"));
+    var userNode = currentNode.session.getNode("/content/user/"+request.getRemoteUser().replace("@","_"));
+    var userIdSocial = false;
+    if(userNode.hasProperty("socialMessagingId")){
+        userIdSocial = true;
+        var userUserNode = currentNode.session.getNode("/content/socialMessenger/socialMessagingId/"+userNode.getProperty("socialMessagingId"));
+        if(userUserNode.hasNode("Follower") && userUserNode.getNode("Following").hasNode(socialNode.getName())){
+            userIdSocial = false;
+        }
+    }
+    
+    var followerLength = 0;
+    var followingLength = 0;
+    var userSocial = false;
+    if(socialNode.hasNode("Follower") && socialNode.getNode("Follower").hasNodes()){
+        followerLength=socialNode.getNode("Follower").getNodes().length;
+    }
+    
+    if(socialNode.hasNode("Following") && socialNode.getNode("Following").hasNodes()){
+        followingLength=socialNode.getNode("Following").getNodes().length;
+    }
+    
+    if(currentNode.getParent().getNode(request.getRemoteUser().replace("@","_")).hasProperty("socialMessagingId")){
+        userSocial = true;
+    }
+%>
+    <div class="inner-btn-box">
+      <div class="box-icon messanger"></div>
+    <%if( userSocial && userIdSocial && request.getRemoteUser().replace("@","_")!=(request.getParameter("userId")+"")){%>
+       <div class="right-icon add-friend" id="socialMessageId" >+ <span><a href="javascript:void(0);" onclick="addFollow('<%=socialNode.getName()%>','<%=userUserNode.getName()%>')" >Follow</a></span></div>
+    <%}%>
+      <div class="icon-text"><strong id="followerId"><%=followerLength%></strong> followers, <strong><%=followingLength%></strong> following</div>
+    </div>
+<%}%>        
+        
+        
+          
+          
+</body>
+</html>

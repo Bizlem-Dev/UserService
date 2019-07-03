@@ -1,0 +1,78 @@
+
+<%
+var eventNode = currentNode.session.getNode("/content/exhibition/");
+%>
+<div class="col-sm-12 col-xs-12">
+
+    <h4 class="hot-product-gallery">Events </h4>
+    <%if(eventNode.hasNodes()){
+    var eventNodes = eventNode.getNodes();
+    %>
+    <div class="flexslider login-hot-product" id="hot-events">
+      <ul class="slides">
+      <%for(var i=0;i<eventNodes.length;i++){
+      
+      %>
+        <!--<li>
+            <div style="margin-right:0" class="card1" id="card">
+<img src="http://s3-us-west-2.amazonaws.com/s.cdpn.io/43604/profile/profile-512_1.jpg"/>
+<h2 style="padding-top: 10px">Fabrics & Accessories Trade Show - New Delhi</h2>
+<p>The 16th Edition of F&A Show will be held from 20 - 22 July 2017 at Hall No.14, Pragati Maidan, New Delhi. The F&A Show will once again bring together..</p>
+<span class="pull-left bottom">March 20 - 22, 2017 </span>
+<span class="pull-right bottom">New Delhi, India</span>
+</div>
+        </li>-->
+         <li>
+                    <div style="margin-right:0" class="card1" id="card">
+  <%if(eventNodes[i].hasNode("image") && eventNodes[i].getNode("image").hasNodes()){
+                              var img= eventNodes[i].getNode("image").getNodes();%>
+                             
+                              <img src="<%=img[0].getProperty('imgPath')%>" style="height: 180px;" alt="<%=eventNodes[i].eventName%>">
+                              <%}else{%>
+                                  <img src="http://prod.bizlem.io:8082/portal/apps/images/nmg.jpg" style="height: 180px;" alt="thumbnail">
+                             <%}%>
+                           <%
+                           var eventNameS = eventNodes[i].eventName;
+                           if(eventNameS.length < 45){%>
+                               <h2 style="padding-top: 10px"><a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=eventNodes[i].getName()%>"><%=eventNodes[i].eventName%></a></h2>
+                              <%}else{%>
+                               <h2 style="padding-top: 10px"><a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=eventNodes[i].getName()%>"><%=eventNameS.substring(0, 45)%>..</a></h2>
+                              
+                              <%}%>
+                            
+  
+  <%
+  var desc = eventNodes[i].description;
+  if(desc.length < 174){%>
+  <p><%=eventNodes[i].description%></p>
+  <%}else{%>
+  <p><%=desc.substring(0, 175)%> <a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=eventNodes[i].getName()%>">More Details</a></p>
+  <%}%>
+  <span class="pull-left bottom"><%=eventNodes[i].from_date%> - <%=eventNodes[i].to_date%> </span>
+  <%if(eventNodes[i].hasNode("venue") && eventNodes[i].getNode("venue").hasNodes()){
+  var event1Arr = eventNodes[i].getNode("venue").getNodes();
+  %>
+  <span class="pull-right bottom"><%=event1Arr[0].v_State%>, <%=event1Arr[0].v_Country%></span>
+  <%}%>
+  
+</div>
+                </li>
+     <%}%>
+      </ul>
+
+
+    </div>
+    <script type="text/javascript">
+      $(window).load(function() {
+          $('#hot-events').flexslider({
+            animation: "slide",
+            animationLoop: false,
+            itemWidth: 500,
+            itemMargin: 40
+          });
+        });
+  </script>
+  <%}else{%>
+  out.println("No Event to Display");
+  <%}%>
+</div>

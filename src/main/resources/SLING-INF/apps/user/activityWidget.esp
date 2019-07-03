@@ -1,0 +1,214 @@
+<div id="people" class="tab-pane fade active in">
+    <div class="content-tab mCustomScrollbar">
+      <div class="tab-three-12">            
+        <div class="people-visited">
+<%currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));%>
+<%	
+var activityType=["Profile","Connection","Recommendation","Group","Status"];
+for(o in activityType){
+	%>
+	<h3><%=activityType[o]%></h3>
+	
+	<%
+		if(currentNode.hasNode("connection") && 
+				currentNode.getNode("connection").getNode("friend").hasNodes()){
+				
+				var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+				
+				for(i in connectionNode){
+				var friendFinalNode=currentNode.session.getRootNode()
+				                        .getNode("content").getNode("user")
+				                        .getNode(connectionNode[i].getName());
+				df = new Packages.java.text.SimpleDateFormat( "yyyy-MM-dd");
+				//out.print("friendFinalNode----"+friendFinalNode);
+				var dateArray=[];
+				
+				for(var j=0;j<=7;j++)
+				{
+					date = Packages.java.util.Calendar.getInstance();
+					date.add(Packages.java.util.Calendar.DATE,- j);
+					dateArray[j]=df.format(date.getTime());
+				}
+				
+				if(friendFinalNode.hasNode("Activity") && friendFinalNode.getNode("Activity").hasNodes() ){
+					 
+					if(activityType[o]=='Recommendation'){
+						var recommendation=weeklyUpdate(dateArray,friendFinalNode,activityType[o]);
+						var recommendArray= filterUserNode(recommendation);
+						
+						if(recommendation.length!=0){
+								showUserProfile(friendFinalNode);
+								out.print(" is endorsed by ");
+								out.print("<a href='#'>"+recommendArray[0]+"</a>");
+								if(recommendArray.length>2){
+									out.print(" and "+((recommendArray.length/2)-1)+" others.");
+								}
+							}
+					
+					}else if(activityType[o]=='Connection'){
+							var connection=weeklyUpdate(dateArray,friendFinalNode,activityType[o]);
+							var friendArray= filterUserNode(connection);
+							if(connection.length!=0){
+								showUserProfile(friendFinalNode);
+								out.print(" is now connected with ");
+								out.print("<a href='#'>"+friendArray[0]+"</a>");
+								if(friendArray.length>2){
+									out.print(" and "+((friendArray.length/2)-1)+" others.");
+								}
+							}
+							
+						
+							
+					}else if(activityType[o]=='Profile'){	
+							var profile=weeklyUpdate(dateArray,friendFinalNode,activityType[o]);
+							//out.print("profile-----"+profile);
+							//out.print("dateArray-----"+dateArray);
+							//out.print("profile-----"+profile.length);							
+							if(profile.length!=0){
+								showUserProfile(friendFinalNode);
+								out.print(" has updated his ");
+								out.print(profile);
+								/*if(profile.length>1){
+									out.print(" and "+(profile.length-1)+" other things.");
+								}*/
+							}
+							
+							
+			
+					}else if(activityType[o]=='Status'){  
+                            var status=weeklyUpdate(dateArray,friendFinalNode,activityType[o]);                            
+                            if(status.length!=0){
+                                showUserProfile(friendFinalNode);
+                                out.print(" has updated his ");
+                                out.print(status[status.length-1]);
+                            }
+                            
+                            
+            
+                    }else if(activityType[o]=='Group'){
+						
+						var group=weeklyUpdate(dateArray,friendFinalNode,activityType[o]);
+					//	out.print("group-----"+group);
+						//	out.print("group-----"+group.length);
+						/*	var userGroupNode=currentNode.session.getRootNode().getNode("content")
+															.getNode("group").getNode(group[0]);*/
+							if(group.length!=0){
+								showUserProfile(friendFinalNode);
+								out.print(" has joined ");
+								out.print(group[0]);
+								if(group.length>1){
+									out.print(" and "+(group.length-1)+" other groups.");
+								}
+							}
+							
+						}
+				
+				}
+				
+				
+				
+				
+				
+				}		
+		}
+	}
+%>
+<%
+	
+	function filterUserNode(array){
+	
+	var userArray=[];
+		for(i in array){
+			var userFriendNode=currentNode.session.getRootNode().getNode("content")
+															.getNode("user").getNode(array[i]);
+			var string=userFriendNode.name;
+			string +=" ";
+			string +=userFriendNode.lastName?userFriendNode.lastName:"";
+			userArray.push(string);
+			userArray.push(userFriendNode);
+		}
+	
+	return userArray;
+	}
+	
+
+
+	function weeklyUpdate(dateArray1,friendNode,activityType){
+
+	//out.print("weeklyUpdate--"+dateArray1+"##"+friendNode+"##"+activityType);
+	var showValues=[];
+	for(var k=0;k<dateArray1.length;k++){
+		
+			if(friendNode.getNode("Activity").hasNode(dateArray1[k])){
+			
+				if(friendNode.getNode("Activity").getNode(dateArray1[k]).hasNode(activityType)){
+					
+					var activityTypeNode=friendNode.getNode("Activity")
+											.getNode(dateArray1[k]).getNode(activityType);
+							
+								 value=getPropertyNodes(activityTypeNode);	
+								 //out.print("value--"+value);
+								for(index in value){
+									if(!contains(showValues,value[index])){
+										showValues.push(value[index]);
+										}
+								}	
+								
+				}													
+			}					
+		}
+		
+		return showValues;
+	}
+%>
+
+<%	
+	function contains(array, value) {
+	    
+	    for(var q = 0 ; q < array.length;q++) {
+	  
+	        if (array[q].equals(value)){
+	        
+	         return true;}
+	    }
+	    return false;
+	}
+	
+	function showUserProfile(profileNode){
+	
+		if(profileNode.hasProperty("profileImage")){
+										 %>
+											<br /><img src="<%=profileNode.profileImage%>" width="30" height="40"  />
+										<%}else{  %>
+											<br /><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" width="30" height="40"  /> 
+										<%}%>
+										<a href="#"><%=profileNode.name%> <%=profileNode.lastName?profileNode.lastName:""%></a>
+						<%				
+		
+	}
+	
+	
+	function getPropertyNodes(node){
+
+		var displayValues=[];
+		var mainNode=node.getNodes();
+			for(var count=0;count<mainNode.length;count++){
+				var childNode=mainNode[count];
+				if(childNode.hasProperty("profileType")){
+					 displayValues.push(childNode.profileType?childNode.profileType:"");
+					 }
+				if(childNode.hasProperty("friend")){
+ 					 	displayValues.push(childNode.friend?childNode.friend:"");
+					 }
+				if(childNode.hasProperty("recommend")){
+					displayValues.push(childNode.recommend?childNode.recommend:"");
+					}
+				if(childNode.hasProperty("groupName")){
+					displayValues.push(childNode.groupName?childNode.groupName:"");
+					}
+			}
+			
+		return displayValues;
+	}
+%>
+</div></div></div></div>

@@ -1,0 +1,340 @@
+<%
+var currentNodeProvided = ((typeof currentNode != "undefined") );
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+        
+    }
+    return result;
+}
+%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <%load("../common/links.esp");%>
+           </head>
+<body>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+    <%load("../common/header.esp");%>
+
+
+<script src="<%=request.getContextPath()%>/apps/js/step-form.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/step-form.css">
+<script>
+    $(document).ready(function(e) {
+        
+        $(".stepsForm").stepsForm({
+            theme:'purple'
+        }); 
+        
+        $(".container .themes>span").click(function(e) {
+            $(".container .themes>span").removeClass("selectedx");
+            $(this).addClass("selectedx");
+            $(".stepsForm").removeClass().addClass("stepsForm");
+            $(".stepsForm").addClass("sf-theme-"+$(this).attr("data-value"));
+        });
+    });
+    
+    function validateGroupForm(){
+    	var strGroupName = document.getElementById("groupName").value;
+    	var strGroupSummary = document.getElementById("groupSummary").value;
+    	var strPubRadioCh = document.getElementById("publicradio").checked;
+    	var strPriRadioCh = document.getElementById("privateradio").checked;
+    	UserDWRService.getGroupAddEditMsg(strGroupName,strGroupSummary,strPubRadioCh,strPriRadioCh,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				alert(data);
+				}else if(data == "true"){
+				document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+    }
+</script>
+<script src="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.min.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.css"> 
+
+ <script src="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader-new.css"> 
+
+<style type="text/css">
+#dropzone { margin-bottom: 3rem; }
+.dropzone { border: 2px dashed #0087F7; border-radius: 5px; padding: 0px;}
+.dropzone .dz-message { font-weight: 400; }
+.dropzone .dz-message .note { font-size: 0.8em; font-weight: 200; display: block; margin-top: 1.4rem; }
+.dropzone .dz-message {
+    margin: 2em 0;
+    text-align: center;
+}
+.dropzone .dz-preview .dz-details, .dropzone-previews .dz-preview .dz-details {width: 100%; height: 30px;}
+</style>
+
+<section class="Profile_page">
+		
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-10 col-xs-12">
+						<div class="row">
+							<div class="col-xs-12 ">
+								<!--STEPS FORM START  -->
+								    <form method="POST" id="grpForm" action="<%=request.getContextPath()%>/servlet/group/show.save" enctype="multipart/form-data" class="form-horizontal">
+      <input type="hidden" value="<%if(!request.getParameter("id").equals("new")){
+      out.print(request.getParameter("id"));
+      }else{
+       out.print("new");}
+      %>" name="groupid">
+        <div style="width:100%">
+        <div style="float:left;width:20%">		
+        <div class="profile-user-thumb">
+			<%if(currentNodeProvided && currentNode.hasNode("picture")){%>
+			<img src="<%=request.getContextPath()%><%=currentNode.getNode("picture")%>"  height="80px" width="125px" />
+			<%}else{%>
+			<img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif"  height="80px" width="125px" />
+			<%}%>
+			<div><input type="file" class="btn btn-primary" style="width:86%"  class="form-control" placeholder="Browse picture"  name="file"></div>		</div></div>
+		<div style="float:left;width:80%">	
+        
+                                
+                <div class=" sf-radius"> 
+                    
+                    <ul class="sf-content"> <!-- form step one --> 
+			
+                        <li style="width:75%">
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Group Name</label>
+								    <div class="col-sm-10">
+								      <input type="text" id="groupName" value="<%=getCurrentNodeValue("groupName")%>" name="groupName" class="form-control" placeholder="Group Name" data-required="true">
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Group Type</label>
+								    <div class="col-sm-10">
+								    	      <%
+								var groupType=["Alumni Group","Corporate Group","Conference Group","Networking Group","Nonprofit Group","Professional Group"];
+							%>
+							<select name="groupType" class="form-control">
+							<%
+								for(i in groupType){
+									if(getCurrentNodeValue("groupType")==groupType[i]){
+									%>
+										<option value="<%=groupType[i]%>" selected="selected" ><%=groupType[i]%></option>
+									<%	}
+									else{
+									%>
+										<option value="<%=groupType[i]%>"><%=groupType[i]%></option>
+									<%}
+								}
+							
+							%>
+							</select>
+								     
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Group Summary</label>
+								    <div class="col-sm-10">
+								      <textarea id="groupSummary" name="groupSummary" placeholder="Enter a brief description about your group and its purpose. Your summary about this group will appear in the Groups Directory." class="form-control" placeholder="Description" data-required="true"><%=getCurrentNodeValue("groupSummary")%></textarea>
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Group Description</label>
+								    <div class="col-sm-10">
+								      <textarea name="groupDescription" placeholder="Your full description of this group will appear on your group pages." class="form-control" placeholder="Description" data-required="true"><%=getCurrentNodeValue("groupDescription")%></textarea>
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Group Website</label>
+								    <div class="col-sm-10">
+								      <input type="text" name="groupWebsite" value="<%=getCurrentNodeValue("groupWebsite")%>" class="form-control" placeholder="Website" data-required="true">
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Group Access</label>
+								    <div class="col-sm-10">
+								      	<%if(getCurrentNodeValue("groupAccess")=='public'){
+								%>
+									<input id="publicradio" style="width:10% !important;" type="radio" name="groupAccess" value="public" checked >Public - Without any restriction anyone can join this group.<br>
+								<%}else{%>
+									<input id="publicradio" style="width:10% !important;"  type="radio" name="groupAccess" value="public" >Public - Without any restriction anyone can join this group.<br>
+								<%}
+								if(getCurrentNodeValue("groupAccess")=='private'){
+								%>
+									<input id="privateradio"  style="width:10% !important;" type="radio" name="groupAccess" value="private" checked>Restricted - Request will be send for approval to Creator.<br>
+								<%}else{%>
+									<input id="privateradio"  style="width:10% !important;" type="radio" name="groupAccess" value="private" >Restricted - Request will be send for approval to Creator.<br>
+								<%}%>
+						
+								    </div>
+								</div>
+                            </div>
+                         </li>
+                    </ul>
+                     
+                   
+                    
+                </div>
+
+
+                
+                <div class="sf-steps-navigation sf-align-right">
+                    <span id="sf-msg" class="sf-msg-error"></span>
+                    
+                    <button id="sf-next" type="button" onclick="validateGroupForm()" class="btn btn-primary">Submit</button>
+                </div>
+            
+            </div>
+        </div>
+        </form>
+        <!--STEPS FORM END  -->
+							</div>
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+
+</section>
+
+<%load("../common/footer.esp");%>
+
+
+<!-- Login Modal Start  -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Login Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Login Modal End  -->
+
+<!-- register Modal Start  -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Registration Form</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+
+
+<!-- contactsupplier Modal Start  -->
+<div class="modal fade contactsupplier" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Contact Supplier</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+    
+  
+        
+    </body>
+</html>
+

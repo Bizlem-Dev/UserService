@@ -1,0 +1,60 @@
+<%load("../user/includes/header.esp");%>
+<script>
+	function formSubmit(){
+		//document.getElementById("formSubmit").submit();
+
+		window.opener.location.reload(true);
+		//self.close();
+	}
+</script>
+</head>
+<body>
+<%var masterNode=currentNode.session.getNode("/content/master/company");
+var companyNode=masterNode.getNode("company");
+var user=masterNode.getNode("user");
+var product=masterNode.getNode("product");
+%>
+<table width="100%" border="0" cellspacing="2" cellpadding="2" class="form">
+	<%if(request.getParameter("mapType")=='company'){%>
+		<form id="formSubmit" action="<%=request.getContextPath()%>/servlet/company/save.mapCompanyType" onSubmit="return formSubmit()" method="POST">
+		<%var companyType=companyNode.companyType;
+		for(i in companyType){%>
+		  <tr><td><input type="checkbox" name="companyMapType"  value="<%=(companyType[i]+"").replace(/ /g,"")%>" /></td><td><%=companyType[i]%> </td></tr>
+		 <%}%> 
+		<tr><td colspan="2"><input type="hidden" name="mapCompanyName" value="<%=request.getParameter("compN")%>" /></td></tr>
+		 
+		<tr><td colspan="2">	<input type="submit" onSubmit="formSubmit()" value="Save" class="btn btn-primary" /></td></tr>
+		</form>
+		<%}else if(request.getParameter("mapType")=='user'){%>
+	
+
+		<form id="formSubmit" action="<%=request.getContextPath()%>/servlet/company/save.mapUserType" onSubmit="return formSubmit()" method="POST">
+		<%var userType=user.userType;
+        for(i in userType){%>
+		  <tr><td><input type="checkbox" name="mapUserType"  value="<%=(userType[i]+"").replace(/ /g,"")%>" /></td><td><%=userType[i]%> </td></tr>
+		<%}%>
+
+		<tr><td colspan="2"><input type="hidden" name="mapCompanyName" value="<%=request.getParameter("compN")%>" /></td></tr>
+		 
+		<tr><td colspan="2">	<input type="submit" value="Save" class="btn btn-primary" /></td></tr>
+		</form>
+	<%}else if(request.getParameter("mapType")=='product'){%>
+    
+
+        <form id="formSubmit" action="<%=request.getContextPath()%>/servlet/company/save.mapProductType" onSubmit="return formSubmit()" method="POST">
+        <%var productType=product.productType;
+        for(i in productType){%>
+          <tr><td><input type="checkbox" name="mapProductType"  value="<%=(productType[i]+"").replace(/ /g,"")%>" /></td><td><%=productType[i]%> </td></tr>
+        <%}%>
+
+
+        <tr><td colspan="2"><input type="hidden" name="mapCompanyName" value="<%=request.getParameter("compN")%>" /></td></tr>
+         
+        <tr><td colspan="2">    <input type="submit" value="Save" class="btn btn-primary" /></td></tr>
+        </form>
+    <%}%>
+
+
+	
+</body>
+</html>	

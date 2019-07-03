@@ -1,0 +1,224 @@
+<html>
+<head>
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null); 
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+    postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<script language="javascript">
+    var counts;
+    function addRow(tableID) {
+        
+        
+        var table = document.getElementById(tableID);
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        counts = rowCount - 1;
+        
+
+        
+        var cell2 = row.insertCell(0);  
+        var rate = document.createElement("input");
+        rate.type = "text";
+        rate.name = "skill";
+        rate.setAttribute("class", "");
+        rate.id = "jsp_" + counts
+        + "__rate";
+        cell2.appendChild(rate);
+        
+        
+        
+        var cell3 = row.insertCell(1);
+        var selector = document.createElement('select');
+        selector.id = 'selBidReceivedIsPM';
+        selector.name = 'level';
+        cell3.appendChild(selector);
+        var option = '';
+        option = document.createElement('option');
+        for(var i = 0;i<=10;i++){  
+        option = document.createElement('option');
+        option.value = i;
+        option.appendChild(document.createTextNode(i));
+        selector.appendChild(option);
+       	}
+        
+        var cell1 = row.insertCell(2);
+        var skill = document.createElement("label");
+        skill.id = "jsp_" + counts
+                + "__skill";
+        skill.setAttribute("class", "");
+        cell1.appendChild(skill);       
+    }
+
+    function deleteRow(guestList) {
+        try {
+            var table = document.getElementById(guestList);
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                table.deleteRow(rowCount - 1);
+            }
+        } catch (e) {
+            alert(e);
+        }
+    }
+
+
+</script>
+</head>
+<body>
+
+    <form method="POST" action="<%=request.getContextPath() %>/content/user/save.su">
+        <input type="hidden" name="title" value="ProfessionalSummary" />
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="form">
+            <tr>
+                <td colspan="3">
+                <label>Professional Experience &amp; Goals</label><br />
+                <textarea name="goals" cols="40" rows="2"  ><%= getCurrentNodeValue("goals") %></textarea></td>
+            </tr>
+
+
+            <tr>
+                <td colspan="3">
+                <label>Specialities</label><br />
+                <textarea name="specialities" cols="40" rows="2" ><%= getCurrentNodeValue("specialities") %></textarea></td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+
+
+
+                    <td width="45%"><label>Skill Expertise</label>
+                    </td>
+                    
+                    <td width="15%"><label>Rate <em>(Upto 10)</em></label>
+                    </td>
+                    <td> </td>
+                    </tr>
+                    <tbody id="skillList">
+                    
+                        <%
+                           if( currentNodeProvided && currentNode.hasProperty("skill") && currentNode.getProperty("skill").getDefinition().isMultiple() ){
+                          
+                           var skillValue=getCurrentNodeValue("skill");
+                           var levelValue=getCurrentNodeValue("level");
+                           for(j in skillValue)
+                           {
+                         %>
+                         <tr>
+                            <td><input name="skill" value="<%=skillValue[j]%>" /></td>
+                            <td>
+                            <select name="level">
+                                            <%
+                                                
+                                               for(i=0;i<=10;i++) {
+                                               if(i==levelValue[j]){
+                                               out.println(i);
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+                                                         </select>
+                                    
+                                 <!--   <input name="level" value="<%=levelValue[j]%>" /> -->
+                                    
+                                    </td>
+                            <td>
+                   
+                                  
+                                  &nbsp;  <a id="profileEdit" onclick="addRow('skillList')" href="javascript:void(0)">
+                                          <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD" />
+                                                                    </a>
+                                                                    <a id="profileEdit" onclick="deleteRow('skillList')" href="javascript:void(0)">
+                                                                        <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete" />
+                                                                    </a>
+                                    
+                                 </td>
+                            </tr>
+                            <%}} else {%>
+                
+                            <tr>
+                            <td><input name="skill" value="<%= getCurrentNodeValue("skill") %>" /></td>
+                            <td>
+                                    <select name="level">
+                                            <%
+                                                
+                                               for(i=0;i<=10;i++) {
+                                               if(i==getCurrentNodeValue("level")){
+                                               out.println(i);
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+                                                         </select>
+                                  
+                                    
+                                    </td>
+                            <td>
+                   
+                                  
+                                  &nbsp;  <a id="profileEdit" onclick="addRow('skillList')" href="javascript:void(0)">
+                                          <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD" />
+                                                                    </a>
+                                                                    <a id="profileEdit" onclick="deleteRow('skillList')" href="javascript:void(0)">
+                                                                        <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete" />
+                                                                    </a>
+                                    
+                                 </td>
+                            </tr>
+                           <%}%>
+             </tbody>
+                   <%
+                    var path=postPath;
+                    var last=path.lastIndexOf("/");
+                    var redirect=path.substring(0,path.lastIndexOf("/"));
+                    var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+                    
+                    
+                    %>
+                    <input name="redirect" type="hidden" value="<%=param%>"/>
+                                       
+            <tr>
+                <td colspan="3"><input type="submit" value="Save Changes" class="btn btn-primary" />
+                <a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>"
+                    class="btn btn-warning" id="cancelEdit">Cancel</a>
+                </td>
+            </tr>
+
+        </table>
+    </form>
+</body>
+</html>

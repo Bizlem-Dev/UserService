@@ -1,0 +1,140 @@
+<%
+var login=request.getSession(true);
+var loginId=login.getAttribute("loginPkId")+"";
+%>
+<%
+var currentNodeProvided = ((typeof currentNode != "undefined") );
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+        
+    }
+    return result;
+}
+%>
+
+<%load("../user/includes/header.esp");%>
+
+
+<%load("../user/includes/menu.esp");%>
+
+
+<div  class="section-left">
+	<fieldset class="row-fluid" id="userProfilePrimaryData">
+		<div class="profile-user-thumb">
+		
+			<%if(currentNodeProvided && currentNode.hasNode("picture")){%>
+			<img src="<%=request.getContextPath()%><%=currentNode.getNode("picture")%>"  height="80px" width="125px" />
+			<%}else{%>
+			<img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif"  height="80px" width="125px" />
+			<%}%>
+			<div align="center"><a rel="facebox" href="<%=request.getContextPath()%>/content/group/*.uploadGroupPic?id=<%=request.getParameter("id")%>" class="btn btn-primary">Change Picture</a></div>
+		</div>
+		<div class="profile-info-visible" style="width:77%;">
+			<form method="POST" action="<%=request.getContextPath()%>/servlet/group/show.save">
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="form">
+					<br />
+					<tr>
+						 <td width="33%">
+							 <label>Group Name </label>
+						 </td>
+						 <td>
+							 <input type="text" value="<%=getCurrentNodeValue("groupName")%>" name="groupName" />
+						 </td>
+					</tr>
+					<tr>
+						<td width="33%">
+							<label>Group Type </label>
+						</td>
+						<td>
+							<%
+								var groupType=["Alumni Group","Corporate Group","Conference Group","Networking Group","Nonprofit Group","Professional Group"];
+							%>
+							<select name="groupType" >
+							<%
+								for(i in groupType){
+									if(getCurrentNodeValue("groupType")==groupType[i]){
+									%>
+										<option value="<%=groupType[i]%>" selected="selected" ><%=groupType[i]%></option>
+									<%	}
+									else{
+									%>
+										<option value="<%=groupType[i]%>"><%=groupType[i]%></option>
+									<%}
+								}
+							
+							%>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td width="33%">
+							<label>Group Summary </label>
+						</td>
+						<td>
+							<textarea name="groupSummary" placeholder="Enter a brief description about your group and its purpose. Your summary about this group will appear in the Groups Directory."
+							 cols="29" rows="3"><%=getCurrentNodeValue("groupSummary")%></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td width="33%">
+							<label>Group Description </label>
+						</td>
+						<td>
+							<textarea placeholder="Your full description of this group will appear on your group pages."
+							 name="groupDescription" cols="30" rows="3"><%=getCurrentNodeValue("groupDescription")%></textarea>
+						</td>
+					</tr>
+					<tr>
+						<td width="33%">
+							<label>Group Website </label>
+						</td>
+						<td>
+							<input type="text" name="groupWebsite" value="<%=getCurrentNodeValue("groupWebsite")%>" />
+						</td>
+					</tr>
+					<!--<tr>
+						<td width="33%">
+							<label>Group Owner Email </label>
+						</td>
+						<td>-->
+							<input type="hidden" name="groupOwnerEmail" value="<%=request.getRemoteUser().replace("@","_")%>" />
+					<!--	</td>
+					</tr>-->
+					<tr>
+						<td width="33%">
+							<label>Group Access </label>
+						</td>
+						<td>
+							
+								<%if(getCurrentNodeValue("groupAccess")=='public'){
+								%>
+									<input style="width:10% !important;" type="radio" name="groupAccess" value="public" checked >Public - Without any restriction anyone can join this group.<br>
+								<%}else{%>
+									<input style="width:10% !important;"  type="radio" name="groupAccess" value="public" >Public - Without any restriction anyone can join this group.<br>
+								<%}
+								if(getCurrentNodeValue("groupAccess")=='private'){
+								%>
+									<input  style="width:10% !important;" type="radio" name="groupAccess" value="private" checked>Restricted - Request will be send for approval to Creator.<br>
+								<%}else{%>
+									<input  style="width:10% !important;" type="radio" name="groupAccess" value="private" >Restricted - Request will be send for approval to Creator.<br>
+								<%}%>
+							
+						
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">	
+							<input type="submit" value="Create Group" class="btn btn-info" />
+						</td>
+					</tr>
+					
+			</form>
+		</div>
+	 </fieldset>
+</div>
+
+<div>
+</body>
+</html>

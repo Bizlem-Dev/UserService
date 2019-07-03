@@ -1,0 +1,101 @@
+﻿.thumb-slider 
+{
+    width:40%;
+    height:86px;
+    margin: 0 auto;
+    padding:36px 20px;
+    border:1px solid #dedcb4;
+    background:#f2f1ea url(images/loading.gif) no-repeat 50% 50%;
+    box-shadow: 0px 1px 11px #CCCCCC;
+    
+    /* Do not alter the below settings*/
+    white-space:nowrap;
+    position:relative;
+    font-size:0px;
+}
+ .thumb-slider>* {display:none;}
+  
+/*-------- div.item is each thumbnail's wrapper created by the javascript ------*/
+.thumb-slider div.item 
+{
+    padding:2px;
+    margin-right:6px; /* this specifies the distance between each thumbnail */
+    background-color:White;
+    border:1px solid #ddd;
+    text-align:center;
+    position:relative;
+}
+
+.thumb-slider img 
+{
+    border:none;
+}
+
+
+/*---------built-in navigation buttons-------*/
+.thumb-slider .navPrev, .thumb-slider .navNext, .thumb-slider .navPlay, .thumb-slider .navPause 
+{
+    width:16px; height:22px; position:absolute;  
+    background:url(images/navbuttons.png);
+    display:inline-block; z-index:5; cursor:pointer;
+}
+.thumb-slider .navPrev {background-position:0 -22px;top:60px;left:-40px;}
+.thumb-slider .navPrev:hover {background-position:0 -44px;}
+.thumb-slider .navPrevDisabled, .thumb-slider .navPrevDisabled:hover {background-position:0 0;cursor:default;}
+
+.thumb-slider .navNext {background-position:-16px -22px;top:60px;right:-40px;} 
+.thumb-slider .navNext:hover {background-position:-16px -44px;} 
+.thumb-slider .navNextDisabled, .thumb-slider .navNextDisabled:hover {background-position:-16px 0; cursor:default;} 
+
+.thumb-slider .navPause, .thumb-slider .navPlay {left:50%;top:130px;}
+.thumb-slider .navPause {background-position:0 -66px;} 
+.thumb-slider .navPause:hover {background-position:0 -88px;} 
+.thumb-slider .navPlay {background-position:-16px -66px;} 
+.thumb-slider .navPlay:hover {background-position:-16px -88px;} 
+
+.navPrev, .navPlay, .navPause, .navNext 
+{
+   -moz-user-select: -moz-none;
+   -khtml-user-select: none;
+   -webkit-user-select: none;
+   -o-user-select: none;
+   user-select: none;
+}
+       
+/*---------built-in navigation bullets--------*/
+/* Note: the navBullets won't be available when "scrollByEachThumb" was set to false in the Javascript.*/
+.thumb-slider .navBullets
+{
+    display:none;
+}
+
+/*--------- class1 that is for the slide with HTML content------------*/
+.class1 
+{
+    width:130px;
+    height: 80px;
+    background:#444;
+    text-align:center;
+    color:White;
+    font:normal 11px/14px Arial;
+    white-space:normal;
+}
+.class1 p
+{
+    margin-top:0;
+    margin-bottom:6px;
+    padding-top:6px;
+    font:bold 13px Verdana;
+    color:#F90;
+}
+
+
+/* --------- Others ------- */
+.thumb-slider
+{
+	transform: translate3d(0,0,0);
+    -ms-transform:translate3d(0,0,0);
+    -moz-transform:translate3d(0,0,0);
+    -o-transform:translate3d(0,0,0);
+    -webkit-transform: translate3d(0,0,0);
+}

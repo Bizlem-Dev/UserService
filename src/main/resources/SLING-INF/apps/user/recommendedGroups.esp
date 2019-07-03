@@ -1,0 +1,62 @@
+<%
+ var arr = [];
+ var grpNode = currentNode.session.getRootNode().getNode("content").getNode("group");
+if(grpNode.hasNodes()){
+var grpNodes = grpNode.getNodes();
+while(arr.length < 5){
+    var randomnumber = Math.ceil(Math.random()*(grpNodes.length - 1))
+    if(arr.indexOf(randomnumber) > -1) continue;
+    if(grpNode.hasNode(randomnumber)){
+    arr[arr.length] = randomnumber;
+    }
+  
+}
+//out.print(arr);
+
+}
+%>
+
+<div class="col-sm-12">
+                  <div class="recommeded-conection">
+                      <div class="tab-three">
+                        <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Recommended Groups</h3>
+                        </div>
+                        <div class="panel-body">
+                          <div class="">
+                          <%if(arr.length > 0){
+                          for(var i = 0;i<arr.length;i++){
+                          if(grpNode.hasNode(arr[i])){
+                          var usergrpNode = grpNode.getNode(arr[i]);
+                          %>
+                            <div class="recommended-body">
+                              <div class="recommended-img" style="width:30%">
+                              <%if(usergrpNode.hasNode("picture")){%>
+                                <a target="_blank" href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=arr[i]%>"><img src="<%=request.getContextPath()%><%=usergrpNode.getNode("picture")%>" style="height:70px;width: 100%"/></a>
+                                <%}else{%>
+                                <a href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=arr[i]%>"><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="height:70px;width: 100%"/></a>
+                                <%}%>
+                              </div>
+                              <div class="recommended-text" style="width:66%">
+                              <%if(usergrpNode.hasProperty("groupName")){%>
+                                <h5><a target="_blank" href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=arr[i]%>"><%=usergrpNode.usergrpNode?usergrpNode.usergrpNode:""%></a></h5>
+                                
+                                <%}%>
+                                <%if(usergrpNode.hasProperty("groupSummary")){%>
+                                <p><a target="_blank" href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=arr[i]%>"><%=usergrpNode.groupSummary?usergrpNode.groupSummary:""%></a></p>
+                                
+                                <%}%>
+                              </div>
+                            </div>
+						  <%}
+						  }
+						  }%>
+                            
+
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                  </div>
+              </div><!--end of reccomended conn column -->

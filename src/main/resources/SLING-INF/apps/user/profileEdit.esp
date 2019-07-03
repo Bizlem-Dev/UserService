@@ -1,0 +1,1491 @@
+
+
+<%resource = Packages.java.util.ResourceBundle.getBundle("server");%>
+<%
+    var login = request.getSession(true);
+    var loginId = login.getAttribute("loginPkId") + "";
+%>
+<%
+// Check if we have a currentNode
+    var currentNodeProvided = ((typeof currentNode !=   "undefined") && currentNode.title != null
+    );
+
+function getCurrentNodeValue(prop
+    
+        
+        
+        
+        ) {
+    var result = "";
+        if (currentNodeProvided && currentNode[prop]) {
+            result = currentNode[prop];
+        }
+        return result;
+    }
+    /* Global variable */
+
+    var degree = "";
+    var showEmail = "true";
+    var showPhone = "true";
+    /* */
+
+    /* Following are privacy variables  */
+    var emailPrivacy = "";
+    var contactPrivacy = ""
+var productPrivacy = "";
+    var companyPrivacy = "";
+    var connectionPrivacy = "";
+    var groupPrivacy = "";
+    var activityPrivacy = "";
+    /*  */
+
+    var postPath = null;
+    var pageTitle = null;
+    if (currentNodeProvided) {
+        postPath = request.getContextPath();
+        postPath += currentNode.getPath();
+        pageTitle = currentNode.title;
+    } else {
+        postPath = request.getContextPath() + "";
+        if (postPath.length > 0) {
+            postPath += "/";
+        }
+        postPath += request.getPathInfo();
+        pageTitle = "New post";
+    }
+
+%><!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <%load("../common/links.esp");%>
+        <style>
+
+.row {
+    margin-left: 0px;
+}
+</style>       
+    </head>
+    <body>
+        <div class="pace pace-active" style="display:none;">
+            <div class="pace-progress">
+                <div class="pace-progress-inner"></div>
+            </div>
+            <div class="pace-activity"></div>
+        </div>
+        <%load("../common/header.esp");%>
+     
+
+
+
+        <script src="js/chosen/chosen.jquery.js"></script>
+        <link href="js/chosen/chosen.min.css" rel="stylesheet">
+        <script>
+            $(function() {
+                $('.chosen-select').chosen();
+                $('.chosen-select-deselect').chosen({allow_single_deselect: true});
+            });
+        </script>
+        <section class="profile_update_page">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="tab-two" style="width: 100%; float: left; margin-bottom: 20px;">
+                            <ul class="nav nav-tabs" id="myTab">
+                                <li id="basicli"><a data-toggle="tab" href="#basicinfo">BasicInfo</a></li>
+                                <li id="eduli"><a data-toggle="tab" href="#education">Education</a></li>
+                                <li id="skili"><a data-toggle="tab" href="#professional-summary">Skill</a></li>
+                                <li id="expli"><a data-toggle="tab" href="#experiance">Experiance</a></li>
+                                <li id="relationli"><a data-toggle="tab" href="#relation">Relation</a></li>
+                                <li id="otherli"><a data-toggle="tab" href="#address">Other Details</a></li>
+                                <li style="display:none"><a data-toggle="tab" href="#additional-info">Additional Info</a></li>
+                            </ul>
+
+                            <div class="tab-content" id="myTabContent">
+                                <div id="basicinfo" class="tab-pane fade">
+                                    <h3>Basic Info</h3>
+                                    <div class="row">                  	
+                                        <div class="col-sm-10">
+                                            <div class="row">
+                                                <div class="col-xs-12">
+
+                                                    <div class="col-sm-2">
+                                                        <figure class="image">
+                                                            <% if (currentNodeProvided && currentNode.hasProperty("profileImage")) {
+                                                            %>
+                                                            <img src="<%=getCurrentNodeValue("profileImage")%>" />
+                                                            <%} else {%>
+                                                            <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+                                                            <%}%>      </figure>          				
+                                                        <!--<a href="<%=postPath%>/attachments/*.upload?userId=<%=request.getParameter("id")%>" class="btn btn-primary btn-xs btn-block"> Change Picture</a>-->
+                                                        <a data-target="#userPic" data-toggle="modal" href="#" class="btn btn-info"> Change Picture</a>
+                                                        <div class="modal fade" id="userPic" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            				 <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal" method="POST" id="save" action="<%=request.getContextPath() %>/content/user/save.up" enctype="multipart/form-data">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Change Profile picture</h4>
+      </div>
+      <div class="modal-body" style="height:50px;">
+        <input type="hidden" name="userId" id="userId" value="<%=request.getRemoteUser().replace("@","_")%>" />
+        <div class="form-group">
+            <label class="col-sm-3 control-label">File</label>
+            <div class="col-sm-9">
+              <input class="form-control" type="file" name="myFile" />
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Post</button>
+      </div>
+      </form>
+    </div>
+  </div>
+            				</div>
+            				
+                                                    </div>
+                                                    <!-- Display user info-->
+
+                                                    <div class="col-sm-10">
+                                                        <form  method="POST" action="<%=request.getContextPath()%>/content/user/save.basic" id="myfoem">
+                                                            <div class="row">
+                                                                <div class="col-xs-12">
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4">
+
+
+                                                                            <%if (!currentNodeProvided) {
+                                                                            %>
+                                                                            <input type="hidden" name="profileImage"
+                                                                                   value="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" />         
+                                                                            <%} else {%>
+                                                                            <input type="hidden" name="profileImage" value="<%=getCurrentNodeValue("profileImage")%>" />
+                                                                            <%}%>
+
+                                                                            <label for="">First Name</label>
+
+                                                                            <%if (currentNodeProvided) {%>
+                                                                            <input type="hidden" name="title" value="<%=getCurrentNodeValue("title")%>" />
+                                                                            <%} else {%>
+                                                                            <input type="hidden" name="title" value="<%=request.getParameter("id")%>" />
+                                                                            <%}%>
+                                                                            <input type="text" name="name" id="name" onkeyup="onKeyUpForFname(this.id)"   class="form-control" placeholder="First Name" value="<%= getCurrentNodeValue("name")%>">
+                                                                            <div id="suggestionFname"  style="width:87%;z-index:1;position:absolute;background:white">
+  																			<div class="searchterm" id="searchFname"></div>
+ 																			</div>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Middle Name</label>
+                                                                            <input type="text" class="form-control" name="maidenName" value="<%= getCurrentNodeValue("maidenName")%>"  placeholder="Middle Name">
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Last Name</label>
+                                                                            <input type="text" class="form-control" name="lastName" id="lastname" onkeyup="onKeyUpForLname(this.id)" value="<%= getCurrentNodeValue("lastName")%>" placeholder="Last Name">
+                                                                            <div id="suggestionLname"  style="width:87%;z-index:1;position:absolute;background:white">
+  																			<div class="searchterm" id="searchLname"></div>
+ 																			</div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-12">
+                                                                            <label for="">Profile Headline</label>
+                                                                            <input type="text" class="form-control" placeholder="Profile Headline" name="headline" value="<%= getCurrentNodeValue("headline")%>" >
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-12">
+                                                                            <label for="">Profile Summary</label>
+                                                                            <textarea name="profilesummary" class="form-control" placeholder="Profile Summary"><%= getCurrentNodeValue("profilesummary") %></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-12">
+                                                                            <label for="">Website</label>
+                                                                            <input type="text" class="form-control" placeholder="Enter Website" name="userwebsite" value="<%= getCurrentNodeValue("website")%>" >
+                                                                            <!--<textarea name="specialities" class="form-control" placeholder="Specialities"><%= getCurrentNodeValue("specialities") %></textarea>-->
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Birthday</label>
+                                                                            <input type="text" id='birthDayPicker' class="form-control" placeholder="Birthday" name="birthDay"
+                                                                                   value="<%= getCurrentNodeValue("birthDay")%>">
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Marital Status</label>
+                                                                            <select data-placeholder="Maritual Status" class="form-control chosen-select" name="status"  onchange="statusR(this.value)" >
+                                                                                <%
+                                                                                    //var statusVal =["Single","In a Relationship","Engaged","Married","Divorced","In an Open Relationship"]
+                                                                                    var statusVal = currentNode.session.getRootNode().getNode("content").getNode("maritalstatus").getNodes();
+                                                                                   for (var i=0;i<statusVal.length;i++) {
+                                                                                        if (getCurrentNodeValue("status").equals(statusVal[i].maritalStatus)) {
+                                                                                %>
+                                                                                <option value="<%=statusVal[i].maritalStatus%>" selected="selected" ><%=statusVal[i].maritalStatus%></option>
+                                                                                <%} else {
+                                                                                %>
+                                                                                <option value="<%=statusVal[i].maritalStatus%>"><%=statusVal[i].maritalStatus%></option>   
+
+                                                                                <%  }
+                                                                                    }%>
+                                                                            </select>
+                                                                        </div>
+                                                                        <div class="col-sm-4" id="anniDiv">
+                                                                            <label for="">Marriage Anniversary</label>
+                                                                            <%  if (getCurrentNodeValue("status") != "Single") {
+                                                                            %>
+                                                                            <input  name="anniversary" type="text" value="<%= getCurrentNodeValue("anniversary")%>"  id="anni"  class="form-control" placeholder="Marriage Anniversary" />
+                                                                            <%
+                                                                            } else {
+                                                                            %>
+                                                                            <input name="anniversary" type="text"  disabled="true" id="anni"   class="form-control" placeholder="Marriage Anniversary" />
+
+                                                                            <%}
+                                                                            %>      
+
+                                                                        </div>
+                                                                    </div>  
+                                                                    <div class="form-group" style="margin-bottom: 0px;">
+
+                                                                        <div class="col-sm-6">
+                                                                        
+<script>
+        $( document ).ready(function() {
+    		var tab = '<%=request.getParameter("tab")%>';
+    		
+    		if(tab == 1){
+    		
+    		console.log("tab---"+tab);
+    		$("#basicli").addClass("active");
+    		$("#basicinfo").addClass("active in");
+    		$("#eduli").removeClass("active");
+    		$("#education").removeClass("active in");
+    		$("#skili").removeClass("active");
+    		$("#professional-summary").removeClass("active in");
+    		$("#expli").removeClass("active");
+    		$("#experiance").removeClass("active in");
+    		$("#otherli").removeClass("active");
+    		$("#address").removeClass("active in");
+    		$("#relationli").removeClass("active");
+    		$("#relation").removeClass("active in");
+    		
+    		}else if(tab == 2){
+    		
+    		console.log("tab---"+tab);
+    		$("#eduli").addClass("active");
+    		$("#education").addClass("active in");
+    		$("#basicli").removeClass("active");
+    		$("#basicinfo").removeClass("active in");
+    		$("#skili").removeClass("active");
+    		$("#professional-summary").removeClass("active in");
+    		$("#expli").removeClass("active");
+    		$("#experiance").removeClass("active in");
+    		$("#otherli").removeClass("active");
+    		$("#address").removeClass("active in");
+    		$("#relationli").removeClass("active");
+    		$("#relation").removeClass("active in");
+    		
+    		}else if(tab == 3){
+    		
+    		console.log("tab---"+tab);
+    		$("#skili").addClass("active");
+    		$("#professional-summary").addClass("active in");
+    		$("#basicli").removeClass("active");
+    		$("#basicinfo").removeClass("active in");
+    		$("#eduli").removeClass("active");
+    		$("#education").removeClass("active in");
+    		$("#expli").removeClass("active");
+    		$("#experiance").removeClass("active in");
+    		$("#otherli").removeClass("active");
+    		$("#address").removeClass("active in");
+    		$("#relationli").removeClass("active");
+    		$("#relation").removeClass("active in");
+    		
+    		}else if(tab == 4){
+    		
+    		console.log("tab---"+tab);
+    		$("#expli").addClass("active");
+    		$("#experiance").addClass("active in");
+    		$("#basicli").removeClass("active");
+    		$("#basicinfo").removeClass("active in");
+    		$("#eduli").removeClass("active");
+    		$("#education").removeClass("active in");
+    		$("#skili").removeClass("active");
+    		$("#professional-summary").removeClass("active in");
+    		$("#otherli").removeClass("active");
+    		$("#address").removeClass("active in");
+    		$("#relationli").removeClass("active");
+    		$("#relation").removeClass("active in");
+    		
+    		}else if(tab == 5){
+    		
+    		console.log("tab---"+tab);
+    		$("#relationli").addClass("active");
+    		$("#relation").addClass("active in");
+    		$("#basicli").removeClass("active");
+    		$("#basicinfo").removeClass("active in");
+    		$("#eduli").removeClass("active");
+    		$("#education").removeClass("active in");
+    		$("#skili").removeClass("active");
+    		$("#professional-summary").removeClass("active in");
+    		$("#expli").removeClass("active");
+    		$("#experiance").removeClass("active in");
+    		$("#expli").removeClass("active");
+    		$("#experiance").removeClass("active in");
+    		
+    		}else if(tab == 6){
+    		
+    		console.log("tab---"+tab);
+    		$("#otherli").addClass("active");
+    		$("#address").addClass("active in");
+    		$("#basicli").removeClass("active");
+    		$("#basicinfo").removeClass("active in");
+    		$("#eduli").removeClass("active");
+    		$("#education").removeClass("active in");
+    		$("#skili").removeClass("active");
+    		$("#professional-summary").removeClass("active in");
+    		$("#relationli").removeClass("active");
+    		$("#relation").removeClass("active in");
+    		$("#expli").removeClass("active");
+    		$("#experiance").removeClass("active in");
+    		}else{
+    		
+    		$("#basicli").addClass("active");
+    		$("#basicinfo").addClass("active in");
+    		$("#eduli").removeClass("active");
+    		$("#education").removeClass("active in");
+    		$("#skili").removeClass("active");
+    		$("#professional-summary").removeClass("active in");
+    		$("#expli").removeClass("active");
+    		$("#experiance").removeClass("active in");
+    		$("#otherli").removeClass("active");
+    		$("#address").removeClass("active in");
+    		$("#relationli").removeClass("active");
+    		$("#relation").removeClass("active in");
+    		
+    		}
+		});
+		</script>
+                                                                        
+                                                                            <script type="text/javascript">
+                                                                            
+                         function onKeyUpForLname(id1){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "name", "/content/user/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value,  "lastName", "/content/user/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdLU"+i+"' style='color:black' onclick='selectValLUser(this.id)' >"+parsed[i].lastName+"</a></br>";
+        }
+        
+     $("#suggestionLname").css('visibility', 'visible');
+     $("#suggestionLname").css('border-style', 'outset');
+     
+     
+    $("#suggestionLname").hide();
+    $("#suggestionLname").fadeIn('slow');
+    $("#searchLname").html(sugData);
+     var offsetHeight = document.getElementById('suggestionLname').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionLname").css('overflow-y', 'auto');
+     $("#suggestionLname").css('height', '80px');
+    }
+        }); 
+        }
+function selectValLUser(id){
+document.getElementById("lastname").value = document.getElementById(id).innerHTML; 
+$("#suggestionLname").hide();
+}
+
+                         
+                         function onKeyUpForFname(id1){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "name", "/content/user/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value,  "name", "/content/user/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdU"+i+"' style='color:black' onclick='selectValUser(this.id)' >"+parsed[i].name+"</a></br>";
+        }
+        
+     $("#suggestionFname").css('visibility', 'visible');
+     $("#suggestionFname").css('border-style', 'outset');
+     
+     
+    $("#suggestionFname").hide();
+    $("#suggestionFname").fadeIn('slow');
+    $("#searchFname").html(sugData);
+     var offsetHeight = document.getElementById('suggestionFname').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionFname").css('overflow-y', 'auto');
+     $("#suggestionFname").css('height', '80px');
+    }
+        }); 
+        }
+function selectValUser(id){
+document.getElementById("name").value = document.getElementById(id).innerHTML; 
+$("#suggestionFname").hide();
+}
+                         
+                         
+                         
+                         
+                         
+                         
+                         
+                                                                            
+function onkeyupForAddress(id){
+       
+        var value=document.getElementById("addressId").value;
+        
+          while(value.indexOf(" ") > "-1"){
+value = value.replace(" ","+");
+}
+         var pincode=document.getElementById("postalCodeId").value;
+         //alert("/content/pincode/"+pincode+"/");
+         if(pincode.length!=0){
+   var  param=["paravalue","paraname","path","isparent"];
+   var  isparent="0";
+   var paramValue=[value,"name","/content/pincode/"+pincode+"/",isparent];
+      UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+     console.log(data)
+      var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdV"+i+"' style='color:black' onclick='selectValAdd(this.id)' >"+parsed[i].name+"</a></br>";
+        }
+    var offsetHeight  = "";    
+     $("#suggestionsVenue").css('visibility', 'visible');
+     $("#suggestionsVenue").css('border-style', 'outset');
+    $("#suggestionsVenue").hide();
+    $("#suggestionsVenue").fadeIn('slow');
+     offsetHeight = document.getElementById('suggestionsVenue').offsetHeight;
+    //alert("before---"+offsetHeight);
+    $("#VenueItem").html(sugData);
+     offsetHeight = document.getElementById('suggestionsVenue').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 70)
+    {
+    	$("#suggestionsVenue").css('overflow-y', 'auto');
+     $("#suggestionsVenue").css('height', '70px');
+    }
+    
+   });
+       }
+       }
+       function selectValAdd(id){
+         document.getElementById("addressId").value=document.getElementById(id).innerHTML;
+         $("#suggestionsVenue").hide();
+          }
+                                                                            
+         function submitAdd(){
+         var a = document.getElementById("industry").value;
+                if (a != "") {
+                		if(a != "" && document.getElementById("industryId").value == ""){
+         					var value = document.getElementById("industry").value;
+         					//alert(value);       			
+										var valueRes = value+","+"0";
+
+                        				$.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/common/search.inrichme',
+                            data: {
+                            path:"/content/industry/",
+                            propertyvalue:valueRes,
+                            propertyname:"name,id",
+                            isparent:"0,0",
+                            searchTextvalue:value,
+                            isExist:"0"
+                            },
+                            async:false,
+                            success: function(data) {
+                            				
+                                			console.log(data);
+                        					if(data.indexOf("~") != "-1"){
+                        						var dataRes = data.split("~");
+                        						if(dataRes[0] == "exist"){
+                        						var existParsed = JSON.parse(dataRes[1]);
+                        						console.log("exists==="+existParsed[0].id);
+                        						document.getElementById("industryId").value = existParsed[0].id; 
+                        						document.getElementById("industry").value = existParsed[0].name;
+                        						}else if(dataRes[0] == "success"){
+                        						var successParsed = JSON.parse(dataRes[1]);
+                        						console.log("success==="+successParsed[0].id);
+                        						document.getElementById("industryId").value = successParsed[0].id;
+                        						document.getElementById("industry").value = successParsed[0].name;
+                        						}else{
+                        						console.log("facing some issue");
+                        						}
+
+                        					
+                        					}
+
+                                
+                            }
+                        });
+                        				
+                			
+                		}
+                    }else{
+                    document.getElementById("industryId").value = "";
+                    }
+                    
+                    if(document.getElementById("postalCodeId").value !="" && document.getElementById("addressId").value != ""){
+                    var a=document.getElementById("postalCodeId").value;
+	 var value=document.getElementById("addressId").value;
+	       while(value.indexOf(" ") > "-1"){
+value = value.replace(" ","+");
+}
+//alert(a+"~~~~~"+value);
+	                        $.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.inrichme',
+                            data: {
+                            pincode:a,
+                            address:value
+                            },
+                            async:false,
+                            success: function(data) {
+                            		//		alert(data);
+                                			console.log(data);
+     
+                            }
+                        });
+	 }
+                    
+         document.getElementById("myAddForm").submit();
+         }
+                                                                            	
+     function getIndustryData() {
+     			document.getElementById("industryId").value = "";
+                var a = document.getElementById("industry").value;
+                if (a.length > 2) {
+                    var value = document.getElementById("industry").value;
+                    while (value.indexOf(" ") > -1) {
+                        value = value.replace(" ", "+");
+                    }
+                    var param = ["paravalue", "paraname", "path", "isparent"];
+                    var isparent = "0,0";
+                    var paramValue = [value, "name,id", "/content/industry/", isparent];
+                    UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion", param, paramValue, function(data) {
+
+                        console.log(data);
+                        var parsed = JSON.parse(data);
+                        console.log(parsed);
+                        var sugData = "";
+                        for (var i = 0; i < parsed.length; i++) {
+                            sugData = sugData + "<a href='javascript:void(0)' id='sugIdIndustry" + i + "' style='color:black' onclick='selectValIn(this.id," + parsed[i].id + ")' >" + parsed[i].name + "</a></br>";
+                        }
+
+                        $("#suggestionIndustry").css('visibility', 'visible');
+                        $("#suggestionIndustry").css('border-style', 'outset');
+
+
+                        $("#suggestionIndustry").hide();
+                        $("#suggestionIndustry").fadeIn('slow');
+                        $("#searchIndustry").html(sugData);
+                        var offsetHeight = document.getElementById('suggestionIndustry').offsetHeight;
+                        //alert("after---"+offsetHeight);
+                        if (offsetHeight > 80)
+                        {
+                            $("#suggestionIndustry").css('overflow-y', 'auto');
+                            $("#suggestionIndustry").css('height', '80px');
+                        }
+                    });
+
+                }
+            }
+                                                                            	
+function selectValIn(id, value1) {
+                document.getElementById("industry").value = document.getElementById(id).innerHTML;
+                document.getElementById("industryId").value = value1;
+                $("#suggestionIndustry").hide();
+            }
+
+                                                                            	
+                                                                            	
+function getPostalData() {
+		var strPinNo = document.getElementById('postalCodeId').value;
+		//alert(strPinNo);
+    UserDWRService.getCompAddPinMsg(strPinNo,function(data) {
+				console.log("data111111----"+data);
+				if(data.indexOf("~") != -1){
+				var strData = data.split("~");
+				if(strData[0] == "true"){
+				var res = JSON.parse(strData[1]);
+				console.log(res.country);
+				$("#PinAddErr").hide();
+				$("#country").val(res.country);
+				$("#city").val(res.city);
+				//$("#district").val(res.district);
+				$("#state").val(res.state);
+				}else if(strData[0] == "false"){
+				$("#country").val("");
+				$("#city").val("");
+				//$("#district").val("");
+				$("#state").val("");
+				$("#PinAddErr").hide();
+				}
+				}else {
+				if(data == "true"){
+				}else{
+				//alert(data);
+				$("#PinAddErr").show();
+				$("#PinAddErr").html(data);
+				$("#country").val("");
+				$("#city").val("");
+				//$("#district").val("");
+				$("#state").val("");
+				}
+				}
+				
+	  		});
+	
+	}
+                                                                            	
+                                                                            	function statusR(value){
+                                                                            	if(value == "Married"){
+                                                                            		document.getElementById("anni").disabled = false;
+                                                                            		$("#anniDiv").show();
+                                                                            	}else{
+                                                                            	document.getElementById("anni").disabled = true;
+                                                                            	$("#anniDiv").hide();
+                                                                            	//document.getElementById("anni").value = "";
+                                                                            	}
+                                                                            	}
+
+                                                                                function addRow4(tableID) {
+                                                                                    var table = document.getElementById(tableID);
+                                                                                    var rowCount = table.rows.length;
+                                                                                    var row = table.insertRow(rowCount);
+                                                                                    counts = rowCount - 1;
+
+                                                                                    var cell1 = row.insertCell(0);
+                                                                                    var skill = document.createElement("input");
+                                                                                    skill.type = "text";
+                                                                                    skill.name = "email";
+                                                                                    skill.id = "jsp_" + counts + "__skill";
+                                                                                    skill.setAttribute("class", "");
+                                                                                    cell1.appendChild(skill);
+
+                                                                                    var cell2 = row.insertCell(1);
+                                                                                    var skill = document.createElement("label");
+                                                                                    skill.id = "jsp_" + counts + "__skill";
+                                                                                    skill.setAttribute("class", "");
+                                                                                    cell2.appendChild(skill);
+
+                                                                                    var cell3 = row.insertCell(2);
+                                                                                    var rate = document.createElement("label");
+                                                                                    rate.id = "jsp_" + counts + "__skill";
+                                                                                    rate.setAttribute("class", "");
+                                                                                    cell3.appendChild(skill);
+
+                                                                                }
+
+                                                                                $(document).ready(function() {
+                                                                                
+	 $("#anni").datepicker({
+            format: "yyyy-mm-dd",
+            
+        })
+        .on('changeDate', function(ev){
+        var birthDay = document.getElementById('anni').value;
+           
+            if(new Date(birthDay).getTime() > new Date().getTime())
+{
+//alert("onside if"); 
+document.getElementById('anni').value = "";
+ $(this).datepicker('hide');
+alert("marriage anniversary should be less than current date");
+}else{
+$(this).datepicker('hide');
+}
+
+        });	                                                                               
+                                                                                
+                                                                                
+                                                                                
+ 																					 $("#birthDayPicker").datepicker({
+            format: "yyyy-mm-dd",
+            
+        })
+        .on('changeDate', function(ev){
+        var birthDay = document.getElementById('birthDayPicker').value;
+           
+            if(new Date(birthDay).getTime() > new Date().getTime())
+{
+//alert("onside if"); 
+document.getElementById('birthDayPicker').value = "";
+ $(this).datepicker('hide');
+alert("birth date should be less than current date");
+}else{
+$(this).datepicker('hide');
+}
+
+        });	                                                                               
+                                                                                    var addDiv = $('#keywordList-email');
+                                                                                    var i = parseInt($('#keywordList-email .row').size()) + 1;
+                                                                                    $('#addNew').on('click', function() {
+                                                                                        var input = document.createElement("input");
+                                                                                        input.setAttribute("class", "form-control");
+                                                                                        input.name = "email";
+                                                                                        input.type = "text";
+
+                                                                                        var btn1 = document.createElement("div");
+                                                                                        btn1.setAttribute("class", "col-xs-10");
+
+
+
+                                                                                        var btn = document.createElement("div");
+                                                                                        btn.setAttribute("class", "row remove");
+                                                                                        btn.id = "remove";
+
+                                                                                        var removeDiv = document.createElement("div");
+                                                                                        removeDiv.setAttribute("class", "col-xs-2");
+
+
+                                                                                        var span = document.createElement("span");
+                                                                                        span.setAttribute("class", "glyphicon glyphicon-minus btn btn-default");
+                                                                                        span.id = "remNew";
+                                                                                        removeDiv.appendChild(span);
+
+                                                                                        btn1.appendChild(input);
+                                                                                        btn.appendChild(btn1);
+                                                                                        btn.appendChild(removeDiv);
+
+                                                                                        document.getElementById("myfoem").appendChild(btn);
+                                                                                        document.getElementById("keywordList-email").appendChild(btn);
+
+
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remNew', function() {
+                                                                                        $(this).parents('#remove').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+                                                                            <div id="keywordList-email">
+                                                                                <label>Email</label>
+
+                                                                                <%
+                                                                                    if (currentNodeProvided && currentNode.hasNode("ContactDetails")
+                                                                                            && currentNode.getNode("ContactDetails").hasNode("EmailID")
+                                                                                            && currentNode.getNode("ContactDetails").getNode("EmailID").hasNodes()) {
+
+                                                                                        var emailValue = currentNode.getNode("ContactDetails/EmailID").getNodes();
+
+                                                                                        var countEmail = 0;
+                                                                                        for (i in     emailValue) {
+                                                                                            countEmail++;
+                                                                                %><div class="row  remove<%=countEmail%>" id='remove' style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-10"><input id="keyword" class="form-control" placeholder="Email" name="email" type="text" value="<%= emailValue[i].emailId%>" /> 
+                                                                                        <input name="emailValue" type="hidden" value="<%= emailValue[i].getName()%>" /> </div>
+                                                                                        <% if (countEmail == 1) {
+                                                                                        %>
+                                                                                    <div class="col-xs-2"><span id="addNew" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+
+                                                                                    <%} else { %>
+                                                                                    <div class='col-xs-2'><span id='remNew' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+                                                                                        <%} %>
+
+                                                                                </div>
+                                                                                <%}
+                                                                                } else { %>
+                                                                                <div class="row" style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-10"><input id="keyword" type="text" name="email" class="form-control" placeholder="Email"></input>
+                                                                                        <input name="emailValue" type="hidden" value="" /> </div>
+                                                                                    <div class="col-xs-2"><span id="addNew" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+                                                                                </div>
+                                                                                <%}%>
+
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group" style="margin-bottom: 0px;">
+                                                                        <div class="col-sm-10">
+
+                                                                            <script type="text/javascript">
+                                                                                $(document).ready(function() {
+                                                                                    var addDiv = $('#keywordList-phone');
+                                                                                    var i = parseInt($('#keywordList-phone .row').size()) + 1;
+                                                                                    $('#addNew2').on('click', function() {
+                                                                                        $("<div class='row remove2" + i + "' id='remove2'><div class='col-xs-5'><input class='form-control' name='number' type='text' placeholder='Phone Type'></div><div class='col-xs-5'><select class='form-control' name='numberType'><%var phoneVal = currentNode.session.getRootNode().getNode("content").getNode("phonetype").getNodes();for (i=0;i<phoneVal.length;i++){%><option value='<%=phoneVal[i].phoneType%>'><%=phoneVal[i].phoneType%></option><%}%></select></div><div class='col-xs-2'><span id='remNew2' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remNew2', function() {
+                                                                                        $(this).parents('#remove2').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+                                                                            <div id="keywordList-phone">
+                                                                                <div class="row">
+                                                                                    <label class="col-xs-5">Phone Number</label>
+                                                                                    <label class="col-xs-5">Phone Type</label>
+                                                                                </div>
+                                                                                <%
+                                                                                    if (currentNodeProvided && currentNode.hasNode("ContactDetails")
+                                                                                            && currentNode.getNode("ContactDetails").hasNode("Phone")
+                                                                                            && currentNode.getNode("ContactDetails").getNode("Phone").hasNodes()) {
+                                                                                        var numberValue = currentNode.getNode("ContactDetails/Phone").getNodes();
+
+                                                                                        var countPhone = 0;
+																						//out.print(numberValue.length);
+                                                                                        for (var j=0;j<numberValue.length;j++) {
+                                                                                            countPhone++;
+                                                                                %>
+                                                                                <div class="row remove2<%=countPhone%>" id='remove2' style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-5"><input name="number" type="text" value="<%=numberValue[j].number%>" class="form-control" placeholder="Phone Type"></div>
+                                                                                    <div class="col-xs-5">
+                                                                                        <select data-placeholder="Phone Type" class="form-control" name="numberType">
+                                                                                            <%
+                                                                                                //var phoneVal =["Mobile","Home","Office"];
+                                                                                                var phoneVal = currentNode.session.getRootNode().getNode("content").getNode("phonetype").getNodes();
+                                                                                               for (i=0;i<phoneVal.length;i++) {
+                                                                                                    if (numberValue[j].numberType.equals(phoneVal[i].phoneType)) {
+                                                                                                        out.println(numberValue[j].numberType);
+                                                                                            %>
+                                                                                            <option value="<%=phoneVal[i].phoneType%>" selected="selected" ><%=phoneVal[i].phoneType%></option>
+                                                                                            <%} else {
+                                                                                            %>
+                                                                                            <option value="<%=phoneVal[i].phoneType%>"><%=phoneVal[i].phoneType%></option>   
+
+                                                                                            <%  }
+                                                                                                } %>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <%
+                                                                                        if (countPhone == 1) {
+                                                                                    %>
+
+                                                                                    <div class="col-xs-2"><span id="addNew2" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+                                                                                        <%} else {%>
+                                                                                    <div class='col-xs-2'><span id='remNew2' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+
+                                                                                    <%} %>
+                                                                                </div>
+                                                                                <%}
+                                                                                } else {%>
+                                                                                <div class="row" style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-5"><input type="text" class="form-control" name="number" placeholder="Phone Type"></div>
+                                                                                    <div class="col-xs-5">
+                                                                                        <select data-placeholder="Phone Type" class="form-control" name="numberType">>
+                                                                                            <%
+                                                                                                //var phoneVal =["Mobile","Home","Office"];
+                                                                                                var phoneVal = currentNode.session.getRootNode().getNode("content").getNode("phonetype").getNodes();
+                                                          									for (i=0;i<phoneVal.length;i++) {
+
+                                                                                            %>
+                                                                                            <option value="<%=phoneVal[i].phoneType%>"><%=phoneVal[i].phoneType%></option>   
+
+                                                                                            <%  } %>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="col-xs-2"><span id="addNew2" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+                                                                                </div>
+                                                                                <%}%>   
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+																	
+																	<div class="form-group" style="margin-bottom: 0px;">
+                                                                        <div class="col-sm-10">
+                                                                            <script type="text/javascript">
+                                                                                $(document).ready(function() {
+                                                                                    var addDivS = $('#keywordList-social');
+                                                                                    var iS = parseInt($('#keywordList-social .row').size()) + 1;
+                                                                                    $('#addNewS').on('click', function() {
+                                                                                        $("<div class='row remove2" + iS + "' id='removeS'><div class='col-xs-5'><input class='form-control' name='sociallink' type='text' placeholder='Social Link'></div><div class='col-xs-5'><select class='form-control' name='socialtype'><%var socialVal  = currentNode.session.getRootNode().getNode("content").getNode("social").getNodes();for (i=0;i<socialVal.length;i++){%><option value='<%=socialVal[i].socialType%>'><%=socialVal[i].socialType%></option><%}%></select></div><div class='col-xs-2'><span id='remNewS' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDivS);
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remNewS', function() {
+                                                                                        $(this).parents('#removeS').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+                                                                            <div id="keywordList-social">
+                                                                                <div class="row">
+                                                                                    <label class="col-xs-6">Social Presence(Enter Valid Url)</label>
+                                                                                    <label class="col-xs-5">Social Type</label>
+                                                                                </div>
+                                                                                <%
+                                                                                    if (currentNodeProvided && currentNode.hasNode("ContactDetails")
+                                                                                            && currentNode.getNode("ContactDetails").hasNode("Social")
+                                                                                            && currentNode.getNode("ContactDetails").getNode("Social").hasNodes()) {
+                                                                                        var numberValue = currentNode.getNode("ContactDetails/Social").getNodes();
+
+                                                                                        var countSocial = 0;
+																						//out.print(numberValue.length);
+                                                                                        for (var j=0;j<numberValue.length;j++) {
+                                                                                            countSocial++;
+                                                                                %>
+                                                                                <div class="row remove2<%=countSocial%>" id='removeS' style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-5"><input name="sociallink" type="text" value="<%=numberValue[j].socialLink%>" class="form-control" placeholder="Social Link"></div>
+                                                                                    <div class="col-xs-5">
+                                                                                        <select data-placeholder="Social Type" class="form-control" name="socialtype">
+                                                                                            <%
+                                                                                                //var socialVal =["Facebook","Twitter","Google Plus","Pinterest"];
+                                                                                                var socialVal  = currentNode.session.getRootNode().getNode("content").getNode("social").getNodes();
+                                                                                               for (i=0;i<socialVal.length;i++) {
+                                                                                                    if (socialVal[i].socialType.equals(numberValue[j].socialType)) {
+                                                                                                        out.println(numberValue[j].socialType);
+                                                                                            %>
+                                                                                            <option value="<%=socialVal[i].socialType%>" selected="selected" ><%=socialVal[i].socialType%></option>
+                                                                                            <%} else {
+                                                                                            %>
+                                                                                            <option value="<%=socialVal[i].socialType%>"><%=socialVal[i].socialType%></option>   
+
+                                                                                            <%  }
+                                                                                                } %>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <%
+                                                                                        if (countSocial == 1) {
+                                                                                    %>
+
+                                                                                    <div class="col-xs-2"><span id="addNewS" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+                                                                                        <%} else {%>
+                                                                                    <div class='col-xs-2'><span id='remNewS' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+
+                                                                                    <%} %>
+                                                                                </div>
+                                                                                <%}
+                                                                                } else {%>
+                                                                                <div class="row" style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-5"><input type="text" class="form-control" name="sociallink" placeholder="Social Link"></div>
+                                                                                    <div class="col-xs-5">
+                                                                                        <select data-placeholder="Social Type" class="form-control" name="socialtype">>
+                                                                                            <%
+                                                                                                //var socialVal =["Facebook","Twitter","Google Plus","Pinterest"];
+                                                                                                var socialVal  = currentNode.session.getRootNode().getNode("content").getNode("social").getNodes();
+                                                          									for (i=0;i<socialVal.length;i++) {
+
+                                                                                            %>
+                                                                                            <option value="<%=socialVal[i].socialType%>"><%=socialVal[i].socialType%></option>   
+
+                                                                                            <%  } %>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="col-xs-2"><span id="addNewS" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+                                                                                </div>
+                                                                                <%}%>   
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+																	
+																	
+																	
+                                                                    <div class="form-group" style="margin-bottom: 0px;">
+                                                                        <div class="col-sm-10">
+                                                                            <script type="text/javascript">
+                                                                                $(document).ready(function() {
+                                                                                    var addDiv = $('#keywordList-im');
+                                                                                    var i = parseInt($('#keywordList-im .row').size()) + 1;
+                                                                                    $('#addNew3').on('click', function() {
+                                                                                        $("<div class='row remove2" + i + "' id='remove3'><div class='col-xs-5'><input class='form-control' name='im' type='text'></div><div class='col-xs-5'><select class='form-control' placeholder='IM Id' name='imType'><%var imVal = currentNode.session.getRootNode().getNode("content").getNode("im").getNodes();;for (i=0;i<imVal.length;i++){%><option value='<%=imVal[i].imType%>'><%=imVal[i].imType%></option><%}%></select></div><div class='col-xs-2'><span id='remNew3' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remNew3', function() {
+                                                                                        $(this).parents('#remove3').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+                                                                            <div id="keywordList-im">
+                                                                                <div class="row">
+                                                                                    <label class="col-xs-5">IM Id</label>
+                                                                                    <label class="col-xs-5">IM Id Type</label>
+                                                                                </div>
+                                                                                <%
+                                                                                    if (currentNodeProvided && currentNode.hasNode("ContactDetails")
+                                                                                            && currentNode.getNode("ContactDetails").hasNode("IM")
+                                                                                            && currentNode.getNode("ContactDetails").getNode("IM").hasNodes()) {
+
+                                                                                        var imValue = currentNode.getNode("ContactDetails").getNode("IM").getNodes();
+                                                                                        var countim = 0;
+                                                                                        for (j in     imValue) {
+
+                                                                                            countim++;
+                                                                                %>
+                                                                                <div class="row remove3<%=countim%>" id='remove3' style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-5"><input type="text" name="im" value="<%=imValue[j].imValue%>" class="form-control" placeholder="IM Id"></input></div>
+                                                                                    <div class="col-xs-5">
+                                                                                        <select data-placeholder="Phone Type" class="form-control" name="imType">
+                                                                                            <%
+                                                                                                //var imVal =["Yahoo","GTalk","Skype","Window Live Messenger"];
+                                                                                                var imVal = currentNode.session.getRootNode().getNode("content").getNode("im").getNodes();
+                                                                        for (i in     imVal) {
+                                                                                                    if (imValue[j].imTypeValue.equals(imVal[i].imType)) {%>
+                                                                                            <option value="<%=imVal[i].imType%>" selected="selected" ><%=imVal[i].imType%></option>
+                                                                                            <%} else {%>
+                                                                                            <option value="<%=imVal[i].imType%>"><%=imVal[i].imType%></option>   
+                                                                                            <%  }
+                                                                                                } %>
+                                                                                        </select>
+                                                                                    </div> <%if (countim == 1) {%>
+                                                                                    <div class="col-xs-2"><span id="addNew3" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+                                                                                        <%} else {%>
+                                                                                    <div class='col-xs-2'><span id='remNew3' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+                                                                                        <%} %>
+                                                                                </div>
+                                                                                <%}
+                                                                                } else {%>
+                                                                                <div class="row" style="margin-bottom: 15px;">
+                                                                                    <div class="col-xs-5"><input type="text" name="im" class="form-control" placeholder="IM Id"></input></div>
+                                                                                    <div class="col-xs-5">
+                                                                                        <select data-placeholder="Phone Type" class="form-control" name="imType">
+                                                                                            <%
+                                                                                             //var imVal =["Yahoo","GTalk","Skype","Window Live Messenger"];
+                                                                                                var imVal = currentNode.session.getRootNode().getNode("content").getNode("im").getNodes();
+                                                                  for (i in     imVal) {%>
+                                                                                            <option value="<%=imVal[i].imType%>"  ><%=imVal[i].imType%></option>
+                                                                                            <%}%>
+                                                                                        </select>
+                                                                                    </div>
+                                                                                    <div class="col-xs-2"><span id="addNew3" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+                                                                                </div>
+
+                                                                                <%}%>     
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                       <div class="col-sm-12">
+      							<label for="">Interests</label>
+      							<textarea name="interests" class="form-control" placeholder="Interests"><%= currentNode.interests ? currentNode.interests:"" %></textarea>
+      						</div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="col-xs-12">
+
+                                                                        <%if (currentNodeProvided) {%>
+
+                                                                        <input name="redirect" type="hidden" value="<%=postPath%>.profile"/> 
+                                                                        <%} else {%>
+                                                                        <input name="redirect" type="hidden" value="<%=request.getContextPath()%>/content/profile/posts/<%=request.getParameter("id")%>.profile"/> 
+
+                                                                        <%}%>
+                                                                        <input type="submit" class="btn btn-primary"
+                                                                               value="Save" />
+                                                                        <a class="btn btn-warning" href="<%=request.getContextPath()%>/content/user/info?id=<%=request.getParameter("id")%>" id="cancelEdit">Cancel</a></td>
+
+                                                                    </div>         
+                                                                    </form>
+
+
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                        </div>
+
+                                    </div>
+
+
+
+                                </div>
+                                                                
+                                <div id="education" class="tab-pane fade">
+                                    <h3>Education</h3>
+                                    <div class="row">
+
+                                        <%if (request.getRemoteUser().replace("@", "_").equals(request.getParameter("id"))) {%>
+                                        <%if (currentNodeProvided && currentNode.hasNode("Education")) {
+                                                currentNode = currentNode.getNode("Education");
+                                        %>              
+                                        <%load("education.esp");
+                                            currentNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));
+                                        %>
+
+                                        <%} else {%>
+                                        <%load("education.esp");%>
+                                        <%}%>
+                                        <%}%>
+
+                                    </div>
+                                </div>
+                                <div id="professional-summary" class="tab-pane fade">
+                                    <h3>Skill</h3>
+                                    <div class="row">
+                                        <div class="col-xs-12">
+
+                                            <div class="form-group">
+                                                <div class="col-sm-12">
+                                                    
+                                                    <%
+                                                        if (currentNode.hasNode("ProfessionalSummary")) {
+                                                            currentNode = currentNode.getNode("ProfessionalSummary");
+                                                    %>
+                                                    <%load("summary.esp");
+                                                        currentNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));%>
+
+                                                    <%} else {%><%load("summary.esp");%>
+                                                    <%}%>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div id="experiance" class="tab-pane fade">
+                                    <h3>Experiance</h3>
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <%if (request.getRemoteUser().replace("@", "_").equals(request.getParameter("id"))) {%>
+                                            <%if (currentNodeProvided && currentNode.hasNode("Experience")) {%>
+
+                                            <%
+                                                currentNode = currentNode.getNode("Experience");
+                                                load("experience.esp");
+                                                currentNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));%>
+											<%} else {%>
+                                            <%load("experience.esp");%>
+
+                                            <%}%>
+                                            <%}%>    
+                                        
+                                    </div>
+                                   </div>
+                                </div>
+                                
+                                                                 <div id="relation" class="tab-pane fade">
+                                    <h3>Relation</h3>
+                                    <div class="row">
+
+                                        <%if (request.getRemoteUser().replace("@", "_").equals(request.getParameter("id"))) {%>
+                                        <%if (currentNodeProvided && currentNode.hasNode("connection")) {
+                                                currentNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));
+                                        %>              
+                                        <%load("userRelation.esp");
+                                            currentNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));
+                                        %>
+
+                                        <%} else {%>
+                                        <%load("userRelation.esp");%>
+                                        <%}%>
+                                        <%}%>
+
+                                    </div>
+                                </div>
+                                
+                                
+                                <div id="address" class="tab-pane fade">
+                                    <h3>Address</h3>
+                                    <div class="row">
+										<div class="col-sm-10">
+                                            <form  method="POST" action="<%=request.getContextPath()%>/content/user/save.add" id="myAddForm">
+                                                <div class="row">
+                                                <div class="col-xs-12">
+                                                	<div class="form-group">
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Current Industry</label>
+                                                                            
+                                                                            <%if (currentNodeProvided) {%>
+                                                                            <input type="hidden" name="title" value="<%=currentNode.title ? currentNode.title : ""%>" />
+                                                                            <%} else {%>
+                                                                            <input type="hidden" name="title" value="<%=request.getParameter("id")%>" />
+                                                                            <%}%>
+                                                                            
+                                                                            <%
+                                                                            var inValue = "";
+																			var inId = "";
+																			if(currentNode.industry != ""){
+																			var resIn = currentNode.industry;
+																			if(currentNode.session.getRootNode().getNode("content/industry").hasNode(resIn)){
+																			var industryRes = currentNode.session.getRootNode().getNode("content/industry").getNode(resIn);
+																			
+																			inValue = industryRes.name;
+																			inId = industryRes.id;
+																			
+																			}
+																			}
+                                                                            %>
+                                                                            <input name="industry" type="text" id="industry"
+                                                                                   value="<%=inValue%>" class="form-control" placeholder="Current Industry" onkeyup="getIndustryData()">
+                                                                             <input type="hidden" class="form-control" value="<%=inId%>" name="industryId" id="industryId" data-required="false" >
+                                                                            <!--<div id="attCat"></div>-->
+                                                                            <div id="suggestionIndustry"  style="z-index:1;position:absolute;background:white">
+                                                                                <div class="searchterm" id="searchIndustry"></div>
+                                                                            </div>      
+                                                                        </div>
+                                                                        <%if(currentNode.hasNode("Address")){
+                                                                        var addNode = currentNode.getNode("Address");
+                                                                        }else{
+                                                                        var addNode = "";
+                                                                        }%>
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Pin Code</label>
+                                                                            <input name="pinCode" id="postalCodeId" type="text" 
+                                                                                   value="<%=addNode.pinCode ? addNode.pinCode: ""%>" class="form-control" placeholder="Pin Code" onkeyup="getPostalData()">
+                                                                                   
+                                                                                   <label style="color:red;display:none" id="PinAddErr"></label>
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Current Address</label>
+                                                                            <input  name="address" id="addressId" type="text" 
+                                                                                    value="<%=addNode.address ? addNode.address: ""%>" onkeyup="onkeyupForAddress()" class="form-control" placeholder="Current Address">
+                                                                                    <div id="suggestionsVenue"  style="z-index:1;position: absolute;background: white;width:88%">
+  																					<div class="searchterm" id="VenueItem"></div>
+ 																					</div>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+
+
+
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Current City</label>
+                                                                            <input type="text" id="city" name="city" value="<%=addNode.city ? addNode.city: ""%>" class="form-control" placeholder="Current City">
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">State</label>
+                                                                            <input id="state" name="state" type="text" 
+                                                                                   value="<%=addNode.state ? addNode.state: ""%>" class="form-control" placeholder="State">
+                                                                        </div>
+                                                                        <div class="col-sm-4">
+                                                                            <label for="">Country</label>
+                                                                            <input id="country" name="country" type="text" 
+                                                                                   value="<%=addNode.country ? addNode.country: ""%>" class="form-control" placeholder="Country">
+                                                                        </div>
+                                                                        
+                                                                    </div>
+
+                                                                    <div class="col-xs-12">
+
+                                                                        <input type="button" onclick="submitAdd()" class="btn btn-primary"
+                                                                               value="Save" />
+                                                                        <a class="btn btn-warning" href="<%=request.getContextPath()%>/content/user/info?id=<%=request.getParameter("id")%>" id="cancelEdit">Cancel</a></td>
+
+                                                                    </div>         
+                                                	
+                                                </div>
+                                                </div>
+                                             </form>
+                                          </div>                      
+									</div>
+                                </div>
+                                
+                                <div id="additional-info" class="tab-pane fade" style="display:none">
+                                    <h3>Additional Info</h3>
+                                    <%
+                                    
+                                    if (request.getRemoteUser().replace("@", "_").equals(request.getParameter("id"))) {
+                                    
+                                    %>
+                                    <%if (currentNodeProvided) {
+                                            if (currentNode.hasNode("AdditionalInformation")) {
+                                                currentNode = currentNode.getNode("AdditionalInformation");
+                                    %>
+
+                                    <%
+                                      load("info.esp");
+                                      currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));
+                                    %>
+                         
+
+                                    <%} else {%>
+                                    <%load("info.esp");%>
+                                    <%}
+                                        }else
+                                        	{
+                                        		load("info.esp");
+                                        	}%>
+                                    <%}%>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-3 col-xs-12">
+                        <div class="advertise">
+                            <img alt="advertise" src="images/advertise2.jpg">
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="tab-three">
+                                    <div class="recommeded-conection">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Recommended Connection</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div>
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xssm-12">
+                                <div class="recommeded-conection">
+                                    <div class="tab-three">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">News</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div>
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="recommended-body">
+                                                        <div class="recommended-img">
+                                                            <img src="images/facebook2.png" alt="Add Friend" />
+                                                        </div>
+                                                        <div class="recommended-text">
+                                                            <h5>Testing Name</h5>
+                                                            <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+        <%load("../common/footer.esp");%>
+        <!-- register Modal End  -->
+
+
+
+    </body>
+</html>

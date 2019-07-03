@@ -1,0 +1,122 @@
+<footer id="footer"> 
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+            <%if(request.getRemoteUser()!=null && !request.getRemoteUser().equals("anonymous")){%>  
+ <!--<div id="testDiv" class="navbar-spacer" align="right" class="navbar-spacer" style="display: block; height: 35px; position: fixed; right:0px;bottom: 0px; margin: 0px 0; padding: 0 0; z-index: 9999; border-radius: 4px 4px 0px 0px;width:200px"><div class="miximize" id="sendBtn"></div>
+ <iframe name="bar1" 
+ src="<%=request.getSession(false).getAttribute('chatUrl')%>/OpenFireClient/Login.jsp?username=<%=request.getSession(false).getAttribute('chatId')%>&password=<%=request.getSession(false).getAttribute('chatEncpass')%>" id="chatFrame" frameborder="0" height="35px">
+ </iframe>
+ </div>-->
+ <div id="phoneDiv" class="navbar-spacer" align="right"  class="navbar-spacer" style="right:0px !important; display: block; height: 178px; position: fixed; right:0px;bottom: 0px; margin: 0px 0; padding: 0 0; z-index: 9999; border-radius: 4px 4px 0px 0px;">
+ <iframe height="178px" id="bar2" width="250px" name="bar2" scrolling="no" frameborder="0" src="<%=request.getSession(false).getAttribute('sipmlUrl')%>/expert1.htm?pid=<%=request.getSession(false).getAttribute('sipmlExtn')%>&passwd=05GDO05VVO0"></iframe>
+ </div>
+ 
+<!-- <div id="phoneDiv" class="navbar-spacer" align="right"  class="navbar-spacer" style="right:270px !important; display: block; height: 30px; position: fixed; right:0px;bottom: 0px; margin: 0px 0; padding: 0 0; z-index: 9999; border-radius: 4px 4px 0px 0px;">
+ <iframe height="123px" id="bar2" width="180px" name="bar2" scrolling="no" frameborder="0" src="<%=request.getSession(false).getAttribute('sipmlUrl')%>/expert.htm?pid=<%=request.getSession(false).getAttribute('sipmlExtn')%>&passwd=05GDO05VVO0"></iframe>
+ </div>-->
+ 
+<!-- <div id="phoneDiv" class="navbar-spacer" align="right"  class="navbar-spacer" style="right:270px !important; display: block; height: 250px; position: fixed; right:0px;bottom: 0px; margin: 0px 0; padding: 0 0; z-index: 9999; border-radius: 4px 4px 0px 0px;">
+ <iframe height="250px" id="bar2" width="250px" name="bar2" scrolling="no" frameborder="0" src="<%=request.getSession(false).getAttribute('sipmlUrl')%>/expert1.htm?pid=<%=request.getSession(false).getAttribute('sipmlExtn')%>&passwd=05GDO05VVO0"></iframe>
+ </div>-->
+ 
+       <%}%>
+            <div class="col-sm-3 col-xs-3">
+			<p class="ui-footer-seo-policy text-center">
+			<ul class="nav">
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="<%=request.getContextPath()%>/servlet/service/page.aboutus">About Bizlem</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="<%=request.getContextPath()%>/servlet/service/page.servicelist">Services</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="<%=request.getContextPath()%>/servlet/service/page.keydifferentiators">Key Differentiators</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="<%=request.getContextPath()%>/servlet/service/page.buyers">For Buyers & Sellers</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="<%=request.getContextPath()%>/servlet/service/page.advertise">Advertise with us</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="<%=request.getContextPath()%>/servlet/service/page.contactus">Contact us</a></li>
+			</ul>
+			</p>
+			</div>
+			<div class="col-sm-3 col-xs-3">
+			<p class="ui-footer-seo-policy text-center">
+			<ul class="nav">
+			<li style="font-size: large;color:blue"><a style="padding:1px 15px" href="">Follow us</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Facebook</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Linked In</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Twitter</a></li>
+			</ul>
+			</p>
+			</div>
+			<div class="col-sm-3 col-xs-3">
+			<p class="ui-footer-seo-policy text-center">
+			<ul class="nav">
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Product Categories</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Hot Products</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Hot Sellers</a></li>
+			</ul>
+			</p>
+			</div>
+			<div class="col-sm-3 col-xs-3">
+			<p class="ui-footer-seo-policy text-center">
+			<ul class="nav">
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Bizlem Social</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Search on Bizlem</a></li>
+			<li style="font-size: medium;"><a style="padding:1px 15px" href="">Recommended for you</a></li>
+			</ul>
+			</p>
+			</div>
+                <!--<p class="ui-footer-seo-policy text-center">
+                <a href="#" target="_blank" rel="nofollow">Bizlem  Group</a>
+                 | <a href="#" target="_blank" rel="nofollow">Taobao Marketplace</a>
+                 | <a href="#" target="_blank" rel="nofollow">Tmall.com</a>
+                 | <a href="#" target="_blank" rel="nofollow">Juhuasuan</a>
+                 | <a href="#" target="_blank" rel="nofollow">AliExpress</a>
+                 | <a href="#" target="_blank" rel="nofollow">Bizlem.com</a>
+                 | <a href="#" target="_blank" rel="nofollow">1688.com</a>
+                 | <a href="#" target="_blank" rel="nofollow">Alimama</a>
+                 | <a href="#" target="_blank" rel="nofollow">Alitrip</a>
+                 <br>
+                 <a href="#" target="_blank" rel="nofollow">Bizlem Cloud  Computing</a>
+                 | <a href="#" target="_blank" rel="nofollow">YunOS</a>
+                 | <a href="#" target="_blank" rel="nofollow">AliTelecom</a>
+                 | <a href="#" target="_blank" rel="nofollow">HiChina</a>  
+
+                 | <a href="#" target="_blank" rel="nofollow">Autonavi</a>             
+                 | <a href="#" target="_blank" rel="nofollow">UCWeb</a>
+                 | <a href="#" target="_blank" rel="nofollow">Umeng</a>
+                 | <a href="#" target="_blank" rel="nofollow">Kanbox</a>
+
+                 | <a href="#" target="_blank" rel="nofollow">Xiami</a>
+                 | <a href="#" target="_blank" rel="nofollow">TTPod</a>
+                 | <a href="#" target="_blank" rel="nofollow">Laiwang</a>
+                 | <a href="#" target="_blank" rel="nofollow">DingTalk</a>
+                 | <a href="#" target="_blank" rel="nofollow">11 Main</a>
+                 | <a href="#" target="_blank" rel="nofollow">Alipay</a>
+            </p>
+            <p class="ui-footer-seo-brand2 text-center">
+                <b>Browse Alphabetically:</b>
+                <a href="#" target="_blank">Showroom</a>
+                | <a href="#" target="_blank">Country Search</a>
+                | <a href="#" target="_blank">Manufacturers</a>
+                | <a href="#" target="_blank">Suppliers</a> 
+                | <a href="#" target="_blank">Promotion</a>
+                | <a href="#" target="_blank">Wholesale</a>
+            </p>
+            <p class="ui-footer-seo-brand text-center">
+                <a rel="nofollow" href="#">Product Listing Policy</a>
+                - <a rel="nofollow" href="#">Intellectual Property Policy and Infringement Claims</a>
+                - <a href="#">Privacy Policy</a>
+                - <a rel="nofollow" href="#">Terms of Use</a>
+            </p>
+            <p class="ui-footer-copyright text-center">
+                <small>&copy; 1999-2015 Bizlem.com. All rights reserved.</small>
+            </p>-->
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-12 col-xs-12">
+            <p class="ui-footer-copyright text-center">
+                <small>&copy; 2016 Bizlem.com. All rights reserved.</small>
+            </p>
+            </div>
+        </div>
+        
+    </div>
+    </footer>

@@ -1,0 +1,522 @@
+<html>
+<head>
+<%resource = Packages.java.util.ResourceBundle.getBundle("server");%>
+<%var online = request.getAttribute("online");%>
+<script type='text/javascript' src='<%=request.getContextPath()%>/wro/connection.js'></script>
+<link href="<%=request.getContextPath()%>/wro/connection.css" rel="stylesheet" type="text/css" />
+<script type='text/javascript' src='<%=request.getContextPath()%>/dwr/engine.js'> </script>
+<script type='text/javascript' src='<%=request.getContextPath()%>/dwr/util.js'> </script>
+<script type='text/javascript' src='<%=request.getContextPath()%>/dwr/interface/LoginService.js'> </script> 
+<script>
+    function openPopUpFriend(theURL, title, heightInPX, widthInPX)
+    {
+               var selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+               
+               if(selectedValues!=null){
+                    YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+                                       "top.frames['bar1']", "pop:"+selectedValues+":dummy:conf:chat");
+               }else{
+                    alert("You had not selected anybody");
+               }                        
+               
+               
+    }
+    function dwrLoad(){
+        dwr.engine.setActiveReverseAjax(true);
+        dwr.engine.setErrorHandler(errorHandler);
+    }
+    function errorHandler(message, ex) 
+    {}
+    $(function(){
+        $("#callStatusDivId").click(function(){
+            
+            if($("#statusDivId").text()==""){
+                 $('#statusDivId').load("<%=request.getContextPath()%>/content/user/*.status", function() {
+                    $("#statusDivId").slideToggle("fast");
+                 });
+             }else{
+                $("#statusDivId").slideToggle("slow");
+             }
+             
+        });
+        
+        $(".closeDiv").click(function(){
+                $(this).parent().hide();
+                $(".cred_bg-disable").hide();
+                $("#smsUserId").val("");
+                $("#emailUserId").val("");
+                $("#userNumberId").val("");
+        });
+          
+        $('#smsMessageId').keyup(function () {
+          var max = 140;
+          var len = $(this).val().length;
+          if (len >= max) {
+            
+          } else {
+            var char = max - len;
+            $('#remainId').text("Remaining: "+char);
+          }
+         });
+    });
+    
+$(window).load(function(){
+    dwrLoad();
+});
+
+</script>
+<style type="text/css">		
+	.content_5{overflow:auto;width:216px;margin:0 auto;}	
+	.show{display:block;}
+	.hide{display:none;}
+	.iconC a {border: 1px solid #CCCCCC !important;}
+	.iconC {border: none;width: 48px;margin-top: 3px;position: absolute;right: 3px;}
+	.comment-window{ background: none repeat scroll 0 0 #F1FAFB;float: none;left: 50%;
+                position: fixed;top: 50%;z-index:999;border-radius:4px;transform: translate(-50%, -50%); 
+                -webkit-transform: translate(-50%, -50%);font-family: Dosis; width: 200px;
+                 font-size:13px;padding:5px    }
+    .comment-window td {font-size: 13px;}
+</style>
+<script type="text/javascript">
+    function openPopUp(){
+        
+    }
+    $(function() {
+                 //   $('#commFrame').load("<%=request.getContextPath()%>/servlet/"+
+                   //         "common/search.call?param=dummy"+
+                  //          "&userId=<%=request.getParameter('id')%>");
+                  
+                }); 
+        function callChat(id,v,displayName,userId){
+            checkStatus(id,userId,'chat',v,displayName);
+           // YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+           //                            "top.frames['bar1']", "pop:"+v+":"+displayName);
+        }
+        function callVideo(id,v,displayName,userId){
+         checkStatus(id,userId,'video',v,displayName);
+          //  YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+           //                            "top.frames['bar1']", "pop:"+v+":"+displayName+":video");
+        }
+        function callPhone(id,v,userId){
+            //YAHOO.util.CrossFrame.send("http://socialmail.in/sipml/proxy.html", 
+            //                  "top.frames['bar2']", v);
+            checkStatus(id,userId,'phone',v,'');
+           //    YAHOO.util.CrossFrame.send("http://10.36.76.37:8088/proxy.html", 
+           //                                "top.frames['bar2']", v);                                   
+        }
+        function callExtension(id,v){
+                YAHOO.util.CrossFrame.send("http://172.17.1.26/Jphone/proxy.html", 
+                                       "top.frames['bar2']", "phone:call:"+v);
+        }
+        function callMobilePhone(){
+            if($("#userNumberId").val()!=""){
+                $("#phoneButtonId").attr("disabled","true");
+                $("#phoneImageId").show();
+                var data="conf="+$("#userNumberId").val()+","+document.getElementById("phoneNumberId").value;
+                $.ajax({
+                  type: 'GET',
+                  url: '<%=resource.getString("phone.server")%>/san/conf.php',
+                  data: data,
+                  complete: function(){
+                    alert("Call Done");
+                    $("#phoneDivId").hide();
+                    $(".cred_bg-disable").hide();
+                    $("#userNumberId").val("");
+                    $("#phoneNumberId").val("");
+                    $("#phoneImageId").hide();
+                    $("#phoneButtonId").removeAttr("disabled");
+                  }
+                });                        
+             }
+        }
+        function email(){
+              $("#emailButtonId").attr("disabled","true");
+              $("#emailImageId").show();
+              data="emailFrom=<%=currentNode.primaryEmail?currentNode.primaryEmail:bundle.getString("sendMail.address")%>&emailTo="+$("#emailUserId").val()+"&subject="+
+                    document.getElementById("emailSubjectId").value+"&message="+
+                    document.getElementById("emailMessageId").value;
+              $.ajax({
+                      type: 'POST',
+                      url: '<%=request.getContextPath()%>/servlet/security/verify.sendMail',
+                      data: data,
+                      dataType: 'html',
+                      success: function(data){
+                       alert(data);
+                       $("#emailDivId").hide();
+                       $(".cred_bg-disable").hide();
+                       $("#emailSubjectId").val("");
+                       $("#emailMessageId").val("");
+                       $("#emailImageId").hide();
+                       $("#emailButtonId").removeAttr("disabled");
+                      }
+                }); 
+        }
+        
+        function sms(){
+           $("#smsButtonId").attr("disabled","true");
+           $("#smsImageId").show();
+           var data="userId="+$("#smsUserId").val()+"&message="
+                        + document.getElementById("smsMessageId").value; 
+           $.ajax({
+                  type: 'POST',
+                  url: '<%=request.getContextPath()%>/servlet/security/verify.sendSMS',
+                  data: data,
+                  dataType: 'html',
+                  success: function(data){
+                   alert(data);                   
+                   $('#remainId').text("Remaining: 140");
+                   $("#smsDivId").hide();
+                   $("#smsImageId").hide();
+                   $(".cred_bg-disable").hide();
+                   $("#smsMessageId").val("");
+                   $("#smsButtonId").removeAttr("disabled");
+                  }
+                }); 
+        }
+        function clear2(param){
+            if(param=='sms'){
+                $('#remainId').text("Remaining: 140");
+                $("#smsMessageId").val('');
+            }
+            if(param=='email'){
+                $("#emailSubjectId").val('');
+                $("#emailMessageId").val('');
+            }
+        }
+        function checkStatus(id,userId,flag,v,displayName){
+            $.ajax({
+                          type: 'POST',
+                          url: '<%=request.getContextPath()%>/servlet/common/search.checkStatus',
+                          data: 'userId='+userId,
+                          dataType: 'html',
+                          success: function(data){      
+                               if(data=='online'){
+                                 
+                                 if(flag=='phone'){
+                                      YAHOO.util.CrossFrame.send("<%=resource.getString("phone.server")%>/proxy.html", 
+                                          "top.frames['bar2']", v); 
+                                        
+                                 }else if(flag=='chat'){
+                                  YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+                                       "top.frames['bar1']", "pop:"+v+":"+displayName);
+                                 }else if(flag=='video'){
+                                  YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+                                       "top.frames['bar1']", "pop:"+v+":"+displayName+":video");
+                                 }
+                               }else{
+                                   $(id).parent("div").children('a').addClass("off");
+                                    $(id).parent("div").children('a[onclick]').removeAttr('onclick'); 
+                                  alert("User has just Logged Out");
+                               }
+                          }
+                      });      
+        }
+        
+        function deleteUser(friend,v){
+            var data='userId=<%=currentNode.getName()%>&friend='+friend;
+            var url="<%=request.getContextPath()%>/servlet/friend/show.remove";
+              if(confirm('Confirm Disconnect'))
+                {
+                    $.ajax({
+                          type: 'POST',
+                          url: url,
+                          data: data,
+                          success: function(){
+                            $(v).parent('div').parent('li').remove();
+                          }
+                      }); 
+                 }else{}                  
+        }
+        
+        function showEmailDiv(value){
+            if(value!=""){
+                $("#emailSubjectId").val('');
+                $("#emailMessageId").val('');
+                $("#emailUserId").val(value);
+                $(".cred_bg-disable").show();
+                $("#emailDivId").show();
+            }else{
+                alert("Email Id does not exist !");
+            }
+        }
+        
+        function showSMSDiv(value){
+            if(value!=""){
+                $("#smsMessageId").val("");
+                $('#remainId').text("Remaining: 140");
+                $("#smsUserId").val(value);
+                $(".cred_bg-disable").show();
+                $("#smsDivId").show();
+            }else{
+                alert("Phone Number doesn't Exists");
+            }
+        }
+        
+        function showPhoneDiv(value){
+            if(value!=""){
+                $("#userNumberId").val(value);
+                $(".cred_bg-disable").show();
+                $("#phoneDivId").show();
+            }else{
+                 alert("Phone Number doesn't Exists");
+            }
+        }
+     </script>   
+</head>
+<body>    
+<div class="conference-bar">Create conference 
+    <a href="javascript:void(0);" onclick="openPopUpFriend('<%=
+         request.getContextPath()%>/servlet/friend/show.invite?userId=<%=
+         currentNode.getName()%>&conference=true',
+         'Invite Users', 600, 700)">
+        <img src="<%=request.getContextPath()%>/apps/user/css/images/icon_video_confrence.png" border="0" align="absmiddle" />
+    </a> 
+    
+    <div class="buttondiv">
+        <span>What are you doing today?</span>
+        <div class="pipe">|</div>
+        <div class="sign" id="callStatusDivId"></div>
+    </div>
+    
+    <!--<a href="javascript:void(0);" onclick="openPopUpFriend('<%=
+         request.getContextPath()%>/servlet/friend/show.invite?userId=<%=
+         currentNode.getName()%>&conference=true',
+         'Invite Users', 600, 700)">
+        <img src="<%=request.getContextPath()%>/apps/user/css/images/icon_audio_confrence.png" border="0" align="absmiddle" />
+    </a>-->
+</div>  
+<div id="statusDivId" class="status_div_float"  style="z-index: 900;"></div>                                                  
+<%if(currentNode.hasProperty("extension") && !request.getParameterMap().containsKey("delete")){
+ %>
+        <!--<div style="display:none;">
+            <iframe src="http://14.140.116.246/Jphone/jphonelite-javascript.php?userid=<%=currentNode.extension%>" ></iframe>
+        </div>-->  
+ <%}%>
+<%var countFriend=0;	  
+	if(currentNode.hasNode("connection")){
+                var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+              	
+			  	
+				  
+				  	for(i in connectionNode){
+				  		if(connectionNode[i].request=='accept' ){
+				  			countFriend++;
+				  		}
+				  	}
+			}	  	
+%>
+
+	
+<div id="main" class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" style="margin:5px 2px !important;">
+
+<%
+//if (typeof value3 !== 'undefined') {
+  // value3 is defined
+//}
+// var test67 = Packages.java.util.ArrayList();
+// test67.add("");
+var onlineVar = online ;
+var count=0;
+if(currentNode.hasNode("connection")){	 
+    var size=countFriend;   
+        for(i in connectionNode){
+           if(connectionNode[i].request=='accept'){     
+                var userNode=currentNode.session.getRootNode()
+                                .getNode("content/user/")
+                                .getNode(connectionNode[i].getName());
+                %>
+                <li class="ui-state-default ui-corner-top" style="position: relative !important;height:100px;width: 99% !important;margin:0 1px 5px 0 !important;">
+					<div class="profile-user-thumb" style="margin-right:1px !important;">
+					<% if(userNode.hasProperty("profileImage")){
+                       %>
+                       <img src="<%=userNode.profileImage%>" width="60" height="78"  />
+                       <%}
+                       else{  %>
+                     <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="60" height="78" /> 
+                     <%}%>
+					 <%var check=userNode.serviceCheck?userNode.serviceCheck:"false";%>
+					</div>
+					<div class="content_5">                      
+						<div style="float:left; padding:4px;">
+							<a style="padding:0px !important;" href="<%=resource.getString("rave.portal")%>/portal/profile/getProfile.html?id=<%=userNode.getName()%>" 
+							     target="_blank" >
+							         <strong>
+							             <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%>
+							         </strong>
+							</a>
+						</div>	
+						<h3><%=userNode.headline?userNode.headline:""%></h3>
+						<!--
+						<span>Email:</span><%=userNode.email[0]?userNode.email[0]:""%><br />
+						-->
+						<span>City:</span><%=userNode.city?userNode.city:""%><br />
+						<!--
+						<span>Contact:</span><%=userNode.number? userNode.number[0]: ""%><em>&nbsp;(<%=userNode.numberType?userNode.numberType[0]: ""%>)</em><br />
+						-->
+						<span>Born on:</span><%=userNode.birthDay? userNode.birthDay: ""%><br />
+						<!--<span style="float:left;">Extension No. :</span><a style="padding:0px !important;" href="javascript:void(0);" onclick="callExtension('<%=userNode.extension%>')"><%=userNode.extension%></a><br />-->
+						<!--<span>Current Industry:</span><%=userNode.industry? userNode.industry: ""%><br />-->
+						<span>Connected as a :</span> <%=connectionNode[i].friendType? connectionNode[i].friendType: ""%><br>
+      	 			</div>
+      	 			<%if(request.getParameterMap().containsKey("delete")){
+                        %>
+                          <%if(request.getRemoteUser().replace("@","_").equals(currentNode.getName())){%>
+                            <img id="remove" height="20" style="float:right;" align="middle" alt="Delete" title="Delete Connection" 
+                                 src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" 
+                                 onclick="deleteUser('<%=userNode.getName()%>',this)"/>
+                          <%}%>       
+                        <%
+                        }else{
+                                if(onlineVar.contains(userNode.getName())){
+                                    %>
+                                    <div class="iconC show" id="<%=userNode.getName()%>on">
+                                        <a href="javascript:void(0);" class="online"><span></span></a>
+                                        <%if(check!='false' && check.charAt(4)=='Y'){%>
+                                          <a href="javascript:void(0);" onclick="callPhone(this,'<%=userNode.extension%>','<%=userNode.getName()%>')" class="phone"><span></span></a>
+                                        <%}%>   
+                                        <%if(check!='false' && check.charAt(2)=='Y'){%>
+                                            <a href="javascript:void(0);" onclick="callChat(this,'<%=userNode.secondaryId%>','<%=userNode.name%>','<%=userNode.getName()%>')" class="chat"><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(3)=='Y'){%>
+                                            <a href="javascript:void(0);" onclick="callVideo(this,'<%=userNode.secondaryId%>','<%=userNode.name%>','<%=userNode.getName()%>')" class="video"><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(0)=='Y'){%>
+                                            <a href="javascript:void(0);" class="sms_icon" onclick="showSMSDiv('<%=userNode.getName()%>');" ><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(1)=='Y'){%>
+                                            <a href="javascript:void(0);" class="email_icon" onclick="showEmailDiv('<%=userNode.primaryEmail?userNode.primaryEmail:""%>');" ><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(15)=='Y'){%>
+                                            <a href="javascript:void(0);" class="phone" onclick="showPhoneDiv('<%=userNode.primaryMobile?userNode.primaryMobile:""%>');"><span></span></a>
+                                        <%}%>  
+                                                
+                                     </div>
+                                     <div class="iconC hide" id="<%=userNode.getName()%>off">
+                                        <a href="javascript:void(0);" class="online off"><span></span></a>
+                                        <%if(check!='false' && check.charAt(4)=='Y'){%>
+                                            <a href="javascript:void(0);" class="phone off"><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(2)=='Y'){%>
+                                            <a href="javascript:void(0);"  class="chat off"><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(3)=='Y'){%>
+                                            <a href="javascript:void(0);"  class="video off"><span></span></a>
+                                        <%}%>
+                                              <%if(check!='false' && check.charAt(0)=='Y'){%>
+                                            <a href="javascript:void(0);" class="sms_icon" onclick="showSMSDiv('<%=userNode.getName()%>');" ><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(1)=='Y'){%>
+                                            <a href="javascript:void(0);" class="email_icon" onclick="showEmailDiv('<%=userNode.primaryEmail?userNode.primaryEmail:""%>');" ><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(15)=='Y'){%>
+                                            <a href="javascript:void(0);" class="phone" onclick="showPhoneDiv('<%=userNode.primaryMobile?userNode.primaryMobile:""%>');"><span></span></a>
+                                        <%}%>  
+                                          
+                                       
+                                  </div>    
+                                     <!--<img src="<%=request.getContextPath()%>/apps/user/css/images/online.png" height="8"  />-->
+                                    <%
+                                }else{
+                                %>
+                                    <div class="iconC hide" id="<%=userNode.getName()%>on">
+                                        <a href="javascript:void(0);" class="online"><span></span></a>
+                                        <%if(check!='false' && check.charAt(4)=='Y'){%>
+                                          <a href="javascript:void(0);" onclick="callPhone(this,'<%=userNode.extension%>','<%=userNode.getName()%>')" class="phone"><span></span></a>
+                                        <%}%>   
+                                        <%if(check!='false' && check.charAt(2)=='Y'){%>
+                                            <a href="javascript:void(0);" onclick="callChat(this,'<%=userNode.secondaryId%>','<%=userNode.name%>','<%=userNode.getName()%>')" class="chat"><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(3)=='Y'){%>
+                                            <a href="javascript:void(0);" onclick="callVideo(this,'<%=userNode.secondaryId%>','<%=userNode.name%>','<%=userNode.getName()%>')" class="video"><span></span></a>
+                                        <%}%>   
+                                        <%if(check!='false' && check.charAt(0)=='Y'){%>
+                                            <a href="javascript:void(0);" class="sms_icon" onclick="showSMSDiv('<%=userNode.getName()%>');" ><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(1)=='Y'){%>
+                                            <a href="javascript:void(0);" class="email_icon" onclick="showEmailDiv('<%=userNode.primaryEmail?userNode.primaryEmail:""%>');" ><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(15)=='Y'){%>
+                                            <a href="javascript:void(0);" class="phone" onclick="showPhoneDiv('<%=userNode.primaryMobile?userNode.primaryMobile:""%>');"><span></span></a>
+                                        <%}%>  
+                                           
+                                     </div>
+                                    <div class="iconC show" id="<%=userNode.getName()%>off">
+                                        <a href="javascript:void(0);" class="online off"><span></span></a>
+                                        <%if(check!='false' && check.charAt(4)=='Y'){%>
+                                            <a href="javascript:void(0);" class="phone off"><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(2)=='Y'){%>
+                                            <a href="javascript:void(0);"  class="chat off"><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(3)=='Y'){%>
+                                            <a href="javascript:void(0);"  class="video off"><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(0)=='Y'){%>
+                                            <a href="javascript:void(0);" class="sms_icon" onclick="showSMSDiv('<%=userNode.getName()%>');" ><span></span></a>
+                                        <%}%>
+                                        <%if(check!='false' && check.charAt(1)=='Y'){%>
+                                            <a href="javascript:void(0);" class="email_icon" onclick="showEmailDiv('<%=userNode.primaryEmail?userNode.primaryEmail:""%>');" ><span></span></a>
+                                        <%}%>    
+                                        <%if(check!='false' && check.charAt(15)=='Y'){%>
+                                            <a href="javascript:void(0);" class="phone" onclick="showPhoneDiv('<%=userNode.primaryMobile?userNode.primaryMobile:""%>');"><span></span></a>
+                                         <%}%>   
+                                           
+                                  </div>    
+                                <%
+                            }   }
+                            %>	
+                <%
+    			count++;
+       } }
+
+}else{
+    out.println("No Connection Present");
+}
+
+%>
+</div>
+</div>
+<div class="comment-window sms" id="smsDivId" style="display:none;width: 259px;">
+    Message:  <a href="javascript:void(0);" style="float:right !important;" class="closeDiv" ><img 
+            src="<%=request.getContextPath()%>/apps/contentFeedback/img/closelabel.png" /></a>
+    <br /><br /> <textarea  maxlength="140" style="height: 71px;width: 99%;" id="smsMessageId" placeholder="Write your message..." ></textarea>
+    <span style="float:right;" id="remainId">Remaining: 140</span>
+    <input type="hidden" value="" id="smsUserId" />
+    <input type="button" id="smsButtonId" class="custom-button custom-button-primary" value="Send" onclick="sms()" />
+    <input type="button" class="custom-button custom-button-danger" value="Clear" onclick="clear2('sms')" />
+    <img src="<%=request.getContextPath()%>/apps/user/css/images/loading.gif" height="14px" id="smsImageId" style="display:none;" /> 
+</div>
+<div class="comment-window email" id="emailDivId" style="display:none;width: 259px;">
+    <a href="javascript:void(0);" style="float:right !important; margin: 4px;" class="closeDiv" ><img 
+            src="<%=request.getContextPath()%>/apps/contentFeedback/img/closelabel.png" /></a>
+    <table>
+        <tr><td>Subject:</td>
+            <td><input type="text" id="emailSubjectId" style="width:96%;"  /></td>
+        </tr>
+        <tr>
+            <td>Message:</td>
+            <td><textarea id="emailMessageId" placeholder="Write your message..."  style="height: 74px;"></textarea></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                    <input type="hidden" id="emailUserId" />
+                    <input type="button" id="emailButtonId" class="custom-button custom-button-primary" value="Send" onclick="email()" />
+                    <input type="button" class="custom-button custom-button-danger" value="Reset" onclick="clear2('email')" /> 
+                    <img src="<%=request.getContextPath()%>/apps/user/css/images/loading.gif" height="14px" id="emailImageId" style="display:none;" />
+            </td>
+        </tr>  
+    </table>                        
+</div>
+<div class="comment-window mobile" id="phoneDivId" style="display:none;">
+    Enter 10 didgit Mobile Number:  <a href="javascript:void(0);" style="float:right !important;" class="closeDiv" ><img 
+            src="<%=request.getContextPath()%>/apps/contentFeedback/img/closelabel.png" /></a>
+    <br /><br /> <input type="text" id="phoneNumberId"  /><br/>
+    <input type="hidden" id="userNumberId" />
+    <input type="button" id="phoneButtonId" class="custom-button custom-button-primary" value="Send" onclick="callMobilePhone();" />
+    <input type="button" class="custom-button custom-button-danger" value="Clear" onclick="clear2('sms')" />
+    <img src="<%=request.getContextPath()%>/apps/user/css/images/loading.gif" height="14px" id="phoneImageId" style="display:none;" /> 
+</div> 
+<div class="cred_bg-disable" style="display:none;"></div>         
+</body>
+</html>

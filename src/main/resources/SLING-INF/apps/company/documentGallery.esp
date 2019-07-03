@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<head>
+<script type="text/javascript" src="<%=request.getContextPath()%>/wro/company.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/wro/company.css" type="text/css" />
+<script>
+    $(function(){
+        /*$.ajax({
+            url:'<%=request.getContextPath()%>/servlet/company/show.addCategory',
+            type:'POST',
+            data:'type=Picture&category=',
+            success:function(){
+            
+            }
+          });
+            */
+            
+            $("#categoryAddId").click(function(){
+                $("#categoryDivId").show();
+            });
+            $("#categoryCancelId").click(function(){
+                $("#categoryDivId").hide();
+            });
+            $(".iframe_close").click(function(){
+                $("#iframeDivId").hide();
+            });
+            
+            $(".collapseId").toggle(function(){
+                $(this).parent().parent().next('div').slideUp();
+                $(this).html("Expand &nbsp;<span class='arrow-img-up arrow-img-down'></span>");
+            }, function() {
+                $(this).parent().parent().next('div').slideDown();
+                $(this).html("Collapse &nbsp;<span class='arrow-img-up arrow-img-down arrow-img-upV'></span>");
+            });
+        });
+    
+
+    function addCategory(){
+        if($("#categoryId").val()!=""){
+            $.ajax({
+                url:'<%=request.getContextPath()%>/servlet/company/show.addCategory',
+                type:'POST',
+                data:'type=Document&company=<%=request.getParameter("comp")%>&category='+$("#categoryId").val(),
+                success:function(){
+                    window.location.reload();
+                }
+            });
+        }else{
+            alert("Field Required !");
+        }
+    }
+    
+    function iframeLoad(){
+        window.location.reload();
+    }
+    
+    function addImageLink(category){
+        $("#iframeDivId").show();
+        $("#frameId").attr("src","<%=request.getContextPath()%>/content/company/*.uploadAll?type=doc&company=<%=currentNode.getName()%>&category="+category);
+    }
+    
+    function downloadFile(filePath){
+        $("#downloadId").val(filePath);
+        $("#downFormId").submit();
+    }
+</script>
+
+
+</head>
+<body>
+
+
+<%
+
+
+    if(currentNode.hasNode("BasicInfo")){
+        var companyNode=currentNode.getNode("BasicInfo");
+    
+    }
+
+%>
+<div class="container-fluid company-profile">
+   <h1 class="spacing-left">
+    <div class="company-icon">
+        <% if(companyNode.hasProperty("companyLogo")){
+           %>
+           <img src="<%=companyNode.companyLogo?companyNode.companyLogo:request.getContextPath()+"/apps/user/css/images/photo.gif"%>"  />
+           <%}
+           else{  %>
+           <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+         <%}%>
+    </div>
+    <%=companyNode.companyName?companyNode.companyName:""%>
+    <br />
+    <a href="http://<%=companyNode.website?companyNode.website:""%>" target="_blank" class="sub-link"><%=companyNode.website?companyNode.website:""%></a>
+    <a href="javascript:void(0);" id="categoryAddId" class="category_a" style="color:#1230B3"> + Add Category</a>
+    
+  </h1>
+  <hr />    
+  <%if(currentNode.hasNode("media") && currentNode.getNode("media").hasNode("Document") 
+            && currentNode.getNode("media").getNode("Document").hasNodes()){
+        var docNodes = currentNode.getNode("media").getNode("Document").getNodes();
+        for(i in docNodes){
+        %>
+          <div class="document_container image_containe_box">
+              <div class="image_container_heading"><%=docNodes[i].categoryName%>
+                <span>
+                        <a class="category_a" href="javascript:void(0);" 
+                           onclick="addImageLink('<%=docNodes[i].getName()%>')">+Add Document</a>
+                        <a class="category_a collapseId" href="javascript:void(0);" > 
+                            Collapse &nbsp;<span class="arrow-img-up arrow-img-down arrow-img-upV"></span></a> 
+               </span>
+             </div>
+             <div class="content"> 
+                 <!--<h2>
+                    <%=docNodes[i].categoryName%>
+                    <a class="category_a" href="javascript:void(0);" 
+                       onclick="addImageLink('<%=docNodes[i].getName()%>')">+Add Document</a>
+                    <a class="category_a collapseId" href="javascript:void(0);" > 
+                        Collapse &nbsp;<span class="arrow-img-up arrow-img-down arrow-img-upV">
+                        </span>
+                    </a>   
+                 </h2>-->
+                 <%if(docNodes[i].hasNodes()){
+                        var doc = docNodes[i].getNodes();
+                        for( j in doc){
+                        %><div>
+                            <%=doc[j].getNodes()[0].getName()%>
+                            <a target="_blank" href="https://docs.google.com/viewer?url=http://<%=request.getServerName()+":"+request.getServerPort()+request.getContextPath()+doc[j].getNodes()[0]%>">View</a>
+                            <a target="_blank" href="javascript:void(0);" onclick="downloadFile('<%=doc[j].getNodes()[0]%>')" >Download</a>
+                          </div>  
+                        <%
+                        }
+                 }%>
+             </div>
+          </div>
+        <%}%>  
+  <%}else{
+    out.println("Content Not Present");
+  }%>
+  
+</div>       
+        
+  
+  
+  
+<div id="categoryDivId" style="display:none;">
+    <div class="cred_bg-disable"></div>
+    <div class="category_div">
+        Category: 
+        <input type="text" value="" id="categoryId" placeholder="Category Name"/>
+        <input type="button" value="Add Category" class="btn btn-primary" onclick="addCategory()" />
+        <input type="button" value="Cancel" class="btn btn-danger" id="categoryCancelId" />
+    </div>    
+</div>
+<div id="iframeDivId" style="display:none;">
+    <div class="cred_bg-disable"></div>
+    <div class="iframe_div">
+        <a href="javascript:void(0);" class="iframe_close"></a>
+        <iframe height="301px" width="479px" frameborder="0" id="frameId"
+            src="" ></iframe>
+    </div>    
+</div>
+<div style="display:none;">
+    <form action="<%=request.getContextPath()%>/servlet/company/show.download" 
+            method="POST" id="downFormId" >
+        <input type="hidden" value="" id="downloadId" name="path" />
+    </form> 
+</div>    
+</body>
+</html>

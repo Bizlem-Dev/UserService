@@ -1,0 +1,39 @@
+<%
+var	companyNode=request.getAttribute("companylist");
+
+for(i=0;i<companyNode.size();i++){
+											var cmpNode=companyNode.get(i);
+												
+												%>
+							            <div class="col-md-6 col-xs-12 custom-width">
+							            	<div class="well well-sm company-list">
+							            		<div class="row">
+							            		<div class="col-sm-4 col-xs-4 image">
+							            			<% if(cmpNode.hasNode("BasicInfo")){
+							            			var basicInfo = cmpNode.getNode("BasicInfo");
+												               	%>
+																	<img width="88.32" height="115.95" src="<%=request.getContextPath()%><%=basicInfo.companyLogo?basicInfo.companyLogo:""%>" alt=""/>
+													            <%}else{  %>
+													                     <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" alt=""/> 
+													            <%}%>
+							            		</div>
+							            		<% if(cmpNode.hasNode("BasicInfo")){%>
+							            		<div class="col-sm-8 col-xs-8 text">
+							            			<h3><a href='<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=cmpNode.companyNumber ?cmpNode.companyNumber :""%>'><%=basicInfo.companyName?basicInfo.companyName:""%></a></h3>
+							            			<p><a href="http://<%=companyNode.website?companyNode.website:""%>" target="_blank"><%=basicInfo.website?basicInfo.website:""%></a></p>
+							            			<p><a href="#">Industries: </a><%=basicInfo.industries?basicInfo.industries:""%></p>
+							            			<%
+							            			if(cmpNode.hasNode("taxation")){
+							            			var taxNode = cmpNode.getNode("taxation");
+							            			%>
+							            			<p><a href="#">Place: </a><%=taxNode.foundedPlace?taxNode.foundedPlace:""%></p>
+							            			<p><a href="#">Founded: </a><%=taxNode.founded?taxNode.founded:""%></p>
+							            			<!--<p><a href="#">Turn Over: </a><%=basicInfo.turnOver?basicInfo.turnOver:""%></p>-->
+							            			<%}%>
+							            			
+							            		</div>
+							            		<%}%>
+							            		</div>
+							            	</div>
+							            </div>
+<%}%>

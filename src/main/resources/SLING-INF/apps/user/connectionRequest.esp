@@ -1,0 +1,117 @@
+<script>$(function() { 
+        $(".message-overflow").hover(
+            function () {
+                $(this).next().next('a').hide();
+            },
+            function () {
+                $(this).next().next('a').show();
+            });
+    });
+</script>
+<script>
+	function acceptFrienRequest(url,id){
+	
+		var userId=document.getElementById("userId").value;
+		var friendValue=document.getElementById("friendGet"+id).value;
+		var friendMessage=document.getElementById("friendMessage"+id).value;
+		var friendType=document.getElementById("friendType"+id).value;
+		
+		var data='userId='+userId+'&friend='+friendValue+'&friendMessage='+friendMessage+'&friendType='+friendType;
+		
+		$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				  success: function(){
+				//  alert(data);
+				  	//document.getElementById("accept"+id).style.display='none';
+				  	//document.getElementById("acceptRequest"+id).style.display='block';
+				 location.reload();
+				  }
+				
+			});
+	
+	}
+	
+	
+</script>
+<% currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));
+var countFriend=0;	  
+			 
+			  	if(currentNode.hasNode("connection") && currentNode.getNode("connection") 
+			  			&& currentNode.getNode("connection").getNode("friend").hasNodes()){
+				  	var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+				  	for(i in connectionNode){
+				  		if(connectionNode[i].request=='pending' && connectionNode[i].requestType=='reciever' ){
+				  			countFriend++;
+				  		}
+				  	}
+				 }
+			if(countFriend>0){  	
+			if(currentNode.hasNode("connection") && currentNode.getNode("connection").hasNode("friend") 
+				  			&& currentNode.getNode("connection").getNode("friend").hasNodes()){
+			var count=0;
+			var friend=currentNode.getNode("connection").getNode("friend").getNodes();
+			var size=countFriend;
+%>
+<div id="people" class="tab-pane fade active in">
+                  <div class="content-tab mCustomScrollbar">
+                    <div class="tab-three-12">            
+                      <div class="people-visited">
+<%
+			for(i in friend){
+				
+				if(friend[i].request=='pending' && friend[i].requestType=='reciever' ){
+					var name=friend[i].getName();
+					var node=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(name);%>
+			       <div class="tumbnail-login">
+                        <div class="thumbnail">
+                         
+                         <% if(node.hasProperty("profileImage")){
+					                           %>
+					                           		<img src="<%=node.profileImage%>" style="width:100px;height:100px"  />
+					           <%}else{  %>
+					                 		<img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="width:100px;height:100px" /> 
+					                 <%}%>
+                          <div class="caption">
+                            <h3 style="text-align: center;"><a href="#"><%=node.name%></a></h3>
+                            
+                            
+					
+					<input type="hidden" name="userId" id="userId" value="<%=request.getRemoteUser().replace("@","_")%>" />
+					<input type="hidden" name="friend" id="friendGet<%=i%>" value="<%=friend[i].getName()%>" />
+					<input type="hidden" name="friendMessage" id="friendMessage<%=i%>" value="<%=friend[i].friendMessage%>" />
+					<input type="hidden" name="friendType" id="friendType<%=i%>" value="<%=friend[i].friendType%>" />
+					<p><a href="javascript:void(0);"  class="btn btn-outline"
+							 onclick="acceptFrienRequest('<%=request.getContextPath()%>/servlet/friend/show.accept','<%=i%>')">
+				    Accept</a>
+					<a href="javascript:void(0);"  class="btn btn-outline" >Cancel</a></p>
+					<div id="acceptRequest<%=i%>" style="display:none;">
+						Accepted
+					</div>
+					
+                          </div>
+                        </div>
+                      </div>
+					     
+					     	
+					      
+					  
+				<% count++;
+				
+				}}%>
+		
+		
+                      </div>
+                      
+                    </div>
+
+
+                  </div>
+                </div>
+		<% 
+} }else{
+out.print("0 Connection request..");
+}%> 
+				
+		

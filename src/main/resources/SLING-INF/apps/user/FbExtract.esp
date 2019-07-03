@@ -1,0 +1,28 @@
+
+
+<html>
+    <head>
+     </head>
+    <body>
+   
+    <%
+        var fb=request.getAttribute("fb");
+
+      %>
+      <div class="demo content4">
+
+
+                        <div class="search-list-mobile">
+                            <div class="thumbnail">
+                            <div class="caption">
+                              <h3><a href="#"><%=fb[1]%>  <%=fb[2]%></a></h3>
+                              <p class="foo1">
+                                 <%=fb[0]%>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        </div>   
+    </body>
+</html>
+

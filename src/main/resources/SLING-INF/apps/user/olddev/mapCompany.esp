@@ -1,0 +1,109 @@
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null);
+%>
+<html>
+<head>
+ <script>
+    function openPopUpCompany(theURL, title, heightInPX, widthInPX,mapType)
+    {
+        if(confirm('Would You like to get validated from Company')){
+         document.getElementById("validate").value='true';
+        }else{
+         document.getElementById("validate").value='false';
+        }  
+       var selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+       document.getElementById("companyValueID").value=selectedValues;
+       document.getElementById("nodeNameID").value=mapType;
+       document.getElementById("formCompany").submit(); 
+     }
+     
+     function deleteCompany(node,companyName,mapType,v,verified){
+        var url="<%=request.getContextPath()%>/content/user/save.deleteCompanyMap"
+        var data="nodeName="+node+"&mapCompanyName="+companyName+"&mappingUserType="+mapType+"&verified="+verified+"&userId=<%=currentNode.getName()%>";
+        if(confirm('Confirm Delete'))
+                {
+                    $.ajax({
+                          type: 'POST',
+                          url: url,
+                          data: data,
+                          success: function(){
+                            $(v).parent('li').remove();
+                          }
+                      }); 
+                      
+                 }else{}    
+     }
+  </script>    
+</head>
+<body>
+<h2 style="font-size:30px !important;">Company</h2><br/>
+<%var companyType=currentNode.session.getNode("/content/master/company/user").userType;
+    for(i in companyType){
+    %>
+      
+           <div class="section">
+       <div class="header"> <%=companyType[i]%>
+         <%if(request.getRemoteUser().replace("@","_").equals(currentNode.getName())){%>
+             <a class="btn btn-primary" style="float:right !important;" 
+                            onclick="openPopUpCompany('<%=request.getContextPath()%>/servlet/common/search.company?keywords=',
+                                                      'Product Mapping', 800, 1000,
+                                                      '<%=companyType[i].replace(/ /g,"")%>')" 
+                                            href="javascript:void(0)">Add</a>
+        <%}%>                                    
+      </div>                                      
+        <%if(currentNodeProvided && currentNode.hasNode("Company")
+                && currentNode.getNode("Company").hasNode(companyType[i])
+                && currentNode.getNode("Company").getNode(companyType[i]).hasNodes()){
+                var companyNode=currentNode.getNode("Company").getNode(companyType[i]).getNodes();
+                %>
+                    <ul>
+                        <%
+                         for(company in companyNode){
+                         %>
+                            <li><%=companyNode[company].getName()%> 
+                                <%if(companyNode[company].hasProperty("verified")){ 
+                                        if(companyNode[company].verified=='true'){
+                                %>
+                                   <span class="verify">verified by Owner.</span>
+                                   
+                                <%
+                                } else if(companyNode[company].verified=='pending'){
+                                %>
+                                <span class="unverify">verification is pending.</span>
+                                <%
+                                } else if(companyNode[company].verified=='false'){
+                                %>
+                                <span class="unverify">rejcted by Company.</span>
+                                <%
+                                }}
+                                %>
+                                <%if(request.getRemoteUser().replace("@","_").equals(currentNode.getName())){%>
+                                    <img id="remove" height="20" style="float:right;" align="middle" alt="Delete" title="Delete Row" 
+                                     src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" 
+                                     onclick="deleteCompany('<%=companyNode[company]%>','<%=companyNode[company].getName()%>',
+                                                            '<%=companyNode[company].getParent().getName()%>',this,'<%=
+                                                            companyNode[company].hasProperty("verified")?
+                                                            companyNode[company].verified:"notValid"%>')"/>
+                                <%}%>                            
+                             </li>
+                            
+                         <%}  
+                         %>
+                    </ul>
+                <%
+                }
+                %> 
+   </div>  
+   <%}%>           
+  <div>
+    <form method="POST" id="formCompany" action="<%=request.getContextPath()%>/content/user/save.mapCompany">
+    <input type="hidden" id="companyValueID" name="companyValues" />
+    <input type="hidden" id="nodeNameID" name="mapType"  />
+    <input type="hidden" name="userId"  value="<%=currentNode.getName()%>" />   
+    <input type="hidden" id="validate" name="validate"  />  
+     
+    </form>
+   </div> 
+</body>
+</html>

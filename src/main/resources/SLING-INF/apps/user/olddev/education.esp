@@ -1,0 +1,148 @@
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null); 
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+  postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<html>
+<head>
+<script>
+		function setTitleValue(v){
+			var title=v.replace(/ /g,"");
+			document.getElementById("title").value=title;
+		
+		}
+</script>
+</head>
+<body>
+<form  method="POST"  action="<%=request.getContextPath()%>/content/user/save.edu">
+<input type="hidden" name="title" id="title" value="<%= getCurrentNodeValue("title") %>" />
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="form">
+<tr>
+<td colspan="2"><label>School</label><input name="school"   class="span3 pull-left" value="<%=getCurrentNodeValue("school")%>"   /></td></tr><tr>
+<td width="50%"><label>Degree</label><input name="degree" class="span3 pull-left" value="<%=getCurrentNodeValue("degree")%>" onblur="setTitleValue(this.value)" /></td>
+<td width="50%"><label>School Location</label><input name="location" class="span3 pull-left" value="<%=getCurrentNodeValue("location")%>"  /></td></tr><tr>
+</tr>
+
+
+<td><label>From Date</label><br />
+ <select name="toMonth" style="width:48px !important;">
+ 	<option value="">MM</option>
+                                            <%
+                                               for(i=1;i<=12;i++) {
+                                               if(getCurrentNodeValue("toMonth")==i){
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+</select>
+
+
+
+
+
+ <select name="toDate" style="width:60px !important;">
+ 	<option value="">Year</option>
+                                            <%
+                                               for(i=1950;i<=2050;i++) {
+                                               if(getCurrentNodeValue("toDate")==i){
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+                                                    <%  }} %>
+                                                         </select>
+
+
+
+</td>
+<td><label>To Date</label><br />
+ <select name="endMonth" style="width:48px !important;">
+                                            <option value="">MM</option>
+                                            <%
+                                               for(i=1;i<=12;i++) {
+                                               if(getCurrentNodeValue("endMonth")==i){
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+ </select>
+
+
+
+ <select name="endDate" style="width:60px !important;">
+ 					<option value="">Year</option>
+                                            <%
+                                               for(i=1950;i<=2050;i++) {
+                                               if(getCurrentNodeValue("endDate")==i){
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+                                                         </select></td>
+
+
+</tr>
+	<tr>
+			<td><label>Percentage</label><input name="grade"  value="<%=getCurrentNodeValue("grade")%>" class="span3 pull-left" /></td>
+	
+		<td><label>Activity</label><input name="activity" value="<%=getCurrentNodeValue("activity")%>"  class="span3 pull-left" /></td>
+	</tr>
+<tr><td colspan="2"><label>Additional Notes</label><textarea name="additionalNotes"  cols="30" rows="2" class="span3 pull-left" ><%=getCurrentNodeValue("additionalNotes")%></textarea></td></tr>
+
+<%
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+
+
+%>
+<input name="redirect" type="hidden" value="<%=param%>"/>
+<tr><td><input type="submit" value="Add Education" class="btn btn-primary" /></td>
+<td><a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" class="btn btn-warning" >Cancel</a>
+
+                </td></tr>
+ 
+</table>
+</form>
+</body>
+</html>

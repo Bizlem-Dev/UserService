@@ -1,0 +1,75 @@
+
+<div class="tab-two">
+              <ul class="nav nav-tabs" id="myTab">
+                <li class="active"><a data-toggle="tab" href="#facebook">People Visited to your profile</a></li>
+               
+              </ul>
+
+              <div class="tab-content" id="myTabContent">
+                <div id="facebook" class="tab-pane fade active in">
+                  <div class="content-tab2 mCustomScrollbar">
+                    <div class="tab-three-12">
+                    
+                      
+<%currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));%>
+                      <div class="people-visited">
+<%
+var visitorNode;
+var userNode;
+var dateNode;
+var timeNode;
+var visitNodes;
+var visitorType='false';
+if(currentNode.hasNode("Visitor") && currentNode.getNode("Visitor").hasProperty("visitorName")){
+visitNodes =  currentNode.getNode("Visitor").getProperty("visitorName").getValues();
+for( var i= 0;i<visitNodes.length;i++){
+    //out.print(visitNodes[i].getString());
+    userNode=currentNode.session.getRootNode().getNode("content/user/"+visitNodes[i].getString());
+    if(userNode.hasNode("Privacy") && userNode.getNode("Privacy").hasNode("Identity")
+      && userNode.getNode("Privacy").getNode("Identity").hasProperty("visitorPrivacy")
+      && userNode.getNode("Privacy").getNode("Identity")
+         .getProperty("visitorPrivacy").getString() =='annonymous'){
+              visitorType='true';
+              
+    }
+    visitorNode=currentNode.getNode("Visitor").getNode(visitNodes[i].getString());
+    dateNode = visitorNode.getNodes();
+    timeNode=dateNode[dateNode.length-1].getNodes();
+    %>
+  <div class="tumbnail-login">
+                        <div class="thumbnail">
+                         
+         <%if(visitorType=='true'){%>
+                    <img src="<%=request.getContextPath()%>/apps/css/images/nmg.jpg" style="width:121px;height:130px" />
+        <h3>Annonymous</h3> 
+        <% }else{%>
+             <img src="<%=userNode.profileImage?userNode.profileImage:request.getContextPath()+
+                                "/apps/images/nmg.jpg"%>" class="visitor-picture" style="width:121px;height:130px"/> 
+              <div class="caption">
+                            <h3 style="text-align: center"><a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" > <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%></a></h3>
+                            
+                           
+         <%}%> 
+         <p style="width: 100%;float: left;overflow: hidden;display: block;white-space: nowrap;text-overflow: ellipsis;"><%=timeNode[timeNode.length-1].date%><br /><%=timeNode[timeNode.length-1].time%> </p>
+         <!--<p><a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" class="btn btn-outline">view</a></p>-->
+     </div>
+                        </div>
+                      </div>
+   <%
+   }
+}else{
+out.println("Nobody has visit your profile yet.");
+}
+%> </div>
+                      
+      
+                    </div>
+
+
+                  </div>
+                </div>
+                
+              </div>
+
+            </div>
+              

@@ -1,0 +1,1155 @@
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null);
+//out.print(currentNode); 
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+  postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<html>
+<head>
+
+<script>
+            jQuery(document).ready(function($) {
+            	$(".chosen-container").css("width","100%");
+            });
+
+		function setTitleValue(v){
+			var title=v.replace(/ /g,"");
+			document.getElementById("title").value=title;
+		
+		}
+		
+		function onkeyupForSchoolName1(id1,count) {
+        		document.getElementById("schoolId"+count).value = "";
+                var a = document.getElementById("school"+count).value;
+                //if (a.length > 3) {
+                    var value = document.getElementById("school"+count).value;
+                    while (value.indexOf(" ") > -1) {
+                        value = value.replace(" ", "+");
+                    }
+                    var  param=["paravalue","paraname","path","isparent"];
+					var  isparent="0,0,0";
+					var paramValue=[value, "name,location,id", "/content/school/",isparent];
+						UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+						console.log(data);
+						var parsed=JSON.parse(data);
+						console.log(parsed);
+						var sugData="";
+						for(var i=0;i<parsed.length;i++){
+							sugData=sugData+"<a href='javascript:void(0)' id='sugIdSchool"+i+"' title='"+parsed[i].name+"' style='color:black' onclick='selectValSchool1(this.id,"+parsed[i].id+",this.title," + count + ")' ><b>"+parsed[i].name+"<b><br>"+parsed[i].location+"</a></br>";
+                        }
+						
+                        $("#suggestionSchool"+count).css('visibility', 'visible');
+                        $("#suggestionSchool"+count).css('border-style', 'outset');
+
+
+                        $("#suggestionSchool"+count).hide();
+                        $("#suggestionSchool"+count).fadeIn('slow');
+                        $("#searchSchool"+count).html(sugData);
+                        var offsetHeight = document.getElementById('suggestionSchool'+count).offsetHeight;
+                        //alert("after---"+offsetHeight);
+                        if (offsetHeight > 80)
+                        {
+                            $("#suggestionSchool"+count).css('overflow-y', 'auto');
+                            $("#suggestionSchool"+count).css('height', '80px');
+                        }
+                    });
+
+                //}
+            }
+        	
+        	function selectValSchool1(id,value,name,count) {
+                document.getElementById("school"+count).value = name;
+                document.getElementById("schoolId"+count).value = value;
+                $("#suggestionSchool"+count).hide();
+            }
+		
+		
+		
+		function onkeyupForStreamName1(id1,count) {
+        		document.getElementById("activityId"+count).value = "";
+                var a = document.getElementById("activity"+count).value;
+                //if (a.length > 3) {
+                    var value = document.getElementById("activity"+count).value;
+                    while (value.indexOf(" ") > -1) {
+                        value = value.replace(" ", "+");
+                    }
+                    var  param=["paravalue","paraname","path","isparent"];
+					var  isparent="0,0";
+					var paramValue=[value, "streamName,id", "/content/stream/",isparent];
+						UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+						console.log(data);
+						var parsed=JSON.parse(data);
+						console.log(parsed);
+						var sugData="";
+						for(var i=0;i<parsed.length;i++){
+							
+							sugData=sugData+"<a href='javascript:void(0)' id='sugIdStreamId"+i+"' style='color:black' onclick='selectValStream1(this.id,"+parsed[i].id+"," + count + ")' >"+parsed[i].streamName+"</a></br>";
+                        }
+						
+                        $("#suggestionStream"+count).css('visibility', 'visible');
+                        $("#suggestionStream"+count).css('border-style', 'outset');
+
+
+                        $("#suggestionStream"+count).hide();
+                        $("#suggestionStream"+count).fadeIn('slow');
+                        $("#searchStream"+count).html(sugData);
+                        var offsetHeight = document.getElementById('suggestionStream'+count).offsetHeight;
+                        //alert("after---"+offsetHeight);
+                        if (offsetHeight > 80)
+                        {
+                            $("#suggestionStream"+count).css('overflow-y', 'auto');
+                            $("#suggestionStream"+count).css('height', '80px');
+                        }
+                    });
+
+                //}
+            }
+        	
+        	function selectValStream1(id, value1,count) {
+                document.getElementById("activity"+count).value = document.getElementById(id).innerHTML;
+                document.getElementById("activityId"+count).value = value1;
+                $("#suggestionStream"+count).hide();
+            }
+		
+		
+		function onkeyupForDegreeName1(id1,count) {
+        		document.getElementById("idDegree"+count).value = "";
+                var a = document.getElementById("degree"+count).value;
+                //if (a.length > 3) {
+                    var value = document.getElementById("degree"+count).value;
+                    while (value.indexOf(" ") > -1) {
+                        value = value.replace(" ", "+");
+                    }
+                    var  param=["paravalue","paraname","path","isparent"];
+					var  isparent="0,0";
+					var paramValue=[value, "name,id", "/content/degree/",isparent];
+						UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+						console.log(data);
+						var parsed=JSON.parse(data);
+						console.log(parsed);
+						var sugData="";
+						for(var i=0;i<parsed.length;i++){
+       
+                            sugData=sugData+"<a href='javascript:void(0)' id='strdegree"+i+"'  style='color:black' onclick='selectValDegree1(this.id,"+parsed[i].id+"," + count + ")' >"+parsed[i].name+"</a></br>";
+                        }
+							
+                        $("#suggestionDegree"+count).css('visibility', 'visible');
+                        $("#suggestionDegree"+count).css('border-style', 'outset');
+
+
+                        $("#suggestionDegree"+count).hide();
+                        $("#suggestionDegree"+count).fadeIn('slow');
+                        $("#searchDegree"+count).html(sugData);
+                        var offsetHeight = document.getElementById('suggestionDegree'+count).offsetHeight;
+                        //alert("after---"+offsetHeight);
+                        if (offsetHeight > 80)
+                        {
+                            $("#suggestionDegree"+count).css('overflow-y', 'auto');
+                            $("#suggestionDegree"+count).css('height', '80px');
+                        }
+                    });
+
+                //}
+            }
+        	
+        	function selectValDegree1(id, value1,count) {
+                document.getElementById("degree"+count).value = document.getElementById(id).innerHTML;
+                document.getElementById("idDegree"+count).value = value1;
+                $("#suggestionDegree"+count).hide();
+            }
+		
+		
+			function eduFormSubmit(){
+			
+			var toMonth1 = document.getElementsByName("toMonth").length;
+			
+			for(var i = 0;i<toMonth1;i++){
+			
+			var toMonth = document.getElementsByName("toMonth")[i].value;
+			
+			var toDate = document.getElementsByName("toDate")[i].value;
+			var endMonth = document.getElementsByName("endMonth")[i].value;
+			var endDate = document.getElementsByName("endDate")[i].value;
+			if(parseInt(toDate) > parseInt(endDate)){
+			alert("from date should be less than to date");
+			return "false";	
+			}else if(parseInt(toDate) == parseInt(endDate)){ 
+			if(parseInt(toMonth) > parseInt(endMonth)){
+			alert("from date should be less than to date");
+			return "false";
+			}else{
+				if (document.getElementsByName("degree")[i].value != "") {
+                		if(document.getElementsByName("degree")[i].value != "" && document.getElementsByName("idDegree")[i].value == ""){
+         					var value = document.getElementsByName("degree")[i].value;
+         					//alert(value);       			
+										var valueRes = value+","+"0";
+
+                        	$.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/common/search.inrichme',
+                            data: {
+                            path:"/content/degree/",
+                            propertyvalue:valueRes,
+                            propertyname:"name,id",
+                            isparent:"0,0",
+                            searchTextvalue:value,
+                            isExist:"0"
+                            },
+                            async:false,
+                            success: function(data) {
+                            				
+                                			console.log(data);
+                        					if(data.indexOf("~") != "-1"){
+                        						var dataRes = data.split("~");
+                        						if(dataRes[0] == "exist"){
+                        						var existParsed = JSON.parse(dataRes[1]);
+                        						console.log("exists==="+existParsed[0].id);
+                        						document.getElementsByName("idDegree")[i].value = existParsed[0].id; 
+                        						document.getElementsByName("degree")[i].value = existParsed[0].name;
+                        						}else if(dataRes[0] == "success"){
+                        						var successParsed = JSON.parse(dataRes[1]);
+                        						console.log("success==="+successParsed[0].id);
+                        						document.getElementsByName("idDegree")[i].value = successParsed[0].id;
+                        						document.getElementsByName("degree")[i].value = successParsed[0].name;
+                        						}else{
+                        						console.log("facing some issue");
+                        						}
+
+                        					
+                        					}
+
+                                
+                            }
+                        });
+                        				
+                			
+                		}
+                    }else{
+                    document.getElementsByName("idDegree")[i].value = "";
+                    }
+				
+					if (document.getElementsByName("activity")[i].value != "") {
+					//alert("if1");
+                		if(document.getElementsByName("activity")[i].value != "" && document.getElementsByName("activityId")[i].value == ""){
+         		//	alert("if2");
+         					var value = document.getElementsByName("activity")[i].value;
+         					//alert(value);       			
+										var valueRes = value+","+"0";
+
+                        				$.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/common/search.inrichme',
+                            data: {
+                            path:"/content/stream/",
+                            propertyvalue:valueRes,
+                            propertyname:"streamName,id",
+                            isparent:"0,0",
+                            searchTextvalue:value,
+                            isExist:"0"
+                            },
+                            async:false,
+                            success: function(data) {
+                            //	alert(data);			
+                                			console.log(data);
+                        					if(data.indexOf("~") != "-1"){
+                        						var dataRes = data.split("~");
+                        						if(dataRes[0] == "exist"){
+                        						var existParsed = JSON.parse(dataRes[1]);
+                        						console.log("exists==="+existParsed[0].id);
+                        						document.getElementsByName("activityId")[i].value = existParsed[0].id; 
+                        						document.getElementsByName("activity")[i].value = existParsed[0].streamName;
+                        						}else if(dataRes[0] == "success"){
+                        						var successParsed = JSON.parse(dataRes[1]);
+                        						console.log("success==="+successParsed[0].id);
+                        						document.getElementsByName("activityId")[i].value = successParsed[0].id;
+                        						document.getElementsByName("activity")[i].value = successParsed[0].streamName;
+                        						}else{
+                        						console.log("facing some issue");
+                        						}
+
+                        					
+                        					}
+
+                                
+                            }
+                        });
+                        				
+                			
+                		}
+                    }else{
+                    document.getElementsByName("activityId")[i].value = "";
+                    }
+				
+								
+				if (document.getElementsByName("school")[i].value != "") {
+                		if(document.getElementsByName("school")[i].value != "" && document.getElementsByName("schoolId")[i].value == ""){
+         					var value = document.getElementsByName("school")[i].value;
+         					//alert(value);       			
+										var valueRes = value+","+" "+","+" "+","+"0";
+
+                        	$.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/common/search.inrichme',
+                            data: {
+                            path:"/content/school/",
+                            propertyvalue:valueRes,
+                            propertyname:"name,university,location,id",
+                            isparent:"0,0,0,0",
+                            searchTextvalue:value,
+                            isExist:"0"
+                            },
+                            async:false,
+                            success: function(data) {
+                            				
+                                			console.log(data);
+                        					if(data.indexOf("~") != "-1"){
+                        						var dataRes = data.split("~");
+                        						if(dataRes[0] == "exist"){
+                        						var existParsed = JSON.parse(dataRes[1]);
+                        						console.log("exists==="+existParsed[0].id);
+                        						document.getElementsByName("schoolId")[i].value = existParsed[0].id; 
+                        						document.getElementsByName("school")[i].value = existParsed[0].name;
+                        						}else if(dataRes[0] == "success"){
+                        						var successParsed = JSON.parse(dataRes[1]);
+                        						console.log("success==="+successParsed[0].id);
+                        						document.getElementsByName("schoolId")[i].value = successParsed[0].id;
+                        						document.getElementsByName("school")[i].value = successParsed[0].name;
+                        						}else{
+                        						console.log("facing some issue");
+                        						}
+
+                        					
+                        					}
+
+                                
+                            }
+                        });
+                        				
+                			
+                		}
+                    }else{
+                    document.getElementsByName("schoolId")[i].value = "";
+                    }
+				
+				
+				
+				}
+			}else{
+				if (document.getElementsByName("degree")[i].value != "") {
+                		if(document.getElementsByName("degree")[i].value != "" && document.getElementsByName("idDegree")[i].value == ""){
+         					var value = document.getElementsByName("degree")[i].value;
+         					//alert(value);       			
+										var valueRes = value+","+"0";
+
+                        	$.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/common/search.inrichme',
+                            data: {
+                            path:"/content/degree/",
+                            propertyvalue:valueRes,
+                            propertyname:"name,id",
+                            isparent:"0,0",
+                            searchTextvalue:value,
+                            isExist:"0"
+                            },
+                            async:false,
+                            success: function(data) {
+                            				
+                                			console.log(data);
+                        					if(data.indexOf("~") != "-1"){
+                        						var dataRes = data.split("~");
+                        						if(dataRes[0] == "exist"){
+                        						var existParsed = JSON.parse(dataRes[1]);
+                        						console.log("exists==="+existParsed[0].id);
+                        						document.getElementsByName("idDegree")[i].value = existParsed[0].id; 
+                        						document.getElementsByName("degree")[i].value = existParsed[0].name;
+                        						}else if(dataRes[0] == "success"){
+                        						var successParsed = JSON.parse(dataRes[1]);
+                        						console.log("success==="+successParsed[0].id);
+                        						document.getElementsByName("idDegree")[i].value = successParsed[0].id;
+                        						document.getElementsByName("degree")[i].value = successParsed[0].name;
+                        						}else{
+                        						console.log("facing some issue");
+                        						}
+
+                        					
+                        					}
+
+                                
+                            }
+                        });
+                        				
+                			
+                		}
+                    }else{
+                    document.getElementsByName("idDegree")[i].value = "";
+                    }
+				
+					if (document.getElementsByName("activity")[i].value != "") {
+					//alert("if1");
+                		if(document.getElementsByName("activity")[i].value != "" && document.getElementsByName("activityId")[i].value == ""){
+         		//	alert("if2");
+         					var value = document.getElementsByName("activity")[i].value;
+         					//alert(value);       			
+										var valueRes = value+","+"0";
+
+                        				$.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/common/search.inrichme',
+                            data: {
+                            path:"/content/stream/",
+                            propertyvalue:valueRes,
+                            propertyname:"streamName,id",
+                            isparent:"0,0",
+                            searchTextvalue:value,
+                            isExist:"0"
+                            },
+                            async:false,
+                            success: function(data) {
+                            //	alert(data);			
+                                			console.log(data);
+                        					if(data.indexOf("~") != "-1"){
+                        						var dataRes = data.split("~");
+                        						if(dataRes[0] == "exist"){
+                        						var existParsed = JSON.parse(dataRes[1]);
+                        						console.log("exists==="+existParsed[0].id);
+                        						document.getElementsByName("activityId")[i].value = existParsed[0].id; 
+                        						document.getElementsByName("activity")[i].value = existParsed[0].streamName;
+                        						}else if(dataRes[0] == "success"){
+                        						var successParsed = JSON.parse(dataRes[1]);
+                        						console.log("success==="+successParsed[0].id);
+                        						document.getElementsByName("activityId")[i].value = successParsed[0].id;
+                        						document.getElementsByName("activity")[i].value = successParsed[0].streamName;
+                        						}else{
+                        						console.log("facing some issue");
+                        						}
+
+                        					
+                        					}
+
+                                
+                            }
+                        });
+                        				
+                			
+                		}
+                    }else{
+                    document.getElementsByName("activityId")[i].value = "";
+                    }
+				
+								
+								if (document.getElementsByName("school")[i].value != "") {
+                		if(document.getElementsByName("school")[i].value != "" && document.getElementsByName("schoolId")[i].value == ""){
+         					var value = document.getElementsByName("school")[i].value;
+         					//alert(value);       			
+										var valueRes = value+","+" "+","+" "+","+"0";
+
+                        	$.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/common/search.inrichme',
+                            data: {
+                            path:"/content/school/",
+                            propertyvalue:valueRes,
+                            propertyname:"name,university,location,id",
+                            isparent:"0,0,0,0",
+                            searchTextvalue:value,
+                            isExist:"0"
+                            },
+                            async:false,
+                            success: function(data) {
+                            				
+                                			console.log(data);
+                        					if(data.indexOf("~") != "-1"){
+                        						var dataRes = data.split("~");
+                        						if(dataRes[0] == "exist"){
+                        						var existParsed = JSON.parse(dataRes[1]);
+                        						console.log("exists==="+existParsed[0].id);
+                        						document.getElementsByName("schoolId")[i].value = existParsed[0].id; 
+                        						document.getElementsByName("school")[i].value = existParsed[0].name;
+                        						}else if(dataRes[0] == "success"){
+                        						var successParsed = JSON.parse(dataRes[1]);
+                        						console.log("success==="+successParsed[0].id);
+                        						document.getElementsByName("schoolId")[i].value = successParsed[0].id;
+                        						document.getElementsByName("school")[i].value = successParsed[0].name;
+                        						}else{
+                        						console.log("facing some issue");
+                        						}
+
+                        					
+                        					}
+
+                                
+                            }
+                        });
+                        				
+                			
+                		}
+                    }else{
+                    document.getElementsByName("schoolId")[i].value = "";
+                    }
+				
+				
+				
+				
+				}
+				}
+	  		document.getElementById('eduForm').submit();
+			
+		}
+
+		
+		 function onkeyupForDegreeName(id1){
+		 document.getElementById("idDegree").value = "";
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0,0";
+    var paramValue=[value, "name,id", "/content/degree/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='strdegree"+i+"'  style='color:black' onclick='selectValDegree(this.id,"+parsed[i].id+")' >"+parsed[i].name+"</a></br>";
+        }
+        
+     $("#suggestionDegree").css('visibility', 'visible');
+     $("#suggestionDegree").css('border-style', 'outset');
+     
+     
+    $("#suggestionDegree").hide();
+    $("#suggestionDegree").fadeIn('slow');
+    $("#searchDegree").html(sugData);
+     var offsetHeight = document.getElementById('suggestionDegree').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionDegree").css('overflow-y', 'auto');
+     $("#suggestionDegree").css('height', '80px');
+    }
+        }); 
+        }
+function selectValDegree(id,degId){
+document.getElementById("degree").value = document.getElementById(id).innerHTML; 
+document.getElementById("idDegree").value = degId;
+$("#suggestionDegree").hide();
+}
+
+
+		 function onkeyupForStreamName(id1){
+		 document.getElementById("activityId").value = "";
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0,0";
+    var paramValue=[value, "streamName,id", "/content/stream/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdStream"+i+"' style='color:black' onclick='selectValStream(this.id,"+parsed[i].id+")' >"+parsed[i].streamName+"</a></br>";
+        }
+        
+     $("#suggestionStream").css('visibility', 'visible');
+     $("#suggestionStream").css('border-style', 'outset');
+     
+     
+    $("#suggestionStream").hide();
+    $("#suggestionStream").fadeIn('slow');
+    $("#searchStream").html(sugData);
+     var offsetHeight = document.getElementById('suggestionStream').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionStream").css('overflow-y', 'auto');
+     $("#suggestionStream").css('height', '80px');
+    }
+        }); 
+        }
+function selectValStream(id,value){
+document.getElementById("activity").value = document.getElementById(id).innerHTML; 
+document.getElementById("activityId").value = value;
+$("#suggestionStream").hide();
+}
+
+function onkeyupForSchoolName(id1){
+document.getElementById("schoolId").value = "";
+        var value=document.getElementById(id1).value;
+        var schId = document.getElementById("degreeId").value;
+       // alert(schId);
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0,0,0";
+     var paramValue;
+     paramValue=[value, "name,location,id", "/content/school/",isparent];
+    // if(schId == "postSchool"){
+    // paramValue=[value, "collegeName", "/content/school/"+schId+"/",isparent];
+    //}else if(schId == "preSchool"){
+    // paramValue=[value, "schoolName", "/content/school/"+schId+"/",isparent];
+   // }
+   // alert(paramValue);
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+       sugData=sugData+"<a href='javascript:void(0)' id='sugIdSchool"+i+"' title='"+parsed[i].name+"' style='color:black' onclick='selectValSchool(this.id,"+parsed[i].id+",this.title)' ><b>"+parsed[i].name+"<b><br>"+parsed[i].location+"</a></br>";
+      
+      // if(schId == "postSchool"){
+       // sugData=sugData+"<a href='javascript:void(0)' id='sugIdSchool"+i+"' style='color:black' onclick='selectValSchool(this.id)' >"+parsed[i].collegeName+"</a></br>";
+       // }else if(schId == "preSchool"){
+      //  sugData=sugData+"<a href='javascript:void(0)' id='sugIdSchool"+i+"' style='color:black' onclick='selectValSchool(this.id)' >"+parsed[i].schoolName+"</a></br>";
+      //  }
+        
+        }
+        
+     $("#suggestionSchool").css('visibility', 'visible');
+     $("#suggestionSchool").css('border-style', 'outset');
+     
+     
+    $("#suggestionSchool").hide();
+    $("#suggestionSchool").fadeIn('slow');
+    $("#searchSchool").html(sugData);
+     var offsetHeight = document.getElementById('suggestionSchool').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionSchool").css('overflow-y', 'auto');
+     $("#suggestionSchool").css('height', '80px');
+    }
+        }); 
+        }
+function selectValSchool(id,value,name){
+document.getElementById("school").value = name;
+document.getElementById("schoolId").value = value; 
+$("#suggestionSchool").hide();
+}
+
+		 function onkeyupForUniName(id1){
+		 document.getElementById("boardId").value = "";
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0,0";
+    var paramValue=[value, "uniName,id", "/content/university/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+         sugData=sugData+"<a href='javascript:void(0)' id='sugIdUni"+i+"' style='color:black' onclick='selectValUni(this.id,"+parsed[i].id+")' >"+parsed[i].uniName+"</a></br>";
+        }
+        
+     $("#suggestionUni").css('visibility', 'visible');
+     $("#suggestionUni").css('border-style', 'outset');
+     
+     
+    $("#suggestionUni").hide();
+    $("#suggestionUni").fadeIn('slow');
+    $("#searchUni").html(sugData);
+     var offsetHeight = document.getElementById('suggestionUni').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionUni").css('overflow-y', 'auto');
+     $("#suggestionUni").css('height', '80px');
+    }
+        }); 
+        }
+function selectValUni(id,value){
+document.getElementById("board").value = document.getElementById(id).innerHTML;
+document.getElementById("boardId").value = value;  
+$("#suggestionUni").hide();
+}	
+
+ function onkeyupForLocationName(id1){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value, "distatename", "/content/address/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+         sugData=sugData+"<a href='javascript:void(0)' id='sugIdLocation"+i+"' style='color:black' onclick='selectValLocation(this.id)' >"+parsed[i].distatename+"</a></br>";
+        }
+        
+     $("#suggestionLocation").css('visibility', 'visible');
+     $("#suggestionLocation").css('border-style', 'outset');
+     
+     
+    $("#suggestionLocation").hide();
+    $("#suggestionLocation").fadeIn('slow');
+    $("#searchLocation").html(sugData);
+     var offsetHeight = document.getElementById('suggestionLocation').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionLocation").css('overflow-y', 'auto');
+     $("#suggestionLocation").css('height', '80px');
+    }
+        }); 
+        }
+function selectValLocation(id){
+document.getElementById("location").value = document.getElementById(id).innerHTML; 
+$("#suggestionLocation").hide();
+}		
+</script>
+
+<script type="text/javascript">
+<%var currentNode1 = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@", "_"));
+if(currentNode1.hasNode("Education") && currentNode1.getNode("Education").hasNodes()){%>
+                                                                        var globalcountEdu=1+<%=currentNode1.getNode("Education").getNodes().length%>;
+                                                                        <%}else{
+                                                                        %>
+                                                                        var globalcountEdu=1;
+                                                                        <%}%>
+                                                                                $(document).ready(function() {
+                                                                                    var addDivEdu = $('#educationdiv');
+//                                                                                    var iEdu = parseInt($('#educationdiv').size()) + 1;
+                                                                                    //alert(addDiv+"~~~~"+i);
+                                                                                    $('#addFormEdu').on('click', function() {
+                                                                                   // alert("inside");
+                                                                                   	var iEdu = globalcountEdu++; 
+                                                                                      $("<div class='row remove2" + iEdu + "' id='removeFormEdu'><hr style='border-top:1px solid;width:96%'><div class='col-md-8 col-xs-12'><div class='form-group'><div class='col-sm-6'><label for=''>Degree</label><input type='text' onkeyup='onkeyupForDegreeName1(this.id," + iEdu + ")' id='degree" + iEdu + "' name='degree' class='form-control' placeholder='Degree' value='' onblur='setTitleValue(this.value)'><input type='hidden' onkeyup='onkeyupForDegreeName(this.id)' id='degreeId' name='degreeId' class='form-control' placeholder='Degree'><input type='hidden' id='idDegree" + iEdu + "' name='idDegree' class='form-control' placeholder='Degree' value=''><div id='suggestionDegree" + iEdu + "'  style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchDegree" + iEdu + "'></div></div></div><div class='col-sm-6'><label for=''>Stream</label><input type='text' onkeyup='onkeyupForStreamName1(this.id," + iEdu + ")' id='activity" + iEdu + "' name='activity' value='' class='form-control' placeholder='Stream'><input type='hidden' id='activityId" + iEdu + "' name='activityId' value='' class='form-control' placeholder='Activity'><div id='suggestionStream" + iEdu + "'  style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchStream" + iEdu + "'></div></div></div></div><div class='form-group'><div class='col-sm-12'><label for=''>School/College</label><input type='text' onkeyup='onkeyupForSchoolName1(this.id," + iEdu + ")' name='school' id='school" + iEdu + "' class='form-control' placeholder='School/College' value=''><input type='hidden'  name='schoolId' id='schoolId" + iEdu + "' class='form-control' placeholder='School/College' value=''><div id='suggestionSchool" + iEdu + "'  style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchSchool" + iEdu + "'></div></div></div></div><div class='form-group'><div class='col-sm-6'><div class='row'><label class='col-sm-12' for=''>From Date</label><div class='col-xs-6'><select data-placeholder='MM' name='toMonth' id='toMonth' class='form-control chosen-select'><option value=''>MM</option><%for(i=1;i<=12;i++){%><option value='<%=i%>'><%=i%></option><%}%></select></div><div class='col-xs-6'><select data-placeholder='YY' name='toDate' id='toDate' class='form-control chosen-select'><option value=''>Year</option><%for(i=1950;i<=2050;i++) {%><option value='<%=i%>'><%=i%></option><%}%></select></div></div></div><div class='col-sm-6'><div class='row'><label class='col-sm-12' for=''>To Date</label><div class='col-xs-6'><select data-placeholder='MM' name='endMonth' id='endMonth' class='form-control chosen-select'><option value=''>MM</option><%for(i=1;i<=12;i++) {%><option value='<%=i%>'><%=i%></option><%}%></select></div><div class='col-xs-6'><select data-placeholder='YY' name='endDate' id='endDate' class='form-control chosen-select'><option value=''>Year</option><%for(i=1950;i<=2050;i++) {%><option value='<%=i%>'><%=i%></option>   <% } %></select></div></div></div></div><div class='form-group'><div class='col-sm-12'><label for=''>Achievements</label><textarea class='form-control' name='additionalNotes' placeholder='Additional Notes'></textarea></div></div></div><div class='col-xs-2'><span id='remFormEdu' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDivEdu);
+
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remFormEdu', function() {
+                                                                                        $(this).parents('#removeFormEdu').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+
+</head>
+<body>
+<%if(currentNode.hasNode(request.getParameter("id"))){
+  currentNode = currentNode.getNode(request.getParameter("id"));
+   }else{
+   }%>
+<%
+var currentNode1 = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@", "_"));
+if(currentNode1.hasNode("Education") && currentNode1.getNode("Education").hasNodes()){
+var eduNodes = currentNode1.getNode("Education").getNodes();
+%>
+
+<form  method="POST" id="eduForm"  action="<%=request.getContextPath()%>/content/user/save.edu">
+<input type="hidden" name="title" id="title" value="<%= currentNode.title?currentNode.title:"" %>" />
+<div  id="educationdiv">
+<%
+var counte = 0;
+for(var e=0 ; e<eduNodes.length ; e++){
+counte++;
+%>
+       
+<div class='row remove2<%=counte%>' id='removeFormEdu'>
+   <%if(e == 0){%>
+                 <%}else{%>                
+  <hr style='border-top:1px solid;width:96%'>
+  <%}%>
+<div class="col-md-8 col-xs-10">
+	<div class="form-group">
+      						<div class="col-sm-6">
+      							<label for="">Degree</label>
+      							<%
+      							var valueDeg = "";
+      							var valueDegId = "";
+      							//out.print(eduNodes[i]);
+      							if(eduNodes[e].hasProperty("degree")){
+      							var degreeId = eduNodes[e].getProperty("degree").getString();
+      							//out.print(degreeId);
+      							var degreeNod = currentNode.session.getRootNode().getNode("content").getNode("degree");
+      							//out.print(degreeNod);
+      							if(degreeNod.hasNode(degreeId)){
+      							var degreeNode = currentNode.session.getRootNode().getNode("content").getNode("degree").getNode(degreeId);
+      							valueDeg = degreeNode.name;
+								valueDegId = degreeNode.id;
+      							}
+      							}
+      							%>
+      							<input type="text" onkeyup="onkeyupForDegreeName1(this.id,<%=e%>)" id="degree<%=e%>" name="degree" class="form-control" placeholder="Degree" value="<%=valueDeg%>" onblur="setTitleValue(this.value)">
+      							<input type="hidden" onkeyup="onkeyupForDegreeName(this.id)" id="degreeId<%=e%>" name="degreeId" class="form-control" placeholder="Degree">
+      							<input type="hidden" id="idDegree<%=e%>" name="idDegree" class="form-control" placeholder="Degree" value="<%=valueDegId%>">
+      													<div id="suggestionDegree<%=e%>"  style="width: 90%;z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchDegree<%=e%>"></div>
+ </div>
+      						</div>
+      						<div class="col-sm-6">
+      							<label for="">Stream</label>
+      							<%
+      							var valueAct = "";
+      							var valueId = "";
+      							if(eduNodes[e].hasProperty("activity")){
+      							var activityId = eduNodes[e].getProperty("activity").getString();
+      							var streamNode = currentNode.session.getRootNode().getNode("content").getNode("stream");
+      							if(streamNode.hasNode(activityId)){
+      							var activityNode = currentNode.session.getRootNode().getNode("content").getNode("stream").getNode(activityId);
+      							valueAct = activityNode.streamName;
+								valueId = activityNode.id;
+      							}
+      							}
+      							%>
+      							<input type="text" onkeyup="onkeyupForStreamName1(this.id,<%=e%>)" id="activity<%=e%>" name="activity" value="<%=valueAct%>" class="form-control" placeholder="Stream">
+      							<input type="hidden" id="activityId<%=e%>" name="activityId" value="<%=valueId%>" class="form-control" placeholder="Activity">
+      							<div id="suggestionStream<%=e%>"  style="width: 90%;z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchStream<%=e%>"></div>
+ </div>
+      						</div>
+      						
+      					</div>
+<div class="form-group">
+      						<div class="col-sm-12">
+      							<label for="">School/College</label>
+      							<%
+      							var valueSch = "";
+      							var valueSclId = "";
+      							if(eduNodes[e].hasProperty("school")){
+      							var schoolId = eduNodes[e].getProperty("school").getString();
+      							var schoolNode = currentNode.session.getRootNode().getNode("content").getNode("school");
+      							if(schoolNode.hasNode(schoolId)){
+      							var schNode = currentNode.session.getRootNode().getNode("content").getNode("school").getNode(schoolId);
+      							valueSch = schNode.name;
+								valueSclId = schNode.id;
+      							}
+      							}
+      							%>
+      							<input type="text" onkeyup="onkeyupForSchoolName1(this.id,<%=e%>)" name="school" id="school<%=e%>" class="form-control" placeholder="School/College" value="<%=valueSch%>">
+      							<input type="hidden"  name="schoolId" id="schoolId<%=e%>" class="form-control" placeholder="School/College" value="<%=valueSclId%>">
+      							<div id="suggestionSchool<%=e%>" style="width: 90%;z-index:1;position:absolute;background:white">
+  								<div class="searchterm" id="searchSchool<%=e%>"></div>
+ 								</div>
+      						</div>
+      					</div>
+
+      				
+					
+					      					<div class="form-group">
+      						<div class="col-sm-6">
+      							<div class="row">
+      								<label class="col-sm-12" for="">From Date</label>
+      								<div class="col-xs-6">
+      								
+      									<select data-placeholder="MM" name="toMonth" id="toMonth" class="form-control chosen-select">
+  	<option value="">MM</option>
+                                            <%
+                                            
+                                               for(i=1;i<=12;i++) {
+                                               if(eduNodes[e].getProperty("toMonth").getString() == i){
+                                               
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+                                                                							</select>
+      								</div>
+      								<div class="col-xs-6">
+      									<select data-placeholder="YY" name="toDate" id="toDate" class="form-control chosen-select">
+              								<option value="">Year</option>
+                                            <%
+                                               for(i=1950;i<=2050;i++) {
+                                               if(eduNodes[e].getProperty("toDate").getString() == i){
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+                                                    <%  }} %>
+              							</select>
+      								</div>
+      							</div>
+      						</div>
+      						<div class="col-sm-6">
+      							<div class="row">
+      								<label class="col-sm-12" for="">To Date</label>
+      								<div class="col-xs-6">
+      									<select data-placeholder="MM" name="endMonth" id="endMonth" class="form-control chosen-select">
+              						                                          <option value="">MM</option>
+                                            <%
+                                               for(i=1;i<=12;i++) {
+                                               if(eduNodes[e].getProperty("endMonth").getString()==i){
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+              							</select>
+      								</div>
+      								<div class="col-xs-6">
+      									<select data-placeholder="YY" name="endDate" id="endDate" class="form-control chosen-select">
+  					<option value="">Year</option>
+                                            <%
+                                               for(i=1950;i<=2050;i++) {
+                                               if(eduNodes[e].getProperty("endDate").getString()==i){
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+                                                                							</select>
+      								</div>
+      							</div>
+      						</div>
+      					</div>
+					
+      					
+      					<div class="form-group">
+      						<div class="col-sm-12">
+      							<label for="">Achievements</label>
+      							<textarea class="form-control" name="additionalNotes" placeholder="Additional Notes"><%=eduNodes[e].additionalNotes?eduNodes[e].additionalNotes:""%></textarea>
+      						</div>
+      					</div>
+						
+						</div>
+						
+						
+                 
+                 <%if(e == 0){%>
+                 <div class='col-xs-2'><span id="addFormEdu" class="glyphicon glyphicon-plus btn btn-default"></span></span></div>
+                 <%}else{%>
+                 <div class='col-xs-2'><span id="remFormEdu" class="glyphicon glyphicon-minus btn btn-default"></span></span></div>
+                 <%}%>
+                  </div>
+        
+  <%}%>        
+     
+  	</div>	 
+
+<%
+//out.print(postPath);
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+//var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+var param = request.getParameter("id");
+//out.print(param);
+
+%>
+<div class="col-xs-12">
+<input name="redirect" type="hidden" value="<%=param%>"/>
+						<a href="javascript:void()" onclick="eduFormSubmit()" class="btn btn-primary">Add Education</a>
+<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" class="btn btn-warning" >Cancel</a>
+					</div>
+
+
+</form>
+<%}else{%>
+
+<form  method="POST" id="eduForm"  action="<%=request.getContextPath()%>/content/user/save.edu">
+<input type="hidden" name="title" id="title" value="<%= currentNode.title?currentNode.title:"" %>" />
+<div  id="educationdiv">
+
+<div class="col-md-8 col-xs-12">
+	<div class="form-group">
+      						<div class="col-sm-6">
+      							<label for="">Degree</label>
+
+      							<input type="text" onkeyup="onkeyupForDegreeName(this.id)" id="degree" name="degree" class="form-control" placeholder="Degree" value="" onblur="setTitleValue(this.value)">
+      							<input type="hidden" onkeyup="onkeyupForDegreeName(this.id)" id="degreeId" name="degreeId" class="form-control" placeholder="Degree">
+      							<input type="hidden" id="idDegree" name="idDegree" class="form-control" placeholder="Degree" value="">
+      													<div id="suggestionDegree"  style="width: 90%;z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchDegree"></div>
+ </div>
+      						</div>
+      						<div class="col-sm-6">
+      							<label for="">Stream</label>
+      	
+      							<input type="text" onkeyup="onkeyupForStreamName(this.id)" id="activity" name="activity" value="" class="form-control" placeholder="Stream">
+      							<input type="hidden" id="activityId" name="activityId" value="" class="form-control" placeholder="Activity">
+      							<div id="suggestionStream"  style="width: 90%;z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchStream"></div>
+ </div>
+      						</div>
+      						
+      					</div>
+<div class="form-group">
+      						<div class="col-sm-12">
+      							<label for="">School/College</label>
+      							<input type="text" onkeyup="onkeyupForSchoolName(this.id)" name="school" id="school" class="form-control" placeholder="School/College" value="">
+      							<input type="hidden" onkeyup="onkeyupForSchoolName(this.id)" name="schoolId" id="schoolId" class="form-control" placeholder="School/College" value="">
+      													<div id="suggestionSchool"  style="width: 90%;z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchSchool"></div>
+ </div>
+      						</div>
+      										</div>
+
+      				
+					
+					      					<div class="form-group">
+      						<div class="col-sm-6">
+      							<div class="row">
+      								<label class="col-sm-12" for="">From Date</label>
+      								<div class="col-xs-6">
+      								
+      									<select data-placeholder="MM" name="toMonth" id="toMonth" class="form-control chosen-select">
+  	<option value="">MM</option>
+                                            <%
+                                            
+                                               for(i=1;i<=12;i++) {
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  } %>
+                                                                							</select>
+      								</div>
+      								<div class="col-xs-6">
+      									<select data-placeholder="YY" name="toDate" id="toDate" class="form-control chosen-select">
+              								<option value="">Year</option>
+                                            <%
+                                               for(i=1950;i<=2050;i++) {
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+                                                    <%  } %>
+              							</select>
+      								</div>
+      							</div>
+      						</div>
+      						<div class="col-sm-6">
+      							<div class="row">
+      								<label class="col-sm-12" for="">To Date</label>
+      								<div class="col-xs-6">
+      									<select data-placeholder="MM" name="endMonth" id="endMonth" class="form-control chosen-select">
+              						                                          <option value="">MM</option>
+                                            <%
+                                               for(i=1;i<=12;i++) {
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  } %>
+              							</select>
+      								</div>
+      								<div class="col-xs-6">
+      									<select data-placeholder="YY" name="endDate" id="endDate" class="form-control chosen-select">
+  					<option value="">Year</option>
+                                            <%
+                                               for(i=1950;i<=2050;i++) {
+                                                %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <% } %>
+                                                                							</select>
+      								</div>
+      							</div>
+      						</div>
+      					</div>
+					
+      					
+      					<div class="form-group">
+      						<div class="col-sm-12">
+      							<label for="">Achievements</label>
+      							<textarea class="form-control" name="additionalNotes" placeholder="Additional Notes"></textarea>
+      						</div>
+      					</div>
+						
+						</div>
+						
+                 
+                 <div class='col-xs-2'><span id="addFormEdu" class="glyphicon glyphicon-plus btn btn-default"></span></span></div>
+                 
+                  </div> 
+            
+  	
+  	 
+
+<%
+//out.print(postPath);
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+//var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+var param = request.getParameter("id");
+//out.print(param);
+
+%>
+<div class="col-xs-12">
+<input name="redirect" type="hidden" value="<%=param%>"/>
+						<a href="javascript:void()" onclick="eduFormSubmit()" class="btn btn-primary">Add Education</a>
+<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" class="btn btn-warning" >Cancel</a>
+					</div>
+
+
+</form>
+
+
+<%}%>
+</body>
+</html>

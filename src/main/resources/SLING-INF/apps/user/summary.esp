@@ -1,0 +1,261 @@
+<html>
+<head>
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null); 
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+    postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<script language="javascript">
+    var counts;
+    function addRow(tableID) {
+        
+        
+        var table = document.getElementById(tableID);
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        counts = rowCount - 1;
+        
+
+        
+        var cell2 = row.insertCell(0);  
+        var rate = document.createElement("input");
+        rate.type = "text";
+        rate.name = "skill";
+        rate.setAttribute("class", "");
+        rate.id = "jsp_" + counts
+        + "__rate";
+        cell2.appendChild(rate);
+        
+        
+        
+        var cell3 = row.insertCell(1);
+        var selector = document.createElement('select');
+        selector.id = 'selBidReceivedIsPM';
+        selector.name = 'level';
+        cell3.appendChild(selector);
+        var option = '';
+        option = document.createElement('option');
+        for(var i = 0;i<=10;i++){  
+        option = document.createElement('option');
+        option.value = i;
+        option.appendChild(document.createTextNode(i));
+        selector.appendChild(option);
+       	}
+        
+        var cell1 = row.insertCell(2);
+        var skill = document.createElement("label");
+        skill.id = "jsp_" + counts
+                + "__skill";
+        skill.setAttribute("class", "");
+        cell1.appendChild(skill);       
+    }
+
+    function deleteRow(guestList) {
+        try {
+            var table = document.getElementById(guestList);
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                table.deleteRow(rowCount - 1);
+            }
+        } catch (e) {
+            alert(e);
+        }
+    }
+
+
+</script>
+</head>
+<body>
+
+    <form method="POST" id="proSumForm" action="<%=request.getContextPath() %>/content/user/save.su">
+        <input type="hidden" name="title" value="ProfessionalSummary" />
+        
+        
+        <div class="col-xs-12">
+
+                  		<div class="form-group" style="display:none">
+      						<div class="col-sm-12">
+      							<label for="">Professional Summary</label>
+      							<textarea name="goals" class="form-control" placeholder="Professional Summary"><%= getCurrentNodeValue("goals") %></textarea>
+      						</div>
+      					</div>
+
+      					<div class="form-group" style="display:none">
+      						<div class="col-sm-12">
+      							<label for="">Specialities</label>
+      							<textarea name="specialities" class="form-control" placeholder="Specialities"><%= getCurrentNodeValue("specialities") %></textarea>
+      						</div>
+      					</div>
+
+      					<div class="form-group" style="margin-bottom: 0px;">
+          					<div class="col-sm-10">
+          						<script type="text/javascript">
+								    $(document).ready(function () {
+								    var addDiv = $('#keywordList-axpe');
+								    var i = parseInt($('#keywordList-axpe .row').size()) + 1;
+								    $('#addNew4').on('click', function() {
+								        $("<div class='row remove2"+ i +"' id='remove4'><div class='col-xs-4'><input class='form-control' type='text' name='skill' placeholder='Skill Type'></div><div class='col-xs-3'><select name='skillexp' class='form-control'><option value='0'>0</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option></select></div><div class='col-xs-3'><select name='level' class='form-control'><option value='0'>0</option><option value='1'>1</option><option value='2'>2</option><option value='3'>3</option><option value='4'>4</option><option value='5'>5</option><option value='6'>6</option><option value='7'>7</option><option value='8'>8</option><option value='9'>9</option><option value='10'>10</option></select></div><div class='col-xs-2'><span id='remNew4' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+								    });
+
+								    $(document).on('click','#remNew4', function() {
+								            $(this).parents('#remove4').remove();
+								    });
+								});
+								    </script>
+								<div id="keywordList-axpe">
+								<div class="row">
+									<label class="col-xs-4">Skill Expertise</label>
+									<label class="col-xs-3">No of Month Exp (Upto 10)</label>
+									<label class="col-xs-3">Rate (Upto 10)</label>
+								</div>
+								
+								      <%
+                           if( currentNodeProvided && currentNode.hasProperty("skill") && currentNode.getProperty("skill").getDefinition().isMultiple() ){
+                          
+                           var skillValue=getCurrentNodeValue("skill");
+                           var levelValue=getCurrentNodeValue("level");
+                           var skillexp = getCurrentNodeValue("skillexp");
+                           for(j in skillValue)
+                           {
+                         %>
+								
+	                            <div class="row remove2" id='remove4' style="margin-bottom: 15px;">
+	                      
+	                                <div class="col-xs-4"><input type="text" class="form-control" placeholder="Skill Type" name="skill" value="<%=skillValue[j]%>"></input></div>
+	                                 <div class="col-xs-3">
+	                                	<select class="form-control" name="skillexp">
+          								                                          <%
+                                                
+                                               for(i=0;i<=10;i++) {
+                                               if(i==skillexp[j]){
+                                               out.println(i);
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+          							</select>
+	                                </div>
+	                                <div class="col-xs-3">
+	                                	<select class="form-control" name="level">
+          								                                          <%
+                                                
+                                               for(i=0;i<=10;i++) {
+                                               if(i==levelValue[j]){
+                                               out.println(i);
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+          							</select>
+	                                </div>
+	                                <%if(j == 0){%>
+	                                <div class="col-xs-2"><span id="addNew4" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+	                                <%}else{%>
+	                                <div class='col-xs-2'><span id='remNew4' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+	                                <%}%>
+	                            </div>     
+	                                <%}} else {%>
+	                            <div class="row remove2" id='remove4' style="margin-bottom: 15px;">
+	                      
+	                                <div class="col-xs-4"><input type="text" class="form-control" placeholder="Skill Type" name="skill" value="<%=getCurrentNodeValue("skill")%>"></input></div>
+	                                <div class="col-xs-3">
+	                                	<select class="form-control" name="skillexp">
+          								                                          <%
+                                                
+                                               for(i=0;i<=10;i++) {
+                                               if(i==getCurrentNodeValue("skillexp")){
+                                               out.println(i);
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+          							</select>
+	                                </div>
+	                                                               <div class="col-xs-3">
+	                                	<select class="form-control" name="level">
+          								                                          <%
+                                                
+                                               for(i=0;i<=10;i++) {
+                                               if(i==getCurrentNodeValue("level")){
+                                               out.println(i);
+                                               %>
+                                                   <option value="<%=i%>" selected="selected" ><%=i%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=i%>"><%=i%></option>   
+  
+                                                    <%  }} %>
+          							</select>
+	                                </div>
+	                                <div class="col-xs-2"><span id="addNew4" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+	                            </div>                                
+	                        <%}%>        
+	                                
+	                                
+	                           
+	                        </div>
+
+          					</div>
+          					</div>
+
+
+
+                  	</div>
+        
+        
+                           <%
+                    var path=postPath;
+                    var last=path.lastIndexOf("/");
+                    var redirect=path.substring(0,path.lastIndexOf("/"));
+                    //var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+                    var param = request.getRemoteUser().replace("@","_"); 
+                    
+                    %>
+                    <input name="redirect" type="hidden" value="<%=param%>"/>
+                          	<div class="col-xs-12">
+						<a href="javascript:void()" onclick="document.getElementById('proSumForm').submit();" class="btn btn-primary">Save Changes</a>
+						<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" class="btn btn-warning">Cancel</a>
+					</div>
+             
+
+        
+    </form>
+</body>
+</html>

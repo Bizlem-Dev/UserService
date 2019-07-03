@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <%load("../common/links.esp");%>
+    
+
+  <%load("../common/header.esp");%>
+
+
+<!--<script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/js/datetimepicker/bootstrap-datetimepicker.min.js"></script>
+<link href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/js/datetimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet">
+
+<script type='text/javascript' src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/js/flot/jquery.flot.js"></script>
+<script type='text/javascript' src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/js/flot/jquery.flot.pie.js"></script>-->
+
+
+
+
+
+<style type="text/css">
+@charset "utf-8";
+/* CSS Document */
+</style>
+<section class="admin-dashbord">
+
+    <div class="container">
+        <div class="tab-admin">
+            <ul class="nav nav-tabs" id="myTab">
+                <li class="active"><a data-toggle="tab" href="#contact">Services</a></li>
+                <li><a data-toggle="tab" href="#people">Traffic Summary</a></li>
+                <li><a data-toggle="tab" href="#vendor">Lead Summary</a></li>
+                <li><a data-toggle="tab" href="#customer">Revenue Summary</a></li>
+                </ul>
+            <div class="tab-content">
+                <div id="people" class="tab-pane fade">
+                    <div class="admin-content-tab">
+                        <div class="well well-sm">
+                            <h3>Traffic Summary</h3>
+                            <div class="row list-form-group">
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label for="">Start Date</label>
+                                        <div class="input-append input-group date datetimepicker">
+                                          <input class="form-control" size="16" type="text" value="">
+                                          <span class="add-on input-group-addon">
+                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                          </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label for="">Start End</label>
+                                        <div class="input-append input-group date datetimepicker">
+                                          <input class="form-control" size="16" type="text" value="">
+                                          <span class="add-on input-group-addon">
+                                            <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                          </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div class="form-group">
+                                        <label for="">Select Services</label>
+                                    <select data-placeholder="Select Services" class="chosen-select form-control" tabindex="5">
+                                        <option value=""></option>
+                                        <optgroup label="NFC EAST">
+                                            <option>Dallas Cowboys</option>
+                                            <option>New York Giants</option>
+                                            <option>Philadelphia Eagles</option>
+                                            <option>Washington Redskins</option>
+                                            <optgroup>
+                                                <optgroup label="NFC NORTH">
+                                                    <option>Chicago Bears</option>
+                                                    <option>Detroit Lions</option>
+                                                    <option>Green Bay Packers</option>
+                                                    <option>Minnesota Vikings</option>
+                                                </optgroup>
+                                                <optgroup label="NFC SOUTH">
+                                                    <option>Atlanta Falcons</option>
+                                                    <option>Carolina Panthers</option>
+                                                    <option>New Orleans Saints</option>
+                                                    <option>Tampa Bay Buccaneers</option>
+                                                </optgroup>
+                                                <optgroup label="NFC WEST">
+                                                    <option>Arizona Cardinals</option>
+                                                    <option>St. Louis Rams</option>
+                                                    <option>San Francisco 49ers</option>
+                                                    <option>Seattle Seahawks</option>
+                                                </optgroup>
+                                                <optgroup label="AFC EAST">
+                                                    <option>Buffalo Bills</option>
+                                                    <option>Miami Dolphins</option>
+                                                    <option>New England Patriots</option>
+                                                    <option>New York Jets</option>
+                                                </optgroup>
+                                                <optgroup label="AFC NORTH">
+                                                    <option>Baltimore Ravens</option>
+                                                    <option>Cincinnati Bengals</option>
+                                                    <option>Cleveland Browns</option>
+                                                    <option>Pittsburgh Steelers</option>
+                                                </optgroup>
+                                                <optgroup label="AFC SOUTH">
+                                                    <option>Houston Texans</option>
+                                                    <option>Indianapolis Colts</option>
+                                                    <option>Jacksonville Jaguars</option>
+                                                    <option>Tennessee Titans</option>
+                                                </optgroup>
+                                                <optgroup label="AFC WEST">
+                                                    <option>Denver Broncos</option>
+                                                    <option>Kansas City Chiefs</option>
+                                                    <option>Oakland Raiders</option>
+                                                    <option>San Diego Chargers</option>
+                                                </optgroup>
+                                            </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 filter-btn">
+                                    <div class="form-group">
+                                        <a href="#" class="btn btn-primary pull-left"><i class="fa fa-search"></i> Filter</a>
+                                    </div>
+                                </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4 col-xs-12">
+                                <div class="placeholder4 demo-placeholder"></div>
+                                        </div>
+                                        <div class="col-sm-4 col-xs-12">
+                                <div class="placeholder5 demo-placeholder"></div>   
+                                        </div>
+                                        <div class="col-sm-4 col-xs-12">
+                                <div class="placeholder6 demo-placeholder"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="vendor" class="tab-pane fade">
+                            <div class="admin-content-tab">
+                                <div class="well well-sm">
+                                    <h3>Lead Summary</h3>
+                                    <div class="row list-form-group">
+                                        <div class="col-sm-3 col-xs-6 custom-width">
+                                            <div class="form-group">
+                                                <label for="">Start Date</label>
+                                                <div class="input-append input-group date datetimepicker">
+                                                  <input class="form-control" size="16" type="text" value="">
+                                                  <span class="add-on input-group-addon">
+                                                    <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                  </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 col-xs-6 custom-width">
+                                            <div class="form-group">
+                                                <label for="">Start End</label>
+                                                <div class="input-append input-group date datetimepicker">
+                                                  <input class="form-control" size="16" type="text" value="">
+                                                  <span class="add-on input-group-addon">
+                                                    <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                  </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 col-xs-6 custom-width">
+                                            <div class="form-group">
+                                                <label for="">Select Services</label>
+                                            <select data-placeholder="Select Services" class="chosen-select form-control">
+                                                <option value=""></option>
+                                                <option>Dallas Cowboys</option>
+                                                <option>New York Giants</option>
+                                                <option>Philadelphia Eagles</option>
+                                                <option>Washington Redskins</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 col-xs-6 custom-width filter-btn">
+                                            <div class="form-group">
+                                                <a href="#" class="btn btn-primary pull-left"><i class="fa fa-search"></i> Filter</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4 col-xs-12">
+                                <div class="placeholder7 demo-placeholder"></div>
+                                        </div>
+                                        <div class="col-sm-4 col-xs-12">
+                                <div class="placeholder8 demo-placeholder"></div>  
+                                        </div>
+                                        <div class="col-sm-4 col-xs-12">
+                                <div class="placeholder9 demo-placeholder"></div>
+                                        </div>
+                                        <div class="col-sm-12 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-shopping-cart"></i>
+                                                            <h2 class="pull-right">0</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-shopping-cart"></i>
+                                                            <h2 class="pull-right">0</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-shopping-cart"></i>
+                                                            <h2 class="pull-right">0</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-shopping-cart"></i>
+                                                            <h2 class="pull-right">0</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="customer" class="tab-pane fade">
+                            <div class="admin-content-tab">
+                                <div class="well well-sm">
+                                    <h3>Lead Summary</h3>
+                                    <div class="row list-form-group">
+                                        <div class="col-sm-3 col-xs-6 custom-width">
+                                            <div class="form-group">
+                                                <label for="">Start Date</label>
+                                                <div class="input-append input-group date datetimepicker">
+                                                  <input class="form-control" size="16" type="text" value="">
+                                                  <span class="add-on input-group-addon">
+                                                    <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                  </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 col-xs-6 custom-width">
+                                            <div class="form-group">
+                                                <label for="">Start End</label>
+                                                <div class="input-append input-group date datetimepicker">
+                                                  <input class="form-control" size="16" type="text" value="">
+                                                  <span class="add-on input-group-addon">
+                                                    <i data-time-icon="glyphicon glyphicon-time" data-date-icon="glyphicon glyphicon-calendar"></i>
+                                                  </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 col-xs-6 custom-width">
+                                            <div class="form-group">
+                                                <label for="">Select Services</label>
+                                            <select data-placeholder="Select Services" class="chosen-select form-control">
+                                                <option value=""></option>
+                                                <option>Dallas Cowboys</option>
+                                                <option>New York Giants</option>
+                                                <option>Philadelphia Eagles</option>
+                                                <option>Washington Redskins</option>
+                                            </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3 col-xs-6 custom-width filter-btn">
+                                            <div class="form-group">
+                                                <a href="#" class="btn btn-primary pull-left"><i class="fa fa-search"></i> Filter</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4 col-xs-12">
+                                            
+                                        <div class="placeholder demo-placeholder"></div>
+                                        </div>
+                                        <div class="col-sm-4 col-xs-12">
+                                            
+                                <div class="placeholder2 demo-placeholder"></div>  
+                                        </div>
+                                        <div class="col-sm-4 col-xs-12">
+                                            
+                                <div class="placeholder3 demo-placeholder"></div>
+                                        </div>
+                                        <div class="col-sm-12 col-xs-12">
+                                            <div class="row">
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-shopping-cart"></i>
+                                                            <h2 class="pull-right">1.2K</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-shopping-cart"></i>
+                                                            <h2 class="pull-right">17.3K</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-user"></i>
+                                                            <h2 class="pull-right">2.2.K</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-xs-6 custom-width">
+                                                    <div class="tile">
+                                                        <div class="tile-heading">Total Orders <span class="pull-right">
+                                                        0%</span></div>
+                                                        <div class="tile-body"><i class="fa fa-user"></i>
+                                                            <h2 class="pull-right">2.2K</h2>
+                                                        </div>
+                                                        <div class="tile-footer"><a href="#">View more...</a></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+  
+                        <div id="contact" class="tab-pane fade active in">
+                            <div class="admin-content-tab">
+                                <div class="well well-sm">
+                                    <h3><i class="fa fa-bar-chart"></i> Services</h3>
+                                    <div class="table-responsive" id="contactService" onload="getServices()" >
+                                        <table class="table table-bordered">
+
+ <thead>
+                                                <tr>
+                                                    <th>Service Name</th>
+                                                    <th>Service Plan</th>
+                                                    <th>Quantity</th>
+                                                    <th>Consumed Quantity</th>
+                                                    <th>Starts Date</th>
+                                                    <th>End Date</th>
+                                                    <th>Status Active</th>
+                                                    <th>Paid Amount</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+
+					
+
+					<%
+					   var customerDetails = request
+					            .getAttribute("services");
+					             var actionurl="";
+					        //    out.print(customerDetails);
+     		 		for(var i=0; i<customerDetails.size(); i++)
+  						 {
+  				    var CustomerMap=customerDetails.get(i);
+     
+   					  
+       
+					%>
+					<tr>
+						<td><%= CustomerMap.get("productCode")%></td>
+						<td><%=CustomerMap.get("productDescription")%></td>
+						
+						<td><%=CustomerMap.get("quantity")%></td>	
+						<td><%=CustomerMap.get("consumptionQuantity")%></td>
+						<td><%=CustomerMap.get("serviceStartDate")%></td>
+						<td><%=CustomerMap.get("serviceEndDate")%></td>			
+							 <td class="text-center">
+			 			<% if(CustomerMap.get("status").equals("active")){
+			 				%>
+ 							<span class="label label-success">active</span>
+						<%}else{%>
+							<span class="label label-danger">Inactive</span>
+			 			 <%}%></td>
+                         <td>120.00</td>
+                         <td class="text-center">
+                         <% if(!CustomerMap.get("status").equals("inactive")){
+                         if(CustomerMap.get("status").equals("active") && !CustomerMap.get("url").equals("")){
+			 				%>
+			 				<%if(CustomerMap.get("productCode").equals("RFQ_Service")){%>
+                          <a href="<%=CustomerMap.get("url")%>" data-placement="top" data-toggle="tooltip" data-original-title="View" class="btn btn-primary btn-xs demotool"><i class="fa fa-pencil"></i></a>
+                          <%}else{%>
+                          <a href="<%=request.getContextPath()%>/servlet/service/config.serviceUrl?name=<%= CustomerMap.get("serviceId")%>" data-placement="top" data-toggle="tooltip" data-original-title="Configure" class="btn btn-primary btn-xs demotool"><i class="fa fa-pencil"></i></a>
+                          <a href="<%=request.getContextPath()%>/servlet/service/config.serviceReport?name=<%= CustomerMap.get("serviceId")%>" data-placement="top" data-toggle="tooltip" data-original-title="Report" class="btn btn-primary btn-xs demotool"><i class="fa fa-eye"></i></a>
+                          <%}%>
+                    	
+                    	<%}else{%>
+							<a href="#" data-placement="top" data-toggle="tooltip" data-original-title="Service Already Configured" class="btn btn-primary btn-xs demotool" style="background-color:#27EA1A;border-color:#2e6da4;color:#fff"><i class="fa fa-pencil"></i></a>
+			 			 <%}%>
+			 			 <%}else{%>
+							<a href="#" ><i ></i></a>
+			 			 <%}%>
+						     
+                    	</td>
+					</tr>
+					<%
+					    }
+					%>
+				</table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+      $('.datetimepicker').datetimepicker({
+        format: 'dd/MM/yyyy hh:mm:ss',
+        language: 'pt-BR'
+      });
+    </script>
+
+<script type="text/javascript">//&lt;![CDATA[ 
+$(window).load(function(){
+var data = [
+    {
+    label: "Serie1",
+    data: 10,
+    url: "http://stackoverflow.com"},
+{
+    label: "Serie2",
+    data: 30,
+    url: "http://serverfault.com"},
+{
+    label: "Serie3",
+    data: 90,
+    url: "http://superuser.com"},
+{
+    label: "Serie4",
+    data: 70,
+    url: "http://www.google.com"},
+{
+    label: "Serie5",
+    data: 80,
+    url: "http://www.oprah.com"},
+{
+    label: "Serie6",
+    data: 110,
+    url: "http://www.realultimatepower.net/"}
+];
+var options = {
+    series: {
+        pie: {
+            show: true
+        }
+    },
+    grid: {
+        hoverable: true
+    }
+
+};
+
+
+var plot = $.plot($(".placeholder3"), data, options);
+
+});//]]&gt;  
+
+</script>
+
+ <script type='text/javascript'>//<![CDATA[
+    $(function () {
+    var d1 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.25) {
+    d1.push([i, Math.sin(i)]);
+    }
+    var d2 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.25) {
+    d2.push([i, Math.cos(i)]);
+    }
+    var d3 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.1) {
+    d3.push([i, Math.tan(i)]);
+    }
+    $.plot(".placeholder", [
+    { label: "sin(x)", data: d1 },
+    { label: "cos(x)", data: d2 },
+    { label: "tan(x)", data: d3 }
+    ], {
+    series: {
+    lines: { show: true },
+    points: { show: true }
+    },
+    xaxis: {
+    ticks: [
+    0, [ Math.PI/2, "\u03c0/2" ], [ Math.PI, "\u03c0" ],
+    [ Math.PI * 3/2, "3\u03c0/2" ], [ Math.PI * 2, "2\u03c0" ]
+    ]
+    },
+    yaxis: {
+    ticks: 10,
+    min: -2,
+    max: 2,
+    tickDecimals: 3
+    },
+    grid: {
+    backgroundColor: { colors: [ "#fff", "#eee" ] },
+    borderWidth: {
+    top: 1,
+    right: 1,
+    bottom: 2,
+    left: 2
+    }
+    }
+    });
+    // Add the Flot version string to the footer
+    //$("#footer").prepend("Flot " + $.plot.version + " &ndash; ");
+    });
+    </script>
+
+<script type="text/javascript">
+//******* 2012 Average Temperature - BAR CHART
+var data = [[0, 11],[1, 15],[2, 25],[3, 24],[4, 13],[5, 18]];
+var dataset = [{ label: "2012 Average Temperature", data: data, color: "#5482FF" }];
+var ticks = [[0, "London"], [1, "New York"], [2, "New Delhi"], [3, "Taipei"],[4, "Beijing"], [5, "Sydney"]];
+
+var options = {
+    series: {
+        bars: {
+            show: true
+        }
+    },
+    bars: {
+        align: "center",
+        barWidth: 0.5
+    },
+    xaxis: {
+        axisLabel: "World Cities",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 10,
+        ticks: ticks
+    },
+    yaxis: {
+        axisLabel: "Average Temperature",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 3,
+        tickFormatter: function (v, axis) {
+            return v + "°C";
+        }
+    },
+    legend: {
+        noColumns: 0,
+        labelBoxBorderColor: "#000000",
+        position: "nw"
+    },
+    grid: {
+        hoverable: true,
+        borderWidth: 2,
+        backgroundColor: { colors: ["#ffffff", "#EDF5FF"] }
+    }
+};
+
+$(document).ready(function () {
+    $.plot($(".placeholder2"), dataset, options);
+    $(".placeholder2").UseTooltip();
+});
+
+function gd(year, month, day) {
+    return new Date(year, month, day).getTime();
+}
+
+var previousPoint = null, previousLabel = null;
+
+$.fn.UseTooltip = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (item) {
+            if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                previousPoint = item.dataIndex;
+                previousLabel = item.series.label;
+                $("#tooltip").remove();
+
+                var x = item.datapoint[0];
+                var y = item.datapoint[1];
+
+                var color = item.series.color;
+
+                //console.log(item.series.xaxis.ticks[x].label);                
+
+                showTooltip(item.pageX,
+                item.pageY,
+                color,
+                "<strong>" + item.series.label + "</strong><br>" + item.series.xaxis.ticks[x].label + " : <strong>" + y + "</strong> °C");
+            }
+        } else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
+};
+
+function showTooltip(x, y, color, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y - 40,
+        left: x - 120,
+        border: '2px solid ' + color,
+        padding: '3px',
+        'font-size': '9px',
+        'border-radius': '5px',
+        'background-color': '#fff',
+        'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+        opacity: 0.9
+    }).appendTo("body").fadeIn(200);
+}
+</script>
+
+
+<!--   ===================     ===========================   -->
+
+<script type="text/javascript">//&lt;![CDATA[ 
+$(window).load(function(){
+var data = [
+    {
+    label: "Serie1",
+    data: 10,
+    url: "http://stackoverflow.com"},
+{
+    label: "Serie2",
+    data: 30,
+    url: "http://serverfault.com"},
+{
+    label: "Serie3",
+    data: 90,
+    url: "http://superuser.com"},
+{
+    label: "Serie4",
+    data: 70,
+    url: "http://www.google.com"},
+{
+    label: "Serie5",
+    data: 80,
+    url: "http://www.oprah.com"},
+{
+    label: "Serie6",
+    data: 110,
+    url: "http://www.realultimatepower.net/"}
+];
+var options = {
+    series: {
+        pie: {
+            show: true
+        }
+    },
+    grid: {
+        hoverable: true
+    }
+
+};
+
+
+var plot = $.plot($(".placeholder4"), data, options);
+
+});//]]&gt;  
+
+</script>
+
+ <script type='text/javascript'>//<![CDATA[
+    $(function () {
+    var d1 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.25) {
+    d1.push([i, Math.sin(i)]);
+    }
+    var d2 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.25) {
+    d2.push([i, Math.cos(i)]);
+    }
+    var d3 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.1) {
+    d3.push([i, Math.tan(i)]);
+    }
+    $.plot(".placeholder5", [
+    { label: "sin(x)", data: d1 },
+    { label: "cos(x)", data: d2 },
+    { label: "tan(x)", data: d3 }
+    ], {
+    series: {
+    lines: { show: true },
+    points: { show: true }
+    },
+    xaxis: {
+    ticks: [
+    0, [ Math.PI/2, "\u03c0/2" ], [ Math.PI, "\u03c0" ],
+    [ Math.PI * 3/2, "3\u03c0/2" ], [ Math.PI * 2, "2\u03c0" ]
+    ]
+    },
+    yaxis: {
+    ticks: 10,
+    min: -2,
+    max: 2,
+    tickDecimals: 3
+    },
+    grid: {
+    backgroundColor: { colors: [ "#fff", "#eee" ] },
+    borderWidth: {
+    top: 1,
+    right: 1,
+    bottom: 2,
+    left: 2
+    }
+    }
+    });
+    // Add the Flot version string to the footer
+    //$("#footer").prepend("Flot " + $.plot.version + " &ndash; ");
+    });
+    </script>
+
+<script type="text/javascript">
+//******* 2012 Average Temperature - BAR CHART
+var data = [[0, 11],[1, 15],[2, 25],[3, 24],[4, 13],[5, 18]];
+var dataset = [{ label: "2012 Average Temperature", data: data, color: "#5482FF" }];
+var ticks = [[0, "London"], [1, "New York"], [2, "New Delhi"], [3, "Taipei"],[4, "Beijing"], [5, "Sydney"]];
+
+var options = {
+    series: {
+        bars: {
+            show: true
+        }
+    },
+    bars: {
+        align: "center",
+        barWidth: 0.5
+    },
+    xaxis: {
+        axisLabel: "World Cities",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 10,
+        ticks: ticks
+    },
+    yaxis: {
+        axisLabel: "Average Temperature",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 3,
+        tickFormatter: function (v, axis) {
+            return v + "°C";
+        }
+    },
+    legend: {
+        noColumns: 0,
+        labelBoxBorderColor: "#000000",
+        position: "nw"
+    },
+    grid: {
+        hoverable: true,
+        borderWidth: 2,
+        backgroundColor: { colors: ["#ffffff", "#EDF5FF"] }
+    }
+};
+
+$(document).ready(function () {
+    $.plot($(".placeholder6"), dataset, options);
+    $(".placeholder6").UseTooltip();
+});
+
+function gd(year, month, day) {
+    return new Date(year, month, day).getTime();
+}
+
+var previousPoint = null, previousLabel = null;
+
+$.fn.UseTooltip = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (item) {
+            if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                previousPoint = item.dataIndex;
+                previousLabel = item.series.label;
+                $("#tooltip").remove();
+
+                var x = item.datapoint[0];
+                var y = item.datapoint[1];
+
+                var color = item.series.color;
+
+                //console.log(item.series.xaxis.ticks[x].label);                
+
+                showTooltip(item.pageX,
+                item.pageY,
+                color,
+                "<strong>" + item.series.label + "</strong><br>" + item.series.xaxis.ticks[x].label + " : <strong>" + y + "</strong> °C");
+            }
+        } else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
+};
+
+function showTooltip(x, y, color, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y - 40,
+        left: x - 120,
+        border: '2px solid ' + color,
+        padding: '3px',
+        'font-size': '9px',
+        'border-radius': '5px',
+        'background-color': '#fff',
+        'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+        opacity: 0.9
+    }).appendTo("body").fadeIn(200);
+}
+</script>
+
+
+
+<!--   ===================     ===========================   -->
+
+<script type="text/javascript">//&lt;![CDATA[ 
+$(window).load(function(){
+var data = [
+    {
+    label: "Serie1",
+    data: 10,
+    url: "http://stackoverflow.com"},
+{
+    label: "Serie2",
+    data: 30,
+    url: "http://serverfault.com"},
+{
+    label: "Serie3",
+    data: 90,
+    url: "http://superuser.com"},
+{
+    label: "Serie4",
+    data: 70,
+    url: "http://www.google.com"},
+{
+    label: "Serie5",
+    data: 80,
+    url: "http://www.oprah.com"},
+{
+    label: "Serie6",
+    data: 110,
+    url: "http://www.realultimatepower.net/"}
+];
+var options = {
+    series: {
+        pie: {
+            show: true
+        }
+    },
+    grid: {
+        hoverable: true
+    }
+
+};
+
+
+var plot = $.plot($(".placeholder7"), data, options);
+
+});//]]&gt;  
+
+</script>
+
+ <script type='text/javascript'>//<![CDATA[
+    $(function () {
+    var d1 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.25) {
+    d1.push([i, Math.sin(i)]);
+    }
+    var d2 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.25) {
+    d2.push([i, Math.cos(i)]);
+    }
+    var d3 = [];
+    for (var i = 0; i < Math.PI * 2; i += 0.1) {
+    d3.push([i, Math.tan(i)]);
+    }
+    $.plot(".placeholder8", [
+    { label: "sin(x)", data: d1 },
+    { label: "cos(x)", data: d2 },
+    { label: "tan(x)", data: d3 }
+    ], {
+    series: {
+    lines: { show: true },
+    points: { show: true }
+    },
+    xaxis: {
+    ticks: [
+    0, [ Math.PI/2, "\u03c0/2" ], [ Math.PI, "\u03c0" ],
+    [ Math.PI * 3/2, "3\u03c0/2" ], [ Math.PI * 2, "2\u03c0" ]
+    ]
+    },
+    yaxis: {
+    ticks: 10,
+    min: -2,
+    max: 2,
+    tickDecimals: 3
+    },
+    grid: {
+    backgroundColor: { colors: [ "#fff", "#eee" ] },
+    borderWidth: {
+    top: 1,
+    right: 1,
+    bottom: 2,
+    left: 2
+    }
+    }
+    });
+    // Add the Flot version string to the footer
+    //$("#footer").prepend("Flot " + $.plot.version + " &ndash; ");
+    });
+    </script>
+
+<script type="text/javascript">
+//******* 2012 Average Temperature - BAR CHART
+var data = [[0, 11],[1, 15],[2, 25],[3, 24],[4, 13],[5, 18]];
+var dataset = [{ label: "2012 Average Temperature", data: data, color: "#5482FF" }];
+var ticks = [[0, "London"], [1, "New York"], [2, "New Delhi"], [3, "Taipei"],[4, "Beijing"], [5, "Sydney"]];
+
+var options = {
+    series: {
+        bars: {
+            show: true
+        }
+    },
+    bars: {
+        align: "center",
+        barWidth: 0.5
+    },
+    xaxis: {
+        axisLabel: "World Cities",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 10,
+        ticks: ticks
+    },
+    yaxis: {
+        axisLabel: "Average Temperature",
+        axisLabelUseCanvas: true,
+        axisLabelFontSizePixels: 12,
+        axisLabelFontFamily: 'Verdana, Arial',
+        axisLabelPadding: 3,
+        tickFormatter: function (v, axis) {
+            return v + "°C";
+        }
+    },
+    legend: {
+        noColumns: 0,
+        labelBoxBorderColor: "#000000",
+        position: "nw"
+    },
+    grid: {
+        hoverable: true,
+        borderWidth: 2,
+        backgroundColor: { colors: ["#ffffff", "#EDF5FF"] }
+    }
+};
+
+$(document).ready(function () {
+    $.plot($(".placeholder9"), dataset, options);
+    $(".placeholder9").UseTooltip();
+});
+
+function gd(year, month, day) {
+    return new Date(year, month, day).getTime();
+}
+
+var previousPoint = null, previousLabel = null;
+
+$.fn.UseTooltip = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (item) {
+            if ((previousLabel != item.series.label) || (previousPoint != item.dataIndex)) {
+                previousPoint = item.dataIndex;
+                previousLabel = item.series.label;
+                $("#tooltip").remove();
+
+                var x = item.datapoint[0];
+                var y = item.datapoint[1];
+
+                var color = item.series.color;
+
+                //console.log(item.series.xaxis.ticks[x].label);                
+
+                showTooltip(item.pageX,
+                item.pageY,
+                color,
+                "<strong>" + item.series.label + "</strong><br>" + item.series.xaxis.ticks[x].label + " : <strong>" + y + "</strong> °C");
+            }
+        } else {
+            $("#tooltip").remove();
+            previousPoint = null;
+        }
+    });
+};
+
+function showTooltip(x, y, color, contents) {
+    $('<div id="tooltip">' + contents + '</div>').css({
+        position: 'absolute',
+        display: 'none',
+        top: y - 40,
+        left: x - 120,
+        border: '2px solid ' + color,
+        padding: '3px',
+        'font-size': '9px',
+        'border-radius': '5px',
+        'background-color': '#fff',
+        'font-family': 'Verdana, Arial, Helvetica, Tahoma, sans-serif',
+        opacity: 0.9
+    }).appendTo("body").fadeIn(200);
+}
+$('.demotool').tooltip(options)
+</script>
+
+ <%load("../common/footer.esp");%>
+  
+    </body>
+</html>

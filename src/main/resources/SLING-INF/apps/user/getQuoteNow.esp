@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <%load("../common/links.esp");%>
+        <style>
+
+            .row {
+                margin-left: 0px;
+            }
+        </style>       
+
+
+        <script>
+
+            function openRecomend()
+            {
+                $("#hideFilter").hide();
+                $("#hideFilter1").hide();
+                $("#hideFilter2").hide();
+                $("#preFilter").show();
+                $("#preFilter1").show();
+                $("#preFilter2").show();
+                $("#preFilter3").show();
+                $("#preFilter4").show();
+                $("#preFilter5").show();
+                $("#preFilter6").show();
+                $("#preFilter7").show();
+            }
+
+            function closeRecommend()
+            {
+                $("#hideFilter").show();
+                $("#hideFilter1").show();
+                $("#hideFilter2").show();
+                $("#preFilter").hide();
+                $("#preFilter1").hide();
+                $("#preFilter2").hide();
+                $("#preFilter3").hide();
+                $("#preFilter4").hide();
+                $("#preFilter5").hide();
+                $("#preFilter6").hide();
+                $("#preFilter7").hide();
+            }
+
+            var i = 0;
+            function openFilter() {
+
+                if (i == 0) {
+                    $("#hideFilter").show();
+                    $("#hideFilter1").show();
+                    $("#hideFilter2").show();
+                    i = 1;
+                } else {
+                    $("#hideFilter").hide();
+                    $("#hideFilter1").hide();
+                    $("#hideFilter2").hide();
+                    $("#preFilter").hide();
+                    $("#preFilter1").hide();
+                    $("#preFilter2").hide();
+                    $("#preFilter3").hide();
+                    $("#preFilter4").hide();
+                    $("#preFilter5").hide();
+                    $("#preFilter6").hide();
+                    $("#preFilter7").hide();
+
+                    i = 0;
+                }
+
+            }
+
+            var j = 0;
+            function openOtherReq() {
+
+                if (j == 0) {
+                    $("#hideOthReq").show();
+                    $("#hideOthReq1").show();
+                    $("#hideOthReq2").show();
+                    j = 1;
+                } else {
+                    $("#hideOthReq").hide();
+                    $("#hideOthReq1").hide();
+                    $("#hideOthReq2").hide();
+                    j = 0;
+                }
+
+            }
+
+
+            function fetchPrd() {
+                var prdNode = document.getElementById("productId").value;
+                var vUrl = '<%=request.getContextPath()%>/servlet/exhibition/flash.eventNameSuggetion'
+                $.ajax({
+                    url: vUrl,
+                    data: {"paravalue": prdNode, "paraname": "name", "path": "/content/product/products/", "isparent": "0"
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        var parsed = (JSON.parse(data)).length - 1;
+                        var vData = parsed + " suppliers can give quotations."
+                        $("#quoSupplr").show();
+                        $("#quoSupplr").html(vData);
+                        $("#tellSupplr").hide();
+
+                    },
+                    error: function(data) {
+                        alert("error--" + data);
+                    }
+                });
+            }
+
+            function submitAdd() {
+                var prdNode = document.getElementById("producturl").value;
+                var vUrl = '<%=request.getContextPath()%>/servlet/common/search.fetchthroughurl'
+                $.ajax({
+                    url: vUrl,
+                    data: {"producturl": prdNode},
+                    success: function(data) {
+                        console.log(data);
+                        var d = data.split("888");
+                        if (d != null && d[0] == "success") {
+                            $("#prodtext").html(d[2]);
+                            $("#prodimgae").html(d[3]);
+                            $("#h4title").html(d[1]);
+                            document.getElementById("hidprdname").value = d[1];
+                            document.getElementById("hidprdcat").value = d[4];
+                            document.getElementById("hidprdimage").value = d[3];
+                            
+                            document.getElementById("urlprod").style.display = '';
+                            document.getElementById("urlprod1").style.display = '';
+                        }else{
+                         $("#h4title").html(data);
+                            document.getElementById("urlprod").style.display = 'none';
+                            document.getElementById("urlprod1").style.display = 'none';
+                        }
+                    },
+                    error: function(data) {
+                        alert("error--" + data);
+                    }
+                });
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="pace pace-active" style="display:none;">
+            <div class="pace-progress">
+                <div class="pace-progress-inner"></div>
+            </div>
+            <div class="pace-activity"></div>
+        </div>
+        <%load("../common/header.esp");%>
+
+
+
+
+        <script src="js/chosen/chosen.jquery.js"></script>
+        <link href="js/chosen/chosen.min.css" rel="stylesheet">
+          <%if (request.getParameter('id')!=null && request.getParameter('id').equals("true")){
+        %>
+        <div class="modal fade" id="eventcreated" role="dialog">
+            <div class="modal-dialog">
+
+                <div class="alert alert-success">
+                    <strong>Your requirement have been submitted successfully !!</strong> .
+                </div>
+
+            </div>
+        </div>
+        <%}%>	
+        <script>
+            $(function() {
+                $('.chosen-select').chosen();
+                $('.chosen-select-deselect').chosen({allow_single_deselect: true});                
+                $('#eventcreated').modal('toggle');
+            });
+        </script>
+      
+        <section class="profile_update_page">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="tab-two" style="width: 100%; float: left; margin-bottom: 20px;">
+                            <ul class="nav nav-tabs" id="myTab">
+                                <li class="active"><a data-toggle="tab" href="#breqform">Buying request form</a></li>
+                                <li><a data-toggle="tab" href="#fothsite">From other websites</a></li>
+                            </ul>
+
+                            <div class="tab-content" id="myTabContent">
+
+                                <div id="breqform" class="tab-pane fade active in">
+                                    <h3>Complete Your Buying Request</h3>
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <form  method="POST" action="<%=request.getContextPath()%>/servlet/company/show.savebuyingreq" id="myAddForm" enctype="multipart/form-data">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3"><label for="">Product Name</label></div>
+                                                            <div class="col-sm-9">
+
+                                                                <input  name="prdname" id="productId" type="text" 
+                                                                        value="" onblur="fetchPrd()" class="form-control" placeholder="Key words of product you are looking for">
+                                                                <!--<div id="suggestionsVenue"  style="z-index:1;position: absolute;background: white;width:88%">
+                                                                                                                                                    <div class="searchterm" id="VenueItem"></div>
+                                                                                                                                                    </div>-->
+                                                            </div>
+
+                                                        </div>
+
+
+
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Quantity</label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <input id="ordquant" name="ordquant" type="text" 
+                                                                       value="" class="form-control" placeholder="Estimated Order Quantity">
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <select  class="form-control" name="piece">
+                                                                    <%
+
+                                                                        var pieceNode = currentNode.session.getRootNode().getNode("content").getNode("pieces");
+                                                                        if (pieceNode.hasNodes()) {
+                                                                            var pieceNodes = pieceNode.getNodes();
+                                                                            for (var k = 0; k < pieceNodes.length; k++) {
+                                                                    %>
+                                                                    <option value="<%=pieceNodes[k].id%>" ><%=pieceNodes[k].quantity%></option>
+
+                                                                    <%}
+                                                                        }
+
+                                                                    %>
+
+                                                                </select>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Details</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <textarea name="detailSpec" id="detailSpec" class="form-control" placeholder="Product Detailed Specification"></textarea>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Uploads</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <input type="file" name="filequote" id="filequote" class="form-control" placeholder="Please select a text document ">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <label id="tellSupplr">Tell us your requirements of suppliers</label>
+                                                                <label id="quoSupplr" style="display:none"></label>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <a style="float: right;font-size: 13px;cursor:pointer" onclick="openFilter()">Filter suppliers    <span class="glyphicon glyphicon-chevron-down"></span></a>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group" id="hideFilter" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-9" style="border: 1px solid #dae2ed;">
+                                                                <label>Powerful international trade ability:</label><br>
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">Supports Trade Assurance</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Export Markets: America or Europe</a>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group" id="hideFilter1" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-9" style="border: 1px solid #dae2ed;">
+                                                                <label>Strong production capabilities:</label><br>
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">Annual Sales Volume: Over US$5 Million</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Business Type: Manufacturer</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Company Established: 5 years or more</a>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group" id="hideFilter2" style="display:none">
+                                                            <div class="col-sm-8">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-4">
+                                                                <label for="">Preferred Suppliers </label><a class="btn" onclick="openRecomend()"><span class="glyphicon glyphicon-chevron-right"></span></a>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" id="preFilter" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Business Type</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">Manufacturer</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Trading Company</a>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" id="preFilter1" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Total No. Employees</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">Less Than 5</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">5 or More</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">10 or More</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">20 or More</a>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" id="preFilter2" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Company Established</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">1 year or more</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">5 year or more</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">10 year or more</a>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" id="preFilter3" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Annual Sales Volume</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">Under US$1 Million</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Over US$1 Million</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Over US$2.5 Million</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Over US$5 Million</a>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group" id="preFilter4" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Certifications</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">ISO9001</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">CE</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="preFilter5" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Export Markets</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">North America</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Africa</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Eastern Europe</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">South Asia</a> | <a style="border: 1px solid #dae2ed;font-size: 13px">Middle East</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="preFilter6" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for="">Trade Assurance</label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a style="border: 1px solid #dae2ed;font-size: 13px">Support Trade Assurances</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group" id="preFilter7" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-9">
+                                                                <a class="btn" onclick="closeRecommend()"><span class="glyphicon glyphicon-chevron-left"></span></a><label for="">Recommended Suppliers </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <hr style='width:73%;float:right'>
+
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-6">
+                                                                <label>Other Requirements</label>
+                                                                <span class="font-size:12px;color:#999">Include unit price, payment terms, etc.</span>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <a style="float: right;font-size: 13px;cursor:pointer" onclick="openOtherReq()">Show    <span class="glyphicon glyphicon-chevron-down"></span></a>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group" id="hideOthReq" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <select  class="form-control" name="fob">
+                                                                    <%                                          
+                                                                    var fobNode = currentNode.session.getRootNode().getNode("content").getNode("fob");
+                                                                        if (fobNode.hasNodes()) {
+                                                                            var fobNodes = fobNode.getNodes();
+                                                                            for (var k = 0; k < fobNodes.length; k++) {
+                                                                    %>
+                                                                    <option value="<%=fobNodes[k].id%>" ><%=fobNodes[k].name%></option>
+
+                                                                    <%}
+                                                                        }
+
+                                                                    %>
+
+                                                                </select>
+
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <input id="pup" name="pup" type="text" 
+                                                                       value="" class="form-control" placeholder="Preferred Unit Piece">
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <select  class="form-control" name="price">
+                                                                    <%                                                                                                var curNode = currentNode.session.getRootNode().getNode("content").getNode("currency");
+                                                                        if (curNode.hasNodes()) {
+                                                                            var curNodes = curNode.getNodes();
+                                                                            for (var k = 0; k < curNodes.length; k++) {
+                                                                    %>
+                                                                    <option value="<%=curNodes[k].id%>" ><%=curNodes[k].code%></option>
+
+                                                                    <%}
+                                                                        }
+
+                                                                    %>
+
+                                                                </select>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group" id="hideOthReq1" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-5">
+                                                                <input id="dp" name="dp" type="text" 
+                                                                       value="" class="form-control" placeholder="Destination Port">
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group" id="hideOthReq2" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                            <div class="col-sm-5">
+                                                                <select  class="form-control" name="pterms">
+                                                                    <%                                                                                                
+                                                                    var ptNode = currentNode.session.getRootNode().getNode("content").getNode("paymentterms");
+                                                                        if (ptNode.hasNodes()) {
+                                                                            var ptNodes = ptNode.getNodes();
+                                                                            for (var k = 0; k < ptNodes.length; k++) {
+                                                                    %>
+                                                                    <option value="<%=ptNodes[k].id%>" ><%=ptNodes[k].name%></option>
+
+                                                                    <%}
+                                                                        }
+
+                                                                    %>
+
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <hr style='width:73%;float:right'>
+
+
+                                                        <div class="col-xs-12">
+
+                                                            <input style="margin-left:26%" type="Submit"  class="btn btn-primary"
+                                                                   value="Submit your request" />
+
+
+                                                        </div>         
+
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>                      
+                                    </div>
+                                </div>
+
+                                <div id="fothsite" class="tab-pane fade">
+                                    <h3>Complete Your Buying Request</h3>
+                                    <div class="row">
+                                        <div class="col-sm-10">
+                                            <form  method="POST" action="<%=request.getContextPath()%>/servlet/company/show.savebuyingreq" id="myAddForm">
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-3">
+                                                                <label for=""> Product page URL</label>
+                                                                </div>
+                                                            <div class="col-sm-6">
+                                                                <input  name="producturl" id="producturl" type="text" 
+                                                                        class="form-control" placeholder="http://">
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <input type="button" onclick="submitAdd()" class="btn btn-primary"
+                                                                       value="Load Product Info" />
+                                                                <div id="productdetails" >
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div> 
+                                                        <div class="col-sm-9">
+                                                             <h4 id="h4title"></h4>
+                                                             
+                                                             </div>
+                                                        <div class="form-group" id="urlprod" style="display:none">
+                                                            <div class="col-sm-3">
+                                                                <label for=""></label>
+                                                            </div>
+                                                           
+                                                            
+                                                            <div class="col-sm-9">
+                                                                <div id="prodimgae"></div>
+                                                                <textarea id="prodtext" name="detailSpec" style="width:498px;height:128px"></textarea>
+                                                                </div>
+                                                           </div>
+                                                            </div>
+                                                        </div>
+
+                                                                <div class="form-group" id="urlprod1" style="display:none">
+                                                                    
+                                                                    <div class="col-sm-3">
+                                                                        <label for="">Quantity</label>
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                    <input type="hidden" name="prdname" id="hidprdname" />
+                                                                    <input type="hidden" name="prdcat" id="hidprdcat" />
+                                                                    <input type="hidden" name="prdimg" id="hidprdimage" />
+                                                                    
+                                                                        <input  name="ordquant" type="text" 
+                                                                               value="" class="form-control" placeholder="Estimated Order Quantity">
+                                                                    </div>
+                                                                    <div class="col-sm-4">
+                                                                        <select  class="form-control" name="piece">
+                                                                            <%
+
+                                                                                var pieceNode = currentNode.session.getRootNode().getNode("content").getNode("pieces");
+                                                                                if (pieceNode.hasNodes()) {
+                                                                                    var pieceNodes = pieceNode.getNodes();
+                                                                                    for (var k = 0; k < pieceNodes.length; k++) {
+                                                                            %>
+                                                                            <option value="<%=pieceNodes[k].id%>" ><%=pieceNodes[k].quantity%></option>
+
+                                                                            <%}
+                                                                                }
+
+                                                                            %>
+
+                                                                        </select>
+
+                                                                    </div>
+																	<div class="col-xs-12">
+
+                                                            <input style="margin-left:26%" type="submit"  class="btn btn-primary"
+                                                                   value="Submit your request" />
+
+
+                                                        </div> 
+                                                                </div>     </div>
+
+                                                        </div>
+                                                    </div>
+                                            </form>
+                                        </div>                      
+                                    </div>
+                                </div>
+
+
+
+
+                                <div id="additional-info" class="tab-pane fade" style="display:none">
+                                    <h3>Additional Info</h3>
+                                    <%                                        if (request.getRemoteUser().replace("@", "_").equals(request.getParameter("id"))) {
+
+                                    %>
+                                    <%if (currentNodeProvided) {
+                                            if (currentNode.hasNode("AdditionalInformation")) {
+                                                currentNode = currentNode.getNode("AdditionalInformation");
+                                    %>
+
+                                    <%
+                                        load("info.esp");
+                                        currentNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));
+                                    %>
+
+
+                                    <%} else {%>
+                                    <%load("info.esp");%>
+                                    <%}
+                                        } else {
+                                            load("info.esp");
+                                        }%>
+                                    <%}%>
+                                </div>
+ <div class="col-md-2 col-sm-3 col-xs-12">
+                    <div class="advertise">
+                        <img alt="advertise" src="images/advertise2.jpg">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="tab-three">
+                                <div class="recommeded-conection">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">Recommended Connection</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div>
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xssm-12">
+                            <div class="recommeded-conection">
+                                <div class="tab-three">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">News</h3>
+                                        </div>
+                                        <div class="panel-body">
+                                            <div>
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="recommended-body">
+                                                    <div class="recommended-img">
+                                                        <img src="images/facebook2.png" alt="Add Friend" />
+                                                    </div>
+                                                    <div class="recommended-text">
+                                                        <h5>Testing Name</h5>
+                                                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                          
+                    </div>
+
+                </div>
+				
+				
+               
+          
+    </section>
+        <%load("../common/footer.esp");%>
+        <!-- register Modal End  -->
+
+
+
+    </body>
+</html>

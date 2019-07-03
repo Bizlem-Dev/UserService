@@ -1,0 +1,61 @@
+
+<%
+var	prodNode=request.getAttribute("productslist");
+for(i = 0;i<prodNode.size();i++){
+
+var pdNode=prodNode.get(i);
+pdNode = pdNode.getName();
+pdNode = pdNode.replace(/_/g , "");
+pdNode = currentNode.session.getRootNode().getNode("content").getNode("product").getNode("products").getNode(pdNode);
+%>
+                        <div class="search-list-mobile">
+                            <div class="thumbnail">
+                              <div class="thumb">
+                          <% if(pdNode.hasNode("media")){
+                	if(pdNode.getNode("media").hasNode("images")){
+                		if(pdNode.getNode("media").getNode("images").hasNode()){
+                			var o=pdNode.getNode("media").getNode("images").getNodes();
+                		
+                			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+o[0].imgpath+"'>");
+                		
+ 						
+                		}else{
+                			//String img="<img alt="+"64x64"+" class="+"media-object"+" src="+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg>";
+                			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg'>");
+                		}
+                	}else{
+                		//String img="<img alt="+"64x64"+" class="+"media-object"+" src="+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg>";
+            			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg'>");  	
+                	}
+                	
+                }else{
+                	//String img="<img alt="+"64x64"+" class="+"media-object"+" src="+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg>";
+    			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg'>");  	
+        	} %>
+             
+                              </div>
+                            <div class="caption">
+                              <h3><a href="#"><%=pdNode.name?pdNode.name:""%></a></h3>
+                              <h3><a href="#">Product Code [<%=pdNode.prd_code?pdNode.prd_code:""%>]</a></h3>
+                              <p class="foo1">
+                                  <%=pdNode.discription?pdNode.discription:""%>
+                              </p>
+                            </div>
+                            <div class="all-btn">
+                              <div class="list-check"><input type="checkbox"></div>
+                              <div class="compare"><a data-target=".contactsupplier" data-toggle="modal" class="btn btn-danger" href="#">Compare Now</a></div>
+                              <%if(pdNode.hasNode("spec")){
+                              var pdSpec = pdNode.getNode("spec"); 
+                              %>
+                              <div class="price">Moq: <%=pdSpec.moq%> &nbsp;&nbsp; Price: <%=pdSpec.price%></div>
+                              <input type="hidden" id="<%=pdNode.prd_code?pdNode.prd_code:""%>" value="<%=pdSpec.price%>"/>
+                              <%}%>
+                              <div class="enquery">
+                                <a href="javascript:void(0)" class="btn btn-default" onclick="addToCart('<%=pdNode.prd_code?pdNode.prd_code:""%>','<%=pdSpec.price%>')">Add to Cart</a>
+                        
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+<%}%>

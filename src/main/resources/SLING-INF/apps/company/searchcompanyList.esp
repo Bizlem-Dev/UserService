@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<%load("../common/links.esp");%>
+    </head>
+    <script>
+    function validateSearch1(){
+    var dtPlaceholder = document.getElementById("idPlaceHolder").value;
+    
+    if(dtPlaceholder == ""){
+    alert("please select category to search");
+    return false;
+    }else{
+var s=document.getElementById("searchByName1").value;
+
+if(s == ""){
+	alert("Please enter some text to search !");
+	return false;
+	}else{
+	document.getElementById("searchForm1").submit();
+	
+	}
+	}
+}
+    </script>
+<body>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+    <%load("../common/header.esp");%>
+     <section class="company_list_page">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10">
+            	<div class="row">
+            		<div class="col-xs-12">
+            			<div class="well well-sm company-header bg-primary">
+            				<div class="row">
+            				<form action="<%=request.getContextPath()%>/servlet/service/globalsearch.searchlist" type="GET" id="searchForm1">
+            					<div class="col-sm-3">
+            					
+            					<select  data-placeholder="Search By Category" class="chosen-select form-control" id="idPlaceHolder" name="core1">
+                                            <option value=""></option>
+                                            <option value="company">Company</option>
+											<option value="group">Group</option>
+											<option value="person">Person</option>
+                                        </select></div>
+                                        <input type="hidden" name="userId" value="<%=request.getRemoteUser().replace("@","_")%>" id="<%=request.getRemoteUser().replace("@","_")%>"/>
+            					<div class="col-sm-3"><input type="text" class="form-control" placeholder="Search by name" id="searchByName1" name="searchByName"></div>
+            					<div class="col-sm-6"><span class="input-group-btn">
+                                            <button class="btn btn-primary" type="button" onclick="validateSearch1()">Search</button>
+                                        </span></div>
+								</form>
+            				</div>
+            			</div>
+            		</div>
+            	</div>
+                <div class="row">
+                    <div class="col-xs-12 ">
+						<div class="row">
+							<div class="col-sm-3">
+								<div class="panel panel-primary">
+							      <div class="panel-heading">
+							        <h3 class="panel-title" id="panel-title">Result for other categories</h3>
+							      </div>
+							      <div class="panel-body">
+							        <p>Company Name <a href="#">1111 results</a></p>
+							        <p>Trade Name <a href="#">221 results</a></p>
+							        <p>Executive name 3333 results</p>
+							        <p>News 4444 results</p>
+							        <p>Contacts 5555 results</p>
+							      </div>
+							    </div>
+							</div>
+							
+							<div class="col-sm-9">
+								<div class="row">
+									<div class="demo content4">
+									            		<%
+            		var count=request.getAttribute("total");
+
+ var result = (count/10);
+var integerPart = Math.floor(result);
+if(count-(integerPart*10)!=0){
+integerPart=integerPart+1;
+}
+
+			var	companyNode=request.getAttribute("companylist");
+		
+	if(companyNode.size()==0){
+	out.print("Sorry no company found for this search text !");
+	
+}else{
+
+for(i=0;i<companyNode.size();i++){
+											var cmpNode=companyNode.get(i);
+			
+												%>
+							            <div class="col-md-6 col-xs-12 custom-width">
+							            	<div class="well well-sm company-list">
+							            		<div class="row">
+							            		<div class="col-sm-4 col-xs-4 image">
+							            			<% if(cmpNode.hasNode("BasicInfo")){
+							            			var basicInfo = cmpNode.getNode("BasicInfo");
+												               	%>
+																	<img width="88.32" height="115.95" src="<%=request.getContextPath()%><%=basicInfo.companyLogo?basicInfo.companyLogo:""%>" alt=""/>
+													            <%}else{  %>
+													                     <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" alt=""/> 
+													            <%}%>
+							            		</div>
+							            		<% if(cmpNode.hasNode("BasicInfo")){%>
+							            		<div class="col-sm-8 col-xs-8 text">
+							            			<h3><a href='<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=cmpNode.companyNumber ?cmpNode.companyNumber :""%>'><%=basicInfo.companyName?basicInfo.companyName:""%></a></h3>
+							            			<p><a href="http://<%=companyNode.website?companyNode.website:""%>" target="_blank"><%=basicInfo.website?basicInfo.website:""%></a></p>
+							            			<p><a href="#">Industries: </a><%=basicInfo.industries?basicInfo.industries:""%></p>
+							            			<%
+							            			if(cmpNode.hasNode("taxation")){
+							            			var taxNode = cmpNode.getNode("taxation");
+							            			%>
+							            			<p><a href="#">Place: </a><%=taxNode.foundedPlace?taxNode.foundedPlace:""%></p>
+							            			<p><a href="#">Founded: </a><%=taxNode.founded?taxNode.founded:""%></p>
+							            			<!--<p><a href="#">Turn Over: </a><%=basicInfo.turnOver?basicInfo.turnOver:""%></p>-->
+							            			<%}%>
+							            		</div>
+							            		<%}%>
+							            		</div>
+							            	</div>
+							            </div>
+<%}}%>
+           
+									</div>
+						            <div class="col-xs-12">
+						            	<div class="demo demo4_bottom"></div>
+						            </div>
+						                 <script type="text/javascript">
+						                        $('.demo4_bottom,.demo4_top').bootpag({
+						                             total: <%=integerPart%>,
+						                            page: 1,
+						                            maxVisible: 15,
+						                            
+						                        }).on("page", function(event, num){
+						                            //show
+						                            $(".pace-active").show();
+						                            $(".content4").load("http://prod.bizlem.io:8082/portal/servlet/service/globalsearch.searchlist?searchByName=<%=request.getParameter('searchByName')%>&core1=company&from="+ num +"&to=10", function(){
+						                              $(".pace-active").hide();
+						                              //hide
+						                            });
+						                            // or some ajax content loading...
+						                        }).find('.pagination');
+						                        
+						                    </script>
+								</div>
+							</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="advertise">
+                    <!--/* OpenX iFrame Tag v2.8.10 */-->
+
+<iframe id='ac741c84' name='ac741c84' src='http://34.193.219.25/openx/www/delivery/afr.php?zoneid=31&amp;cb=8' frameborder='0' scrolling='no' width='168' height='258'><a href='http://34.193.219.25/openx/www/delivery/ck.php?n=af553c54&amp;cb=8' target='_blank'><img src='http://34.193.219.25/openx/www/delivery/avw.php?zoneid=31&amp;cb=8&amp;n=af553c54' border='0' alt='' /></a></iframe>
+
+                </div>
+                <div class="advertise">
+                   <!--/* OpenX iFrame Tag v2.8.10 */-->
+
+<iframe id='a438048d' name='a438048d' src='http://34.193.219.25/openx/www/delivery/afr.php?zoneid=32&amp;cb=8' frameborder='0' scrolling='no' width='168' height='258'><a href='http://34.193.219.25/openx/www/delivery/ck.php?n=a8e267c6&amp;cb=8' target='_blank'><img src='http://34.193.219.25/openx/www/delivery/avw.php?zoneid=32&amp;cb=8&amp;n=a8e267c6' border='0' alt='' /></a></iframe>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<%load("../common/footer.esp");%>
+
+<!-- Login Modal Start  -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Login Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Login Modal End  -->
+
+<!-- register Modal Start  -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Registration Form</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+
+
+<!-- contactsupplier Modal Start  -->
+<div class="modal fade contactsupplier" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Contact Supplier</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+    
+  
+        
+    </body>
+</html>

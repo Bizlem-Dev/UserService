@@ -1,0 +1,1842 @@
+<%
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null);
+currentNode=currentNode;
+%><!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <%load("../common/links.esp");%>
+    </head>
+<body>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+<%load("../common/header.esp");%>
+<%
+var basicInfoNode;
+var taxNode;
+if(currentNodeProvided && currentNode.hasNode("BasicInfo")){
+basicInfoNode=currentNode.getNode("BasicInfo");
+}
+
+if(currentNodeProvided && currentNode.hasNode("taxation")){
+taxNode=currentNode.getNode("taxation");
+}
+
+%>
+<script src="<%=request.getContextPath()%>/apps/js/step-form.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/step-form.css">
+<script>
+
+ function eventDetails(){
+  var a=document.getElementById("eventIdName").value;
+ 
+  if(a.length>3){
+ var getvalue=document.getElementById("eventIdName").value;
+   while(getvalue.indexOf(" ") > -1){getvalue = getvalue.replace(" ","+");}
+  var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0,0";
+    var paramValue=[getvalue,"eventName,eventId","/content/exhibition/",isparent];    
+    
+          UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+          var parsed=JSON.parse(data);
+          var sugData="";
+          console.log(data);
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='eventId"+i+"' style='color:black' onclick='selectValEvent("+parsed[i].eventId+",this.id)' >"+parsed[i].eventName+"</a></br>";
+        }
+        
+     $("#suggestionEvent").css('visibility', 'visible');
+     $("#suggestionEvent").css('border-style', 'outset');
+     
+     
+    $("#suggestionEvent").hide();
+    $("#suggestionEvent").fadeIn('slow');
+    $("#searchEvent").html(sugData);
+     var offsetHeight = document.getElementById('suggestionEvent').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionEvent").css('overflow-y', 'auto');
+     $("#suggestionEvent").css('height', '80px');
+    }
+   
+    });
+    
+    }else{
+  //alert("Please enter 4 character to search category");
+   }
+  }
+  function selectValEvent(eventId,id){
+  		 var param = ["compN","eventId"];
+  		 var paramValue = ['<%=currentNode.getName()%>',eventId];
+  		 UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/company/show.eventExistence",param,paramValue,function(data) {
+   						console.log(data);
+   						var strResult =  data.split("~");
+   						if(strResult[0] == "true"){
+   						$("#eventErrorId").show();
+   						$("#eventErrorId").html("Already participated please search another event");
+   						$("#eventParticipateId").hide();
+   						}else if(strResult[0] == "false"){
+   						$("#eventErrorId").hide();
+   						$("#eventParticipateId").show();
+   						}
+   				 });
+document.getElementById("eventIdName").value = document.getElementById(id).innerHTML;
+document.getElementById("eventIdValue").value =  eventId;
+$("#suggestionEvent").hide();
+}
+function compParticipateEvent(){
+var strEventId = document.getElementById("eventIdValue").value;
+//alert(strEventId);
+var param = ["compN","eventId"];
+  		 var paramValue = ['<%=currentNode.getName()%>',strEventId];
+  		 UserDWRService.callPostService("http://prod.bizlem.io:8082/portal/servlet/company/save.comptoEvent",param,paramValue,function(data) {
+   						console.log(data);
+   				});
+}
+function onkeyupForAddress1(id,count){
+        var value=document.getElementById(id).value;
+          while(value.indexOf(" ") > "-1"){
+value = value.replace(" ","+");
+}
+         var pincode=document.getElementById(count).value;
+         //alert("/content/pincode/"+pincode+"/");
+         if(pincode.length!=0){
+   var  param=["paravalue","paraname","path","isparent"];
+   var  isparent="0";
+   var paramValue=[value,"name","/content/pincode/"+pincode+"/",isparent];
+      UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+     console.log(data)
+      var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdVe"+i+"' style='color:black' onclick='selectValAdd1("+count+",this.id)' >"+parsed[i].name+"</a></br>";
+        }
+    var offsetHeight  = "";    
+     $("#suggestionsVenue"+count).css('visibility', 'visible');
+     $("#suggestionsVenue"+count).css('border-style', 'outset');
+    $("#suggestionsVenue"+count).hide();
+    $("#suggestionsVenue"+count).fadeIn('slow');
+     offsetHeight = document.getElementById('suggestionsVenue'+count).offsetHeight;
+    $("#VenueItem"+count).html(sugData);
+     offsetHeight = document.getElementById('suggestionsVenue'+count).offsetHeight;
+    if(offsetHeight > 70)
+    {
+    	$("#suggestionsVenue"+count).css('overflow-y', 'auto');
+     $("#suggestionsVenue"+count).css('height', '70px');
+    }
+    
+   });
+       }
+       }
+       function selectValAdd1(id1,id){
+         document.getElementById("addressId"+id1).value=document.getElementById(id).innerHTML;
+         $("#suggestionsVenue"+id1).hide();
+          }
+function onkeyupForAddress(id){
+       
+        var value=document.getElementById("addressId").value;
+        
+          while(value.indexOf(" ") > "-1"){
+value = value.replace(" ","+");
+}
+         var pincode=document.getElementById("postalCodeId").value;
+         //alert("/content/pincode/"+pincode+"/");
+         if(pincode.length!=0){
+   var  param=["paravalue","paraname","path","isparent"];
+   var  isparent="0";
+   var paramValue=[value,"name","/content/pincode/"+pincode+"/",isparent];
+      UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+     console.log(data)
+      var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdV"+i+"' style='color:black' onclick='selectValAdd(this.id)' >"+parsed[i].name+"</a></br>";
+        }
+    var offsetHeight  = "";    
+     $("#suggestionsVenue").css('visibility', 'visible');
+     $("#suggestionsVenue").css('border-style', 'outset');
+    $("#suggestionsVenue").hide();
+    $("#suggestionsVenue").fadeIn('slow');
+     offsetHeight = document.getElementById('suggestionsVenue').offsetHeight;
+    //alert("before---"+offsetHeight);
+    $("#VenueItem").html(sugData);
+     offsetHeight = document.getElementById('suggestionsVenue').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 70)
+    {
+    	$("#suggestionsVenue").css('overflow-y', 'auto');
+     $("#suggestionsVenue").css('height', '70px');
+    }
+    
+   });
+       }
+       }
+       function selectValAdd(id){
+         document.getElementById("addressId").value=document.getElementById(id).innerHTML;
+         $("#suggestionsVenue").hide();
+          }
+
+
+
+ function onkeyupForCompanyName(id1){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value, "companyName", "/content/company/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugId"+i+"' style='color:black' onclick='selectValComp(this.id)' >"+parsed[i].companyName+"</a></br>";
+        }
+        
+     $("#suggestionCompany").css('visibility', 'visible');
+     $("#suggestionCompany").css('border-style', 'outset');
+     
+     
+    $("#suggestionCompany").hide();
+    $("#suggestionCompany").fadeIn('slow');
+    $("#searchCompany").html(sugData);
+     var offsetHeight = document.getElementById('suggestionCompany').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionCompany").css('overflow-y', 'auto');
+     $("#suggestionCompany").css('height', '80px');
+    }
+        }); 
+        }
+function selectValComp(id){
+document.getElementById("companyNameId").value = document.getElementById(id).innerHTML; 
+$("#suggestionCompany").hide();
+}
+                                                                            $(document).ready(function() {
+                                                                                    var addDiv = $('#empList');
+                                                                                 //   alert("1---"+addDiv);
+                                                                                    var i = parseInt($('#empList .row').size()) + 1;
+                                                                                   // alert("2---"+i);
+                                                                                    $('#addNew2').on('click', function() {
+                                                                                    //alert("3--");
+                                                                                        $("<div class='row removeMan" + i + "' id='removeMan'><hr style='border-top:1px solid;width:96%'><div class='col-xs-10'><li><div class='sf_columns column_6'><div class='form-group'><label  class='col-sm-2 control-label'>Name</label><div class='col-sm-10'><input type='text' class='form-control' placeholder='Name' data-required='true'  name='empName' value=''/></div></div></div></li><li><div class='sf_columns column_6'><div class='form-group'><label  class='col-sm-2 control-label'>Email Id</label><div class='col-sm-10'><input type='text' class='form-control' placeholder='Email id' data-required='true'  name='empEmail' value=''/></div></div></div></li><li><div class='sf_columns column_6'><div class='form-group'><label  class='col-sm-2 control-label'>Designation</label><div class='col-sm-10'><input type='text' class='form-control' placeholder='Designation' data-required='true'  name='empDesignation' value=''/></div></div></div></li><li><div class='sf_columns column_6'><div class='form-group'><label  class='col-sm-2 control-label'>Description</label><div class='col-sm-10'><input type='text' class='form-control' placeholder='Description' data-required='true'  name='empDescription' value=''/></div></div></div></li><li><div class='sf_columns column_6'><div class='form-group'><label  class='col-sm-2 control-label'>Employee Access</label><div class='col-sm-10'><select class='form-control' name='empAccess'><option value='public'>public</option><option value='private'>private</option></select></div></div></div></li></div><div class='col-xs-2'><span id='remNew2' class='glyphicon glyphicon-minus btn btn-default'></span></span></div></div></div>").appendTo(addDiv);
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remNew2', function() {
+                                                                                    $(this).parents('#removeMan').remove();
+                                                                                    });
+                                                                                });
+$(document).ready(function(e) {
+        $("#upImg").change(function(){
+        readURL(this);
+    });
+    
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+		var reader = new FileReader();
+		reader.onload = function (e) {
+		$('#shImg').attr('src', e.target.result);
+		}
+		reader.readAsDataURL(input.files[0]);
+		}
+    }
+        $(document).on('click', '#sf-next1', function () {
+    console.log("value---"+$(this).text());
+    if($(this).text() == "Submit"){
+  	/*if (document.getElementById('agree').checked)
+    {*/
+     var x = document.getElementsByName("postalCode");
+     console.log(x.length);
+     for(var j = 0;j<x.length;j++){
+     var a=document.getElementsByName("postalCode")[j].value;
+  var value=document.getElementsByName("address")[j].value;
+     while(value.indexOf(" ") > "-1"){
+		value = value.replace(" ","+");
+		}
+  var  param=["pincode","address"];
+   var paramValue=[a,value];
+          UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.inrichme",param,paramValue,function(data) {
+  });
+  }
+    document.getElementById("buttonVal").value = "Submit";document.getElementById("companyadding").submit();
+    /*}else if(!document.getElementById('agree').checked)
+    {
+    alert('Please indicate that you have read and agree to the Terms and Conditions');
+    }*/
+  }else{//document.getElementById("companyadding").submit();
+  $('#divUl').each(function(){
+   $(this).find('ul').each(function(){var currentClass = $(this).attr('class');
+    if(currentClass == "sf-content"){
+    var current = $(this).attr('id');
+    if(document.getElementById(current).style.display == "block"){var res = current.substring(4, current.length);var val = parseInt(res) + parseInt(1);document.getElementById("tabId").value = val;document.getElementById("buttonVal").value = "Next";document.getElementById("companyadding").submit();}
+    }
+    });
+});
+}
+});
+        $(".stepsForm").stepsForm({
+            theme:'purple',
+        });
+        $(".sf-steps-content>div").click(function(e) {
+            var str = $(this).html();var res = str.replace("<span></span>", "");if(res.trim() == "Management Team"){$("#sf-next1").html("Submit");}else{$("#sf-next1").html("Next");}
+        }); 
+        $(".container .themes>span").click(function(e) {
+            $(".container .themes>span").removeClass("selectedx");
+            $(this).addClass("selectedx");
+            $(".stepsForm").removeClass().addClass("stepsForm");
+            $(".stepsForm").addClass("sf-theme-"+$(this).attr("data-value"));
+        });
+         $("#datetimepicker4").datepicker({
+            format: "yyyy-mm-dd",
+            
+        })
+        .on('changeDate', function(ev){
+        var hireDate = document.getElementById('datetimepicker4').value;
+           
+            if(new Date(hireDate).getTime() > new Date().getTime())
+{
+//alert("onside if"); 
+document.getElementById('datetimepicker4').value = "";
+ $(this).datepicker('hide');
+alert("joining date should be less than or equal to current date");
+}else{
+$(this).datepicker('hide');
+}
+        });
+        
+     var i = 0;console.log(<%=request.getParameter("tab")%>);
+        if(<%=request.getParameter("tab")%> != null){$('#divUl').each(function(){$(this).find('ul').each(function(){var currentClass = $(this).attr('class');if(currentClass == "sf-content"){var current = $(this).attr('id');i = i + 1;if(current == "page<%=request.getParameter("tab")%>"){$("#page<%=request.getParameter("tab")%>").css({display: "block"});$("#tab<%=request.getParameter("tab")%>").addClass("sf-active");}else{$("#tab"+i).removeClass("sf-active");$("#page"+i).css({display: "none"});}}});});}
+   });
+    
+    function validateCompLandline(value){
+    
+    UserDWRService.getCompAddLandlineMsg(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("workNumber").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+    
+    }
+    
+    function validateCompMob(value){
+    UserDWRService.getCompAddMobMsg(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("mobileNumber").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+	  		});
+    }
+    
+    function validateCompEmail(value){
+    UserDWRService.getCompAddEmailMsg(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("contactEmailId").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+    }
+</script>
+<script>
+	function addBranch(){
+	var top_level_div = document.getElementById('branchDiv');
+	var count = top_level_div.getElementsByTagName('tbody').length;
+	var id1='Branch'+(count);
+	var newdiv = document.createElement('tbody');
+	newdiv.id=id1;
+		newdiv.innerHTML ="<tr><td colspan='2'><label class='sf-msg-error' style='display:none' id='PinAddErr"+(count)+"'></label></td>"+
+		 		"<td align='right'><a href='javascript:void(0)' class='btn btn-warning' onclick=\"removeBranch(\'"+id1+"\')\" >Remove Branch</a></td></tr>"+
+				"<input type='hidden' name='branchName' value='Branch"+(count)+"' />"+
+				"<tr><td colspan='3' width='50%' ><label>Address Type: </label><select class='form-control' name='addressType'><option value='Office'>Office</option><option value='Home'>Home</option><option value='Head Office'>Head Office</option></select></td></tr>"+
+				 "<tr><td width='33%' ><label>Postal Code :</label><input type='text' name='postalCode' id='"+(count)+"' onkeyup='getPostalData1(this.id)' /></td>"+
+				 "<td width='33%' ><label>Address :</label><input type='text' name='address' id='addressId"+(count)+"' onkeyup='onkeyupForAddress1(this.id,"+(count)+")' /><div id='suggestionsVenue"+(count)+"'  style='z-index:1;position: absolute;background: white;width:32%'>"+
+  				 "<div class='searchterm' id='VenueItem"+(count)+"'></div></div></td>"+
+				 "<td width='33%' ><label>City :</label><input type='text' readonly name='city' id='city"+(count)+"' /></td></tr>"+
+				 "<tr><td width='33%' ><label>District :</label><input type='text' readonly name='district' id='district"+(count)+"' /></td>"+
+				 "<td width='33%' ><label>State :</label><input type='text' name='state' readonly id='state"+(count)+"' /></td>"+
+				 "<td width='33%' ><label>Country :</label><input type='text' name='country' readonly id='country"+(count)+"' /></td></tr>"+
+				 "<tr><td width='33%' ><label>Land Line Number :</label><input type='text' name='workNumber' id='workNumber' value='' onblur='validateCompLandline(this.value)'/></td>"+
+				 "<td width='33%' ><label>Mobile Number :</label><input type='text' name='mobileNumber' id='mobileNumber' value='' onblur='validateCompMob(this.value)'/></td>"+
+				 "<td width='33%' ><label>Contact Email ID :</label><input type='text' name='contactEmailId' id='contactEmailId' value='' onblur='validateCompEmail(this.value)'/></td></tr>";
+				 
+		
+         
+          document.getElementById("branchDiv").appendChild(newdiv);
+	
+	}
+	function removeBranch(divName){
+var d = document.getElementById('branchDiv');
+	  var olddiv = document.getElementById(divName);
+	  d.removeChild(olddiv);
+	}
+function addRow(tableID) {
+		var table = document.getElementById(tableID);
+		var rowCount = table.rows.length;
+		var row = table.insertRow(rowCount);
+		counts = rowCount - 1;
+		var cell2 = row.insertCell(0);	
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "contactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell2.appendChild(rate);
+		var cell3 = row.insertCell(1);
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "nameContactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell3.appendChild(rate);
+		
+		var cell4 = row.insertCell(2);
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "contactContactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell4.appendChild(rate);
+		
+		var cell1 = row.insertCell(3);
+		var skill = document.createElement("input");
+		skill.type = "text";
+		skill.name = "detailContactTypeCompany";
+		skill.setAttribute("class", "");
+		skill.id = "jsp_" + counts
+		+ "__rate";
+		cell1.appendChild(skill);
+	}
+	
+	function addRowEmp(tableID) {
+		var table = document.getElementById(tableID);
+		var rowCount = table.rows.length;
+		var row = table.insertRow(rowCount);
+		counts = rowCount - 1;
+		var cell2 = row.insertCell(0);	
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "contactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell2.appendChild(rate);
+		var cell3 = row.insertCell(1);
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "nameContactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell3.appendChild(rate);
+		
+		var cell4 = row.insertCell(2);
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "contactContactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell4.appendChild(rate);
+		
+		var cell1 = row.insertCell(3);
+		var skill = document.createElement("input");
+		skill.type = "text";
+		skill.name = "detailContactTypeCompany";
+		skill.setAttribute("class", "");
+		skill.id = "jsp_" + counts
+		+ "__rate";
+		cell1.appendChild(skill);
+	}
+	
+
+	function deleteRow(guestList) {
+		try {
+			var table = document.getElementById(guestList);
+			var rowCount = table.rows.length;
+			if (rowCount > 1) {
+				table.deleteRow(rowCount - 1);
+			}
+		} catch (e) {
+			alert(e);
+		}
+	}
+</script>
+<script type="text/javascript">
+    function deleteUserMap(node,userId,mapType,v,reject){
+        var url='<%=request.getContextPath()%>/servlet/company/save.deleteUserMap';
+        var data='userId='+userId+'&mapType='+mapType+'&companyName=<%=currentNodeProvided?currentNode.getName():""%>&nodeName='+node+'&reject='+reject;
+        if(confirm('Confirm Delete'))
+            {
+                $.ajax({
+                      type: 'POST',
+                      url: url,
+                      data: data,
+                      success: function(){
+                        $(v).parent('li').remove();
+                      }
+                  }); 
+             }else{} 
+    }
+	function openPopUpCompany(theURL, title, heightInPX, widthInPX,values)
+       { var selectedValues;
+        var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+          window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+            selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+    	   
+    	   document.getElementById("mappingCompanyTypeID").value=values;
+    	    document.getElementById("selectedCompany").value=selectedValues;
+    	    document.getElementById("formCompany").submit();
+      }
+  function openPopUpUser(theURL, title, heightInPX, widthInPX,values)
+   {var selectedValues;
+   var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+            selectedValues= window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+            selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+	  
+	   document.getElementById("mappingUserTypeID").value=values;
+	    document.getElementById("selectedPerson").value=selectedValues;
+	    document.getElementById("formUser").submit();
+  }
+  
+  function openPopUpCommon(theURL, title, heightInPX, widthInPX)
+   { var selectedValues;
+    var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+           selectedValues= window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+            selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+	  
+	   /*document.getElementById("mappingCompanyTypeID").value=values;
+	    document.getElementById("selectedCompany").value=selectedValues;
+	    document.getElementById("formCompany").submit();*/ 
+   }
+  function openPopUpProduct(theURL, title, heightInPX, widthInPX,values)
+    { var selectedValues;
+    var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+         selectedValues= window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+           selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+     
+       document.getElementById("productTypeID").value=selectedValues;
+        document.getElementById("nodeNameID").value=values;
+        document.getElementById("formProduct").submit(); 
+     }
+    
+    
+    function validateTNCForm() {
+		      /* if (document.getElementById('agree').checked)
+    {
+    return true;
+    } else
+    {
+    alert('Please indicate that you have read and agree to the Terms and Conditions');
+            return false;
+    }    */
+    }
+    
+   
+    function getPostalData() {
+		var strPinNo = document.getElementById('postalCodeId').value;
+		//alert(strPinNo);
+    UserDWRService.getCompAddPinMsg(strPinNo,function(data) {
+				console.log("data111111----"+data);
+				if(data.indexOf("~") != -1){
+				var strData = data.split("~");
+				if(strData[0] == "true"){
+				var res = JSON.parse(strData[1]);
+				console.log(res.country);
+				$("#PinAddErr").hide();
+				$("#country").val(res.country);
+				$("#city").val(res.city);
+				$("#district").val(res.district);
+				$("#state").val(res.state);
+				}else if(strData[0] == "false"){
+				$("#country").val("");
+				$("#city").val("");
+				$("#district").val("");
+				$("#state").val("");
+				$("#PinAddErr").hide();
+				}
+				}else {
+				if(data == "true"){
+				}else{
+				//alert(data);
+				$("#PinAddErr").show();
+				$("#PinAddErr").html(data);
+				$("#country").val("");
+				$("#city").val("");
+				$("#district").val("");
+				$("#state").val("");
+				}
+				}
+				
+	  		});
+	
+	}
+	
+	function getPostalData1(id) {
+		var strPinNo = document.getElementById(id).value;
+		//alert(strPinNo);
+    UserDWRService.getCompAddPinMsg(strPinNo,function(data) {
+				console.log("data111111----"+data);
+				
+				if(data.indexOf("~") != -1){
+				var strData = data.split("~");
+				if(strData[0] == "true"){
+				var res = JSON.parse(strData[1]);
+				console.log(res.country);
+				$("#PinAddErr"+id).hide();
+				$("#country"+id).val(res.country);
+				$("#city"+id).val(res.city);
+				$("#district"+id).val(res.district);
+				$("#state"+id).val(res.state);
+				}else if(strData[0] == "false"){
+				$("#country"+id).val("");
+				$("#city"+id).val("");
+				$("#district"+id).val("");
+				$("#state"+id).val("");
+				$("#PinAddErr"+id).hide();
+				}
+				}else {
+				if(data == "true"){
+				}else{
+				//alert(data);
+				$("#PinAddErr"+id).show();
+				$("#PinAddErr"+id).html(data);
+				$("#country"+id).val("");
+				$("#city"+id).val("");
+				$("#district"+id).val("");
+				$("#state"+id).val("");
+				}
+				}
+				
+	  		});
+	
+	}
+    </script>
+<script src="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.min.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.css"> 
+
+ <script src="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader-new.css"> 
+
+<style type="text/css">
+#dropzone { margin-bottom: 3rem; }
+.dropzone { border: 2px dashed #0087F7; border-radius: 5px; padding: 0px;}
+.dropzone .dz-message { font-weight: 400; }
+.dropzone .dz-message .note { font-size: 0.8em; font-weight: 200; display: block; margin-top: 1.4rem; }
+.dropzone .dz-message {
+    margin: 2em 0;
+    text-align: center;
+}
+.dropzone .dz-preview .dz-details, .dropzone-previews .dz-preview .dz-details {width: 100%; height: 30px;}
+</style>
+<section class="Profile_page">
+		
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-10 col-xs-12">
+						<div class="row">
+							<div class="col-xs-12 ">
+								<!--STEPS FORM START  -->
+        <div class="stepsForm">
+           <form method="POST" action="<%=request.getContextPath()%>/servlet/company/save.com" onsubmit="return validateTNCForm()" id="companyadding" enctype="multipart/form-data">
+                <div class="sf-steps">
+                    <div class="sf-steps-content">
+                        <div id="tab1">
+                            <span></span> Company
+                        </div>
+                        <div id="tab2">
+                            <span></span> Address
+                        </div>
+                        
+                      <% if(!request.getParameter("id").equals("new")){%>  <div id="tab3">
+                            <span></span> Products Service
+                        </div>  
+                        <%}%>
+                        <div id="tab4">
+                            <span></span> Aboutus
+                        </div>
+                        <div id="tab5">
+                            <span></span> Event
+                        </div>
+                       <div id="tab6">
+                            <span></span> Social Connect
+                        </div>
+                        <div id="tab7">
+                            <span></span> Secure Document
+                        </div>
+                        <div id="tab8">
+                            <span></span> Taxation
+                        </div>
+                        <% if(!request.getParameter("id").equals("new")){%>
+                        <div id="tab9">
+                            <span></span> Relationship
+                        </div>
+                       <%}%>
+                       <div id="tab10">
+                            <span></span> Management Team
+                        </div>
+                        
+                </div>                
+                <div class="sf-steps-form sf-radius" id="divUl"> 
+                    <input type="hidden" id="tabId" name="tabIdN" value=""/><input type="hidden" id="buttonVal" name="buttonVal" value=""/>
+                                    <ul class="sf-content" id="page1"> <!-- form step two -->
+                                     
+                <div class="col-sm-2">
+								    <%if(currentNodeProvided && currentNode.hasNode("picture") && currentNode.getNode("picture").hasNode("companyLogo")){%>
+			<img id="shImg" src="<%=request.getContextPath()%><%=currentNode.getNode("picture").getNode("companyLogo")%>"  height="80px" width="125px" />
+			<input  type="file"  class="form-control" placeholder="Select logo image file" data-required="false" id="upImg"  name="file"/>
+			<%}else{%>
+			<img id="shImg" src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif"  height="80px" width="125px" />
+			<input type="file"  class="form-control" placeholder="Select logo image file" data-required="false" id="upImg"  name="file"/>
+			<%}%>
+								      
+		 							
+								    
+                </div>
+                <div class="col-sm-10">
+                       <div class="row">
+                                                                <div class="col-xs-12">
+                         <li>
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Company Name</label>
+								    <div class="col-sm-10">
+								    <input type="text" name="companyName" placeholder="Name" data-required="false" class="form-control" onkeyup="onkeyupForCompanyName(this.id)" id="companyNameId"
+		 								<%if(currentNodeProvided){%>
+		 									value="<%=basicInfoNode.companyName?basicInfoNode.companyName:""%>" /></td>
+		 								<%}else{%>
+		 										value="" />
+		 								<%}%>
+		 				<div id="suggestionCompany"  style="z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchCompany"></div>
+ </div>
+ 							    <input type="hidden" name="companyNo"  id="companyNo"
+								<%if(currentNodeProvided){%>
+								      value="<%=currentNode.companyNumber?currentNode.companyNumber:"new"%>" />
+							<%}else{%>
+ 									value="new"/>
+											<%}%>
+											
+								    </div>
+								</div>
+								</div>
+							</li>
+						
+							 <!--<li style="display:none">
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Description</label>
+								    <div class="col-sm-10">
+								      <textarea class="form-control" placeholder="Description" data-required="false" name="description"><%if(currentNodeProvided){%><%=basicInfoNode.description?basicInfoNode.description:""%><%}%></textarea>
+								    </div>
+								</div>
+								</div>
+							</li>-->
+							
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Email Id</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Email Id" data-required="false" name="emailidcompany" 
+								      <%if(currentNodeProvided){%>
+		 									value="<%=basicInfoNode.offemailid?basicInfoNode.offemailid:""%>" /></td>
+		 								<%}else{%>
+		 										value="" />
+		 								<%}%>
+								    </div>
+								</div>
+								</div>
+							</li>
+							<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Website</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Website" data-required="false" name="website" <%if(currentNodeProvided){%>
+		 							value="<%=basicInfoNode.website?basicInfoNode.website:""%>"
+		 							<%}else{%>
+		 								value=""
+		 							<%}%>
+		 							 />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Industry</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Insustry" data-required="false"  name="industries"  <%if(currentNodeProvided){%>
+		 								value="<%=basicInfoNode.industries?basicInfoNode.industries:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li>
+												<li style="display:none">
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Creator Email Id</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Creator Email Id" data-required="false"  name="creatorEmailId" disabled="true"  value="<%=request.getRemoteUser()%>"/>
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <!--<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Your Title</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Your Title" data-required="false"  name="creatorTitle"
+								 <%if(currentNodeProvided){%>
+									value="<%=basicInfoNode.creatorTitle?basicInfoNode.creatorTitle:""%>"
+								<%}else{%>
+		 								value=""
+		 							<%}%>	 />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Joining Date</label>
+								    <div class="col-sm-10">
+								      <input type="text" id='datetimepicker4' data-format="yyyy-MM-dd hh:mm:00" class="form-control form-date" placeholder="Joining Date" data-required="false"  name="creatorjoiningDate"
+									<%if(currentNodeProvided){%> 
+									value="<%=basicInfoNode.creatorjoiningDate?basicInfoNode.creatorjoiningDate:""%>"
+									<%}else{%>
+		 								value=""
+		 							<%}%> />
+								    </div>
+								</div>
+								
+                            </div>
+                         </li>-->
+                         </div>
+                         </div>
+                         </div>
+                       
+                    </ul>
+                       
+                    <ul class="sf-content" id="page2"> <!-- form step two --> 
+                    
+                         <li>
+                            <div class="sf_columns column_6">
+                                <!-- div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Address</label>
+								    <div class="col-sm-8">
+								      <textarea class="form-control" placeholder="Address" data-required="false"></textarea>
+								    </div>
+								</div -->
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <script type="text/javascript">
+                                            $(document).ready(function () {
+                                            var addDiv = $('#keywordList-email');
+                                            var i = parseInt($('#keywordList-email .row').size()) + 1;
+                                            $('#addNew').on('click', function() {
+                                                $("<div class='row remove"+ i +"' id='remove'><label for='' class='col-sm-2 col-xs-12 control-label'>Address</label><div class='col-xs-8'><textarea class='form-control' placeholder='Address' data-required='true'></textarea></div><div class='col-xs-2'><span id='remNew' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+                                            });
+
+                                            $(document).on('click','#remNew', function() {
+                                                    $(this).parents('#remove').remove();
+                                            });
+                                        });
+                                            </script>
+                                        <div id="keywordList-email">
+                                        <div class="row" style="margin-bottom: 15px;">
+                                           
+                                        </div>
+                                        <div id="remove" class="row remove2">
+                                            <label for="" class="col-sm-2 col-xs-12 control-label">Address</label>
+                                            <div class="col-sm-8">
+                                             <table width="100%" id="branchDiv" border="0" cellspacing="0" cellpadding="0" class="form">
+                                              <% 	  if(currentNodeProvided){
+			 		var addressNode;
+				 	if(currentNode.hasNode("Address") && currentNode.getNode("Address").hasNodes()){
+				 		addressNode=currentNode.getNode("Address").getNodes();
+				 		%>
+				 		
+				 		
+			 				
+				 		<%
+				 		for(var i=0;i<addressNode.length;i++){
+				 		%><tbody id="<%=addressNode[i].branchName?addressNode[i].branchName:""%>">
+				 			<tr><td colspan="2"><label><u><strong><%=addressNode[i].addressType?addressNode[i].addressType:""%></strong></u></label></td></tr>
+				 			<tr>
+				 			<%if(addressNode[i].getProperty("branchName").getString()!='HeadQuater'){
+									%>
+									<td colspan="2"><label class="sf-msg-error" style="display:none" id="PinAddErr<%=i%>"></label></td>
+										<%
+								}else{%>
+								<td colspan="2"><label class="sf-msg-error" style="display:none" id="PinAddErr"></label></td>
+								<%}
+								%>
+		 						<td align="right"><%
+		 						
+			 						if(addressNode[i].getProperty("branchName").getString()=='HeadQuater'){
+									%>
+										<a href="javascript:void(0)" class="btn btn-info" onclick="addBranch()">Add Branch</a>
+									<%
+									}else if(addressNode[i].getProperty("branchName").getString()!='HeadQuater'){
+									%>
+									<a href='javascript:void(0)' class="btn btn-warning" onclick="removeBranch('<%=addressNode[i].branchName?addressNode[i].branchName:""%>')" >Remove Branch</a>
+									
+									<%
+									
+								}%>
+								</td>
+		 					</tr>
+				 			
+				 			 <tr><td colspan="3"><input type="hidden" name="branchName"
+				 			 			 value="<%=addressNode[i].branchName?addressNode[i].branchName:""%>" /></td></tr>
+				 			 
+				 			 				 			 <tr>
+				 			 <td colspan="3" width="50%" ><label>Address Type: </label><select class='form-control' name='addressType'>
+				 			 
+				 			                                                                                             <%
+                                                                                                var phoneVal =
+                                                                                                ["Office","Home","Head Office"];
+                                                                                               for (j=0;j<phoneVal.length;j++) {
+                                                                                                    if (phoneVal[j] == addressNode[i].getProperty("addressType").getString()) {
+                                                                                                      
+                                                                                            %>
+                                                                                            <option value="<%=phoneVal[j]%>" selected="selected" ><%=phoneVal[j]%></option>
+                                                                                            <%} else {
+                                                                                            %>
+                                                                                            <option value="<%=phoneVal[j]%>"><%=phoneVal[j]%></option>   
+
+                                                                                            <%  }
+                                                                                                } %>
+				 			 </select>
+				 			 </td>
+				 			 </tr>		 
+				 			 <%if(addressNode[i].getProperty("branchName").getString()=='HeadQuater'){
+	
+									%>
+							<tr>
+							 <td width="33%" ><label>Postal Code :</label><input type="text" name="postalCode" 
+							 				value="<%=addressNode[i].branchPostalCode?addressNode[i].branchPostalCode:""%>"  id="postalCodeId" onkeyup="getPostalData()" /></td>
+							 <td width="33%" ><label>Address </label><input type="text" name="address" id="addressId" onkeyup="onkeyupForAddress(this.id)" 
+							 			value="<%=addressNode[i].branchAddress?addressNode[i].branchAddress:""%>" /><div id="suggestionsVenue"  style="z-index:1;position: absolute;background: white;width:32%">
+  							<div class="searchterm" id="VenueItem"></div>
+ 							</div></td>
+												 	
+							 	 <td width="33%" ><label>City :</label><input type="text" readonly name="city" id="city" 
+							 				value="<%=addressNode[i].branchCity?addressNode[i].branchCity:""%>" /></td>
+							 	</tr>
+							 	<tr><td width="33%" ><label>District </label><input type="text" readonly name="district" id="district" 
+							 			value="<%=addressNode[i].branchDistrict?addressNode[i].branchDistrict:""%>" /></td>
+								<td width="33%" ><label>State</label><input type="text" readonly name="state" id="state" 
+							 				value="<%=addressNode[i].branchState?addressNode[i].branchState:""%>" /></td>								 	
+							 	 <td width="33%" ><label>Country</label><input type="text" readonly name="country" id="country" 
+							 				value="<%=addressNode[i].branchCountry?addressNode[i].branchCountry:""%>" /></td>
+							 	</tr>
+							
+											<%
+								}else{
+											 			
+								%>
+							<tr>
+							 <td width="33%" ><label>Postal Code :</label><input type="text" name="postalCode" 
+							 				value="<%=addressNode[i].branchPostalCode?addressNode[i].branchPostalCode:""%>" id='<%=i%>' onkeyup="getPostalData1(this.id)" /></td>
+							 <td width="33%" ><label>Address </label><input type="text" name="address" id="addressId<%=i%>" onkeyup="onkeyupForAddress1(this.id,'<%=i%>')"
+							 			value="<%=addressNode[i].branchAddress?addressNode[i].branchAddress:""%>" /><div id="suggestionsVenue<%=i%>"  style="z-index:1;position: absolute;background: white;width:32%">
+  							<div class="searchterm" id="VenueItem<%=i%>"></div>
+ 							</div></td>
+																 	
+							 	 <td width="33%" ><label>City :</label><input type="text" readonly name="city" id='city<%=i%>' 
+							 				value="<%=addressNode[i].branchCity?addressNode[i].branchCity:""%>" /></td>
+							 	</tr>
+							 	<tr><td width="33%" ><label>District </label><input type="text" readonly name="district" id='district<%=i%>' 
+							 			value="<%=addressNode[i].branchDistrict?addressNode[i].branchDistrict:""%>" /></td>
+								<td width="33%" ><label>State</label><input type="text" readonly name="state" id='state<%=i%>' 
+							 				value="<%=addressNode[i].branchState?addressNode[i].branchState:""%>" /></td>								 	
+							 	 <td width="33%" ><label>Country</label><input type="text" readonly name="country" id='country<%=i%>' 
+							 				value="<%=addressNode[i].branchCountry?addressNode[i].branchCountry:""%>" /></td>
+							 	</tr>
+							
+								<%}%>
+							 							 <tr><td width="33%" ><label>Land Line Number :</label><input type="text" name="workNumber" id="workNumber" onblur="validateCompLandline(this.value)" 
+							 				value="<%=addressNode[i].branchWorkNumber?addressNode[i].branchWorkNumber:""%>"/></td>
+							 	<td width="33%" ><label>Mobile Number :</label><input name="mobileNumber" id="mobileNumber"  type="text" onblur="validateCompMob(this.value)" 
+							 				value="<%=addressNode[i].branchMobileNumber?addressNode[i].branchMobileNumber:""%>" /></td>
+								<td width="33%" ><label>Contact Email Id :</label><input type="text" name="contactEmailId" id='contactEmailId' onblur="validateCompEmail(this.value)"
+							 				value="<%=addressNode[i].branchContactEmailId?addressNode[i].branchContactEmailId:""%>" /></td></tr>
+							 				
+							
+							</tbody>
+							
+							 
+				 		
+				 		<%	
+				 		}%>
+				 
+				 		<%	
+				 	}else{
+			 	%>
+			 		<tbody id="HeadQuater">
+			 		<tr><td colspan="2"><label><u><strong>HeadQuater</strong></u></label></td></tr>
+			 		<tr><td colspan="2"><label class="sf-msg-error" style="display:none" id="PinAddErr"></label></td>
+		 						<td align="right"><a href="javascript:void(0)" class="btn btn-info" onclick="addBranch()">Add Branch</a></td></tr>
+				 	 <tr><td colspan="3"><input type="hidden" name="branchName" value="HeadQuater" /></td></tr>
+				 	 <tr><td colspan="3" width="50%" ><label>Address Type: </label><select class='form-control' name='addressType'><option value='Office'>Office</option><option value='Home'>Home</option><option value='Head Office'>Head Office</option></select></td></tr>
+					<tr>
+					<td width="33%" ><label>Postal Code :</label><input type="text" name="postalCode" value="" id="postalCodeId" onkeyup="getPostalData()" /></td>
+					<td width="33%" ><label>Address :</label><input type="text" name="address" id="addressId" onkeyup="onkeyupForAddress(this.id)" value="" /><div id="suggestionsVenue"  style="z-index:1;position: absolute;background: white;width:32%">
+  							<div class="searchterm" id="VenueItem"></div>
+ 							</div></td>
+						
+						<td width="33%" ><label>City :</label><input type="text" name="city" readonly id="city" value="" /></td>
+					 	</tr>
+					 	<tr><td width="33%" ><label>District </label><input type="text" readonly name="district" id="district" 
+							 			value="" /></td>
+								<td width="33%" ><label>State</label><input type="text" readonly name="state" id="state" 
+							 				value="" /></td>								 	
+							 	 <td width="33%" ><label>Country</label><input type="text" readonly name="country" id="country" 
+							 				value="" /></td>
+							 	</tr>
+					<tr><td width="33%" ><label>Land Line Number :</label><input type="text" name="workNumber" id="workNumber" value="" onblur="validateCompLandline(this.value)"/></td>
+					 	<td width="33%" ><label>Mobile Number :</label><input name="mobileNumber" type="text" id="mobileNumber" value="" onblur="validateCompMob(this.value)" /></td>
+					 	<td width="33%" ><label>Contact Email Id :</label><input type="text" name="contactEmailId" id="contactEmailId" value="" onblur="validateCompEmail(this.value)"/></td></tr>
+					 
+					</tbody>
+				  	
+			 	<%
+			 	}
+		
+			 		
+			 		
+			 		
+			 	}else{
+			 	%>
+			 		<tbody id="HeadQuater">
+			 		<tr><td colspan="2"><label><u><strong>HeadQuater</strong></u></label></td></tr>
+			 		<tr><td colspan="2"><label class="sf-msg-error" style="display:none" id="PinAddErr"></label></td>
+		 						<td align="right"><a href="javascript:void(0)" class="btn btn-info" onclick="addBranch()">Add Branch</a></td></tr>
+				 	 <tr><td colspan="3"><input type="hidden" name="branchName" value="HeadQuater" /></td></tr>
+				 	 <tr><td colspan="3" width="50%" ><label>Address Type: </label><select class='form-control' name='addressType'><option value='Office'>Office</option><option value='Home'>Home</option><option value='Head Office'>Head Office</option></select></td></tr>
+					<tr>
+					<td width="33%" ><label>Postal Code :</label><input type="text" name="postalCode" id="postalCodeId" onkeyup="getPostalData()" value="" /></td>
+					<td width="33%" ><label>Address :</label><input type="text" name="address" id="addressId" onkeyup="onkeyupForAddress(this.id)" value="" /><div id="suggestionsVenue"  style="z-index:1;position: absolute;background: white;width:32%">
+  							<div class="searchterm" id="VenueItem"></div>
+ 							</div>
+						</td>
+						<td width="33%" ><label>City :</label><input type="text" name="city" readonly id="city" value="" /></td>
+					 	</tr>
+					 	<tr><td width="33%" ><label>District </label><input type="text" readonly name="district" id="district" 
+							 			value="<%=addressNode[i].branchDistrict?addressNode[i].branchDistrict:""%>" /></td>
+								<td width="33%" ><label>State</label><input type="text" readonly name="state" id="state" 
+							 				value="<%=addressNode[i].branchState?addressNode[i].branchState:""%>" /></td>								 	
+							 	 <td width="33%" ><label>Country</label><input type="text" readonly name="country" id="country" 
+							 				value="<%=addressNode[i].branchCountry?addressNode[i].branchCountry:""%>" /></td>
+							 	</tr>
+					<tr><td width="33%" ><label>Land Line Number :</label><input type="text" name="workNumber" id="workNumber" value="" onblur="validateCompLandline(this.value)"/></td>
+					 	<td width="33%" ><label>Mobile Number :</label><input name="mobileNumber" type="text" id="mobileNumber" value="" onblur="validateCompMob(this.value)" /></td>
+					 	<td width="33%" ><label>Contact Email Id :</label><input type="text" name="contactEmailId" id="contactEmailId" value="" onblur="validateCompEmail(this.value)"/></td></tr>
+					 
+					</tbody>
+				  	
+			 	<%
+			 	}
+		 %>
+		 
+	
+		</table><table  width="100%" border="0" cellspacing="0" cellpadding="0" class="form">
+		 <tr><td colspan="5">
+		           <div class="separator"></div> 
+		
+		<tr><td colspan="3"><label><u>Point Of Contact</u></label><br /></td>
+										<td align="right"><a id="profileEdit" onclick="addRow('contactTypeList')" href="javascript:void(0)">
+		                                                            <!--<img height="20" align="middle" src="<%=request.getContextPath()%>/apps/images/icon_add_2.png" title="Add Row" alt="ADD">-->
+		                                                            <span id="" class="glyphicon glyphicon-plus btn btn-default"></span>
+		                                                        </a>
+		                                                        <a id="profileEdit" onclick="deleteRow('contactTypeList')" href="javascript:void(0)">
+		                                                            <!--<img height="20" align="middle" src="<%=request.getContextPath()%>/apps/images/icon_remove_2.png" title="Delete Row" alt="Delete">-->
+		                                                            <span id="" class="glyphicon glyphicon-minus btn btn-default"></span>
+		                                                        </a>
+		                                  </td>
+		 </tr>
+		
+		 <tr>
+		 		<td width="20%" ><label>Contact For:</label></td>
+		 		<td width="20%" ><label>Name</label></td>
+		 		<td width="20%" ><label>Contact</label></td>
+		 		<td width="20%" ><label>Contact Details</label></td>
+		 		
+		<tbody id="contactTypeList" >
+		  <%
+		             var contactNode;                                   
+		          if( currentNodeProvided && currentNode.hasNode("PointOfContact") && currentNode.getNode("PointOfContact").hasNodes() ){
+		          										contactNode=currentNode.getNode("PointOfContact").getNodes();
+		                                                for(i in contactNode)
+		                                                {%>
+		                                               
+		                                                  <tr>
+		                                                      <td><input type="text" name="contactTypeCompany" 
+		                                                      			value="<%=contactNode[i].contactTypeCompany?contactNode[i].contactTypeCompany:""%>"/></td>
+															<td><input type="text" name="nameContactTypeCompany" 
+																	value="<%=contactNode[i].nameContactTypeCompany?contactNode[i].nameContactTypeCompany:""%>"/></td>
+															<td><input type="text" name="contactContactTypeCompany" 
+																		value="<%=contactNode[i].contactContactTypeCompany?contactNode[i].contactContactTypeCompany:""%>"/></td>
+															<td><input type="text" name="detailContactTypeCompany" 
+																		value="<%=contactNode[i].detailContactTypeCompany?contactNode[i].detailContactTypeCompany:""%>"/></td>
+		
+		                                                       <% if(i==0)
+		                                                        {
+		                                                        %>
+		                                                        <td><a id="profileEdit" onclick="addRow('contactTypeList')" href="javascript:void(0)">
+		                                                            <img height="20" align="middle" src="/sling/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD">
+		                                                        </a>
+		                                                        <a id="profileEdit" onclick="deleteRow('contactTypeList')" href="javascript:void(0)">
+		                                                            <img height="20" align="middle" src="/sling/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete">
+		                                                        </a>
+		                                                        </td>
+		
+		                                                    
+		                                                        
+		                                                        <%} %>
+		                                                      </tr>
+		                                                <%}}
+		                                                else{ %>
+		
+		                                                <tr>
+		
+		                                                    <td><input type="text" name="contactTypeCompany" placeholder="SELL/PURCHASE/OTHER" value=""/></td>
+															<td><input type="text" name="nameContactTypeCompany" value=""/></td>
+															<td><input type="text" name="contactContactTypeCompany" value=""/></td>
+															<td><input type="text" name="detailContactTypeCompany" value=""/></td>
+		
+		                                                   
+		
+		                                                   
+		     
+		                                                </tr>
+		                                                <%}%>
+		</tbody>
+		</tr>
+		
+		 <tr>
+		   <td width="150px">
+		       
+		   </td>
+		 </tr>
+	   </table>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    </div>
+                            </div>
+                         
+                         </li>
+                    
+                    </ul>
+    <% if(!request.getParameter("id").equals("new")){%>
+                    <ul class="sf-content" id="page3"> <!-- form step tree --> 
+                         <li>
+                            <div class="sf_columns column_6">
+                                <div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Product Service</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Product Service" data-required="false">
+								    </div>
+								</div>
+                            </div>
+                         </li>
+                    </ul>
+                    <%}%>
+                    <ul class="sf-content" id="page4"> <!-- form step four --> 
+                         <li>
+                            <div class="sf_columns column_6">
+                                <div class="form-group">
+								    <label for="" class="col-sm-2 control-label">About Us</label>
+								    <div class="col-sm-10"> 
+								      <textarea class="form-control" placeholder="About Us" data-required="false"  name="aboutcom"><%if(currentNodeProvided){%><%=basicInfoNode.aboutcom?basicInfoNode.aboutcom:""%><%}%></textarea>
+								    </div>
+								</div>
+								</div>
+                         </li>
+                         <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Vision</label>
+								    <div class="col-sm-10"> 
+								         <textarea class="form-control" placeholder="Vision" data-required="false"  name="vision"><%if(currentNodeProvided){%><%=basicInfoNode.vision?basicInfoNode.vision:""%><%}%></textarea>
+								    </div>
+								</div>
+								</div>
+                         </li>
+                         <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Mission</label>
+								    <div class="col-sm-10"> 
+								      <textarea class="form-control" placeholder="Mission" data-required="false"  name="mission"><%if(currentNodeProvided){%><%=basicInfoNode.mission?basicInfoNode.mission:""%><%}%></textarea>
+								    </div>
+								</div>
+                            </div>
+                         </li>
+                    </ul>
+                    
+                    <ul class="sf-content" id="page5"> <!-- form step five --> 
+                         	 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Event Name</label>
+								    <div class="col-sm-6">
+								    <input type="hidden" class="form-control" placeholder="enter event name to search" data-required="false"  id="eventIdValue" value=""/>
+								      <input type="text" class="form-control" placeholder="enter event name to search" data-required="false"  id="eventIdName" name="eventIdName" 
+		 							  value="" onkeyup="eventDetails()" />
+		 							  
+		 							   								 								<div id="suggestionEvent"  style="z-index:1;background:white">
+  <div class="searchterm" id="searchEvent"></div>
+ </div></div>
+								    <div class="col-sm-4">
+									  <label id="eventErrorId" class="control-label" style="color:red;display:none"></label>								    
+								      <button id="eventParticipateId" type="button" onclick="compParticipateEvent()" class="btn btn-default" style="display:none">click to participate</button>
+									</div>
+								</div>
+									</div>
+							</li>
+					</ul>
+                     <ul class="sf-content" id="page6"> <!-- form step five --> 
+                     <li style="margin-bottom: 2rem;"><div class="sf_columns column_6" style="width: 100%; margin-bottom: 0px;"><div class="form-group"><label for="" class="col-sm-2 control-label"></label><div class="col-sm-10"><label for="" class="control-label" style="color: #dc3030;">(Please provide http link for facebook,gplus,twitter and pinterest)</label></div></div></div></li>
+                         	 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Facebook</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Enter your company facebook page url here" data-required="false"   name="fburl" 
+		 							  <%if(currentNodeProvided && currentNode.hasNode("BasicInfo")){%>
+		 								value="<%=basicInfoNode.fburl?basicInfoNode.fburl:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+									</div>
+							</li>
+							<li><div class="sf_columns column_6"><div class="form-group"><label for="" class="col-sm-2 control-label">Twitter</label><div class="col-sm-10"><input type="text" class="form-control" placeholder="Enter your company twitter url here" data-required="false"   name="twurl" <%if(currentNodeProvided && currentNode.hasNode("BasicInfo")){%>value="<%=basicInfoNode.twurl?basicInfoNode.twurl:""%>" <%}else{%>value=""<%}%> /></div></div></div></li>
+							 <li><div class="sf_columns column_6"><div class="form-group"><label for="" class="col-sm-2 control-label">Google Plus</label><div class="col-sm-10">								      <input type="text" class="form-control" placeholder="Enter your company google plus page url here" data-required="false" name="googleurl" <%if(currentNodeProvided && currentNode.hasNode("BasicInfo")){%>value="<%=basicInfoNode.googleurl?basicInfoNode.googleurl:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li><li><div class="sf_columns column_6"><div class="form-group"><label for="" class="col-sm-2 control-label">Pinterest</label><div class="col-sm-10"><input type="text" class="form-control" placeholder="Enter your company pinterest url here" data-required="false" name="pinurl"  
+								      <%if(currentNodeProvided && currentNode.hasNode("BasicInfo")){%>
+		 								value="<%=basicInfoNode.pinurl?basicInfoNode.pinurl:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li>
+					</ul>
+                    <ul class="sf-content" id="page7"> <!-- form step five --> 
+                         <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+																					<script>
+											$(document).ready(function() {
+											var addDivSec = $('#keywordList-securedoc');
+											var i = parseInt($('#keywordList-securedoc .row').size()) + 1;
+											$('#addNewSec').on('click', function() {
+											$("<div class='row remove"+ i +"' id='remove'><div class='col-sm-4'><input type='text' class='form-control' placeholder='Enter Filename of Secure Document' data-required='false'   name='secdocfilename' value='' /></div><div class='col-sm-6'><input type='text' class='form-control' placeholder='Enter Url of Secure Document' data-required='false'   name='secdocurl' value='' /></div><div class='col-xs-2'><span id='remNewSec' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDivSec);
+											});
+																			$(document).on('click', '#remNewSec', function() {
+                                                                                        $(this).parents('#remove').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+								<div id="keywordList-securedoc">
+																					<%
+                                                                                    if (currentNodeProvided && currentNode.hasNode("securedoc")
+                                                                                            && currentNode.getNode("securedoc").hasNodes()) {
+
+                                                                                        var emailValue = currentNode.getNode("securedoc").getNodes();
+																						var countEmail = 0;
+                                                                                        for (i in     emailValue) {
+                                                                                            countEmail++;
+                                                                                %><div class="row  remove<%=countEmail%>" id='remove' style="margin-bottom: 15px;">
+                                                                                    <div class="col-sm-4">
+                                                                                    <input type="text" class="form-control" placeholder="Enter Filename of Secure Document" data-required="false"   name="secdocfilename" value="<%= emailValue[i].secfilename%>" /></div> 
+                                                                                        <div class="col-sm-6"><input type="text" class="form-control" placeholder="Enter Url of Secure Document" data-required="false"   name="secdocurl" value="<%= emailValue[i].securl%>" />
+								    												</div><% if (countEmail == 1) {
+                                                                                        %>
+                                                                                    <div class="col-xs-2"><span id="addNewSec" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+																					<%} else { %>
+                                                                                    <div class='col-xs-2'><span id='remNewSec' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+                                                                                        <%} %>
+																					</div>
+                                                                                <%}
+                                                                                } else { %>
+								<div class="row" id='remove'><div class="col-sm-4"><input type="text" class="form-control" placeholder="Enter Filename of Secure Document" data-required="false"   name="secdocfilename" value="" /></div><div class="col-sm-6"><input type="text" class="form-control" placeholder="Enter Url of Secure Document" data-required="false"   name="secdocurl" value="" /></div><div class="col-xs-2"><span id="addNewSec" class="glyphicon glyphicon-plus btn btn-default"></span></div></div><%}%></div></div>
+							</li>
+					</ul>
+                    <ul class="sf-content" id="page8"> <!-- form step five --> 
+                         <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Yearly TurnOver</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Yearly TurnOver" data-required="false"  name="turnOver" 
+		 							  <%if(currentNodeProvided && currentNode.hasNode("taxation")){%>
+		 								value="<%=taxNode.turnOver?taxNode.turnOver:""%>"
+		 								<%}else{%>
+		 								value=""
+		 							<%}%>
+		 								 />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Founded</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Founded" data-required="false"   name="founded" 
+		 							  <%if(currentNodeProvided && currentNode.hasNode("taxation")){%>
+		 								value="<%=taxNode.founded?taxNode.founded:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+									</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+							<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Place where company is founded</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Place where company is founded" data-required="false"   name="foundedPlace" 
+		 							  <%if(currentNodeProvided && currentNode.hasNode("taxation")){%>
+		 								value="<%=taxNode.foundedPlace?taxNode.foundedPlace:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">State Sales Tax Number</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="State Sales Tax Number" data-required="false" name="stateSalesTax" 
+		 							  <%if(currentNodeProvided && currentNode.hasNode("taxation")){%>
+		 								value="<%=taxNode.stateSalesTax?taxNode.stateSalesTax:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Central Sales Tax Number</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Central Sales Tax Number" data-required="false" name="centralSalesTax"  <%if(currentNodeProvided && currentNode.hasNode("taxation")){%>
+		 								value="<%=taxNode.centralSalesTax?taxNode.centralSalesTax:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">PAN No</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="PAN No" data-required="false"    name="panNumber" 
+		 							  <%if(currentNodeProvided && currentNode.hasNode("taxation")){%>
+		 								value="<%=taxNode.panNumber?taxNode.panNumber:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">BSE No.</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="BSE No." data-required="false" name="BSENumber"  <%if(currentNodeProvided && currentNode.hasNode("taxation")){%>
+                                        value="<%=taxNode.BSENumber?taxNode.BSENumber:""%>" 
+                                        <%}else{%>
+                                        value=""
+                                        <%}%>/>
+								    </div>
+								</div>
+								</div>
+							</li>
+                    </ul>
+                    
+                      <% if(!request.getParameter("id").equals("new")){%>
+                      <ul class="sf-content" id="page9"> <!-- form step tree --> 
+                         <li>
+                            <div class="sf_columns column_6">
+                                <div class="form-group">
+                                 <label for="" class="col-sm-2 control-label">Relationship</label>
+								    <div class="col-sm-10">
+								      <%if(currentNodeProvided){%>
+      <h2>Edit Relationship</h2><br><br>
+   
+      <ul class="easyui-tree"  data-options="animate:true,state:'closed'">  
+      		<li>  
+                <span>With Other Company   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                				<a class="btn btn-primary" onclick="openPopUpCommon('<%=request.getContextPath()%>/content/company/<%=request.getParameter("id")%>.mapType?mapType=company&compN=<%=request.getParameter("id")%>', 'Map CompanyType', 200, 300)" 
+                    					href="javascript:void(0)">ADD</a> </span>
+                
+                
+                <ul>  
+                    
+                   <% 
+					    if(currentNode.hasNode("Relationship")){
+					    var relationNode=currentNode.getNode("Relationship");
+     
+                    	if(relationNode.hasNode("Company")){
+                    		var relationTypeNode=relationNode.getNode("Company").getNodes();
+                    		for(i in relationTypeNode){
+                    		%>
+                    		<li data-options="state:'closed'">  
+                    			<span><%=relationTypeNode[i].getName()%>   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    						<a onclick="openPopUpCompany('<%=request.getContextPath()%>/servlet/common/search.company?keywords=', 'Search Company', 800, 1000,'<%=relationTypeNode[i].getName()%>')" 
+                    															href="javascript:void(0)"><img height="14" align="middle" 
+                    																src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png"
+                    																 title="Add Row" alt="ADD" /></a></span>
+                    			<ul>	
+                    		
+                    		<%	var relationCompanyNode=relationTypeNode[i].getNodes();
+                    			for(j in relationCompanyNode){
+                    			%>
+		                    			<li>
+		                    			<a href="<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=relationCompanyNode[j].getName()%>"><%=relationCompanyNode[j].getName()%></a>
+		                    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		                    			<a href="<%=request.getContextPath()%>/servlet/company/show.deleteMap?nodeName=<%=relationCompanyNode[j]%>&compN=<%=request.getParameter("id")%>">
+		                    			<img height="14" align="middle"
+		                    						 src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png"
+		                    						  title="Delete Row" alt="Delete" />
+		                    			</a>
+		                    			</li>
+                    			<%
+                    			 }%>
+                    			</ul>
+                    		  </li>	
+                    		<%}
+                    	}else{
+out.print("No relationship now !");
+}
+
+}else{
+
+					}
+                    
+                    %>
+                         
+                         
+                    
+                </ul>  
+            </li> 
+            <li>  
+                <span>Agent/Employer Etc.   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                					<a class="btn btn-primary" onclick="openPopUpCommon('<%=request.getContextPath()%>/content/company/<%=request.getParameter("id")%>.mapType?mapType=user&compN=<%=request.getParameter("id")%>', 'Map UserType', 200, 300)" 
+                    					href="javascript:void(0)">ADD</a> </span>
+                
+                <ul>  
+                    
+                   <%
+                   		 
+				      	if(currentNode.hasNode("Relationship")){
+				      	var relationNode=currentNode.getNode("Relationship");
+     
+                    	if(relationNode.hasNode("User")){
+                    		var relationTypeNode=relationNode.getNode("User").getNodes();
+                    		for(i in relationTypeNode){
+                    		%>
+                    		<li data-options="state:'closed'">  
+                    			<span><%=relationTypeNode[i].getName()%>    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    						<a onclick="openPopUpUser('<%=request.getContextPath()%>/servlet/common/search.profile?keywords=&userId=newUserId', 'Search User', 800, 1000,'<%=relationTypeNode[i].getName()%>')" 
+                    															href="javascript:void(0)"><img height="14" align="middle" 
+                    																src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png"
+                    																 title="Add Row" alt="ADD" /></a></span>
+                    			<ul>	
+                    		
+                    		<%	var relationUserNode=relationTypeNode[i].getNodes();
+                    			for(j in relationUserNode){
+                    			%>
+		                    			<li>
+		                    			<a href="<%=request.getContextPath()%>/content/user/info?id=<%=relationUserNode[j].getName()%>">
+		                    			<% var userNode=currentNode.session.getRootNode().getNode("content/user/").getNode(relationUserNode[j].getName());%>
+		                    				<%=userNode.name%> <%=userNode.lastName%></a>
+		                    			<%if(relationUserNode[j].hasProperty("rejected") && relationUserNode[j].rejected=='true'){											%>
+		                    			       (Rejected By User)
+		                    			<%}%>
+		                    			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		                    			<a href="javascript:void(0);" onclick="deleteUserMap('<%=relationUserNode[j]%>',
+		                    			                                                     '<%=userNode.getName()%>',
+		                    			                                          '<%=relationTypeNode[i].getName()%>',this,
+		                    			                                          '<%=relationUserNode[j].rejected%>')">
+		                    			<img height="14" align="middle"
+		                    						 src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png"
+		                    						  title="Delete Row" alt="Delete" />
+		                    			</a>
+		                    			</li>
+                    			  <%
+                    			 }%>
+                    			</ul>
+                    		  </li>	
+                    		<%}
+                    	}}
+                    %>
+                </ul>  
+            </li> 
+            <li>  
+                <span>Products   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-primary" onclick="openPopUpCommon('<%=request.getContextPath()%>/content/company/<%=request.getParameter("id")%>.mapType?mapType=product&compN=<%=request.getParameter("id")%>', 'Map ProductType', 200, 300)" 
+                                        href="javascript:void(0)">ADD</a> </span>                
+                <ul>  
+                   <%
+                        if(currentNode.hasNode("Relationship")){
+                        var relationNode=currentNode.getNode("Relationship");
+     			     if(relationNode.hasNode("Product")){
+                            var relationTypeNode=relationNode.getNode("Product").getNodes();
+                            for(i in relationTypeNode){
+                            %>
+                            <li data-options="state:'closed'">  
+                                <span><%=relationTypeNode[i].getName()%>    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <a onclick="openPopUpProduct('<%=request.getContextPath()%>/content/category.searchfn', 'Product Mapping', 800, 1000,'<%=relationTypeNode[i].getName()%>')" 
+                                                                                href="javascript:void(0)"><img height="14" align="middle" 
+                                                                                    src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png"
+                                                                                     title="Add Row" alt="ADD" /></a></span>
+                                <ul>    
+                            
+                            <%  var relationProductNode=relationTypeNode[i].getNodes();
+                                for(j in relationProductNode){
+                                %>
+                                        <li>
+                                       
+                                        <% var productNode=currentNode.session.getNode(relationProductNode[j].productPath);%>
+                                        <%=productNode.name%>
+                                        
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a href="<%=request.getContextPath()%>/servlet/company/show.deleteMap?nodeName=<%=relationProductNode[j]%>&compN=<%=request.getParameter("id")%>">
+                                        <img height="14" align="middle"
+                                                     src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png"
+                                                      title="Delete Row" alt="Delete" />
+                                        </a>
+                                        </li>
+                           <%}%></ul>
+                           <%
+                             }}}%>
+               </ul> 
+            </li>
+        </ul>
+	
+								    </div>
+								</div>
+                            </div>
+                         </li>
+                    </ul>
+                    
+<%}}%>
+
+               <ul class="sf-content" id="page10"> <!-- form step five --> 
+                         
+                         <div class="col-sm-10">
+                         
+		                                		<div id="empList"> 		                                                        
+                        <% if(currentNode.hasNode("managementteam") && currentNode.getNode("managementteam").hasNodes()){
+                           var managementNode = currentNode.getNode("managementteam").getNodes();
+                           
+                           }else{
+                           var managementNode = "0";
+                           }%>
+                           <% 
+                           if(managementNode.length != 0){
+                           for(var i = 0;i<managementNode.length;i++){%>
+                         <div class="row removeMan<%=i%>" id="removeMan">
+                         <%if(i == 0){%>
+                 <%}else{%>                
+  <hr style='border-top:1px solid;width:96%'>
+  <%}%>
+                           <div class="col-xs-10">
+                          
+                         <li>
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Name</label>
+								    <div class="col-sm-10">
+								    <input type="text" name="empName" placeholder="Name" data-required="false" class="form-control"  id="empNameId"
+		 								value="<%=managementNode[i].empname?managementNode[i].empname:""%>" />
+		 								
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Email Id</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Email Id" data-required="false" name="empEmail" 
+								     value="<%=managementNode[i].empemail?managementNode[i].empemail:""%>" />
+								    </div>
+								</div>
+								</div>
+							</li>
+							<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Designation</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Designation" data-required="false" name="empDesignation" 
+								      value="<%=managementNode[i].empdesignation?managementNode[i].empdesignation:""%>" />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Description</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Description" data-required="false"  name="empDescription"  
+								      value="<%=managementNode[i].empdescription?managementNode[i].empdescription:""%>" />
+								    </div>
+								</div>
+								</div>
+							</li>
+							<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Employeee Access</label>
+								    <div class="col-sm-10">
+								    <select class="form-control" id="empAccess" name="empAccess" style="height:30px">
+								      <%if(managementNode[i].empAccess =='public'){
+								%>
+									<option value="public" selected>public</option>
+									<option value="private">private</option>
+								<%}else if(managementNode[i].empAccess =='private'){
+								%><option value="public" >public</option>
+									<option value="private" selected>private</option>
+								<%}else{%><option value="public" >public</option><option value="private">private</option><%}%>
+								</select>
+								    </div>
+								</div>
+								</div>
+							</li>
+						    	
+						</div>
+						<%if(i == 0){%>
+						 <div class='col-xs-2'><span id="addNew2" class="glyphicon glyphicon-plus btn btn-default"></span></span></div>
+						<%}else{%>
+						<div class='col-xs-2'><span id="remNew2" class="glyphicon glyphicon-minus btn btn-default"></span></span></div>
+						<%}%>
+						</div>
+						<%}
+						}else{%>
+						<div class="row" >
+                       
+                           <div class="col-xs-10">
+                          
+                         <li>
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Name</label>
+								    <div class="col-sm-10">
+								    <input type="text" name="empName" placeholder="Name" data-required="false" class="form-control"  id="empNameId"
+		 								value="" />
+		 								
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Email Id</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Email Id" data-required="false" name="empEmail" 
+								     value="" />
+								    </div>
+								</div>
+								</div>
+							</li>
+							<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Designation</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Designation" data-required="false" name="empDesignation" 
+								      value="" />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Description</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Description" data-required="false"  name="empDescription"  
+								      value="" />
+								    </div>
+								</div>
+								</div>
+							</li>
+							<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Employee Access</label>
+								    <div class="col-sm-10">
+								      <select class="form-control" id="empAccess" name="empAccess" style="height:30px"><option value="public">public</option><option value="private">private</option></select>
+								    </div>
+								</div>
+								</div>
+							</li>
+						
+						</div>
+						 <div class='col-xs-2'><span id="addNew2" class="glyphicon glyphicon-plus btn btn-default"></span></span></div>
+						</div>
+						<%}%>
+                         </div>
+                         </div>  
+                         <!--<li>
+                            <div class="sf_columns column_6">
+							 <div class="form-group">
+								    <label for="" class="col-sm-2 control-label"></label>
+								    <div class="col-sm-10"> 
+								    <%
+								    if(request.getParameter("id") != "new"){
+								    if(basicInfoNode.companytnc == "accept"){
+									%>
+								      <input type="checkbox"  value="accept" id="agree" name="agree" data-required="false" checked/>
+								      <%}else{%>
+								      <input type="checkbox"  value="" id="agree" name="agree" data-required="false" />
+								      <%}}else{%>
+								      <input type="checkbox"  value="" id="agree" name="agree" data-required="false" />
+								      <%}%> 
+								      I have read and agree to the <a data-target="#userPic" data-toggle="modal" href="#">Terms and Conditions</a>
+								      <div class="modal fade" id="userPic" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            				 <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Terms and Condition</h4>
+      </div>
+      <div class="modal-body" style="height: 500px;overflow-y: auto;">
+        
+        <div class="form-group">
+            <div class="col-sm-9">
+              <%
+              var content=currentNode.session.getRootNode().getNode("content");
+              if(content.hasNode("termsncondition") && content.getNode("termsncondition").hasNode("companytnc")){
+              var termsncondition = content.getNode("termsncondition");
+              var companytnc = termsncondition.getNode("companytnc");
+              out.print(companytnc.getProperty("tnc").getString());
+              }else{
+              out.print("No terms and conditions available");
+              }
+              %>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+            				</div>
+								    </div>
+								</div>
+								</div>
+								</li>-->
+                                           </ul>
+                </div>
+<div class="sf-steps-navigation sf-align-right">
+                    <span id="sf-msg" class="sf-msg-error"></span>
+                    <button id="sf-prev" type="button" class="btn btn-default">Previous</button>
+                    <%if(request.getParameter("tab") == "9"){%><button id="sf-next1" value="Submit" name="sf-next1" type="button" class="btn btn-primary">Submit</button><%}else{%><button id="sf-next1" value="Next" name="sf-next1" type="button" class="btn btn-primary">Next</button><%}%>
+                </div>
+            </form>
+        </div></form>
+        <!--STEPS FORM END  -->
+							</div>
+						</div>
+					</div>
+				<div class="col-sm-2 col-xs-12">
+						<div class="advertise">
+				          <img alt="advertise" src="images/advertise2.jpg">
+				      </div>
+					</div>
+				</div>
+			</div>
+</section>
+<%load("../common/footer.esp");%>
+  </body>
+</html>

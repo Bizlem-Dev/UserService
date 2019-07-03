@@ -1,0 +1,56 @@
+<%
+ var arr = [];
+ var compNode = currentNode.session.getRootNode().getNode("content").getNode("company");
+if(compNode.hasNodes()){
+var compNodes = compNode.getNodes();
+while(arr.length < 5){
+    var randomnumber = Math.ceil(Math.random()*(compNodes.length - 1))
+    if(arr.indexOf(randomnumber) > -1) continue;
+    arr[arr.length] = randomnumber;
+  
+}
+//out.print(arr);
+
+}
+%>
+
+<div class="col-sm-12">
+                  <div class="recommeded-conection">
+                      <div class="tab-three">
+                        <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Recommended Companies</h3>
+                        </div>
+                        <div class="panel-body">
+                          <div class="">
+                          <%if(arr.length > 0){
+                          for(var i = 0;i<arr.length;i++){
+                          if(compNode.hasNode(arr[i])){
+                          var userCompNode = compNode.getNode(arr[i]);
+                          %>
+                            <div class="recommended-body">
+                              <div class="recommended-img" style="width:30%">
+                              <%if(userCompNode.hasNode("BasicInfo") && userCompNode.getNode("BasicInfo").hasProperty("companyLogo")){%>
+                                <a target="_blank" href="<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=arr[i]%>"><img src="<%=request.getContextPath()%><%=userCompNode.getNode("BasicInfo").companyLogo%>" style="height:70px;width: 100%"/></a>
+                                <%}else{%>
+                                <a href="<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=arr[i]%>"><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="height:70px;width: 100%"/></a>
+                                <%}%>
+                              </div>
+                              <div class="recommended-text" style="width:66%">
+                              <%if(userCompNode.hasNode("BasicInfo")){%>
+                                <h5><a target="_blank" href="<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=arr[i]%>"><%=userCompNode.getNode("BasicInfo").companyName?userCompNode.getNode("BasicInfo").companyName:""%></a></h5>
+                                
+                                <%}%>
+                              </div>
+                            </div>
+						  <%}
+						  }
+						  }%>
+                            
+
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                  </div>
+              </div><!--end of reccomended conn column -->

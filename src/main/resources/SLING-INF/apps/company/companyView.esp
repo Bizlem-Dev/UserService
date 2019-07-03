@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+
+<%
+	var currentNodeProvided = (typeof currentNode != "undefined");
+
+var user=currentNode.session.getRootNode().getNode("content/user/");
+/* Following are privacy variables  */
+var contactPrivacy="";
+var imagesPrivacy=""
+var videoPrivacy="";
+var productPrivacy="";
+var userRelationPrivacy="";
+var compRelationPrivacy="";
+var comDocsPrivacy="";
+var comTaxPrivacy="";
+var comNewsPrivacy="";
+var secureDocsPrivacy="";
+/*  */
+var connectionCom = "false";
+if(currentNodeProvided && request.getRemoteUser()!='anonymous'){
+    if(currentNode.hasNode("Privacy")){
+         var privacyNode = currentNode.getNode("Privacy");
+         contactPrivacy=privacyNode.contactPrivacy?privacyNode.contactPrivacy:"";
+         imagesPrivacy=privacyNode.imagesPrivacy?privacyNode.imagesPrivacy:"";
+         videoPrivacy=privacyNode.videoPrivacy?privacyNode.videoPrivacy:"";
+         productPrivacy=privacyNode.productPrivacy?privacyNode.productPrivacy:"";
+         userRelationPrivacy=privacyNode.userRelationPrivacy?privacyNode.userRelationPrivacy:"";
+         compRelationPrivacy=privacyNode.compRelationPrivacy?privacyNode.compRelationPrivacy:"";
+         comDocsPrivacy=privacyNode.comDocsPrivacy?privacyNode.comDocsPrivacy:"";
+         comTaxPrivacy=privacyNode.comTaxPrivacy?privacyNode.comTaxPrivacy:"";
+         comNewsPrivacy=privacyNode.comNewsPrivacy?privacyNode.comNewsPrivacy:"";
+         secureDocsPrivacy=privacyNode.secureDocsPrivacy?privacyNode.secureDocsPrivacy:"";
+    }
+}
+%>
+
+<html>
+    <head>
+        <title>Company View</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+		<%load("../common/links.esp");%>
+		<script>
+		
+		function verifycompany(){
+	
+	
+    var url = '<%=request.getContextPath()%>/servlet/company/show.verifycomp';
+    $.ajax({
+    type:'get',
+	  url:url,
+	  data:{
+	
+		compid:'<%=request.getParameter("compN")%>'
+	  },
+	  success: function(result){
+	       // $("#div1").html(result);
+	       //alert("sucess---"+result);
+		  
+		  
+		  if(result) {
+	            document.getElementById('verify').style.visibility = 'hidden';
+	        } else {
+	            document.getElementById('verify').style.visibility = 'visible';
+	        }
+	    }
+})
+}
+		
+		
+		function loadDoc() {
+	//	alert("start");
+		    var xhttp;
+		    var page;
+		    if (window.XMLHttpRequest) {
+		         // code for modern browsers
+		         xhttp = new XMLHttpRequest();
+		    } 
+		    else {
+		        // code for IE6, IE5
+		         xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		     }
+		    xhttp.onreadystatechange = function() {
+		  //  alert(this.status+"---"+this.readyState);
+		      if (this.readyState == 4 && this.status == 200) {
+		       
+		      page= this.responseText.toString();
+		      //alert(page);
+		      console.log("page--"+page);
+		      var url = '<%=request.getContextPath()%>/servlet/friend/show.ehcachecompany';
+		     $.ajax({
+		    	  type:'POST',
+		    	  url:url,
+		    	  data:{
+		    		vpage:page,
+		    		id:'<%=request.getParameter("compN")%>'
+		    		//alert(request.getParameter("id"));
+		    	  },
+		    	  success: function(result){
+		    	       // $("#div1").html(result);
+		    	      // alert("sucess---"+result);
+		    	    }
+		      })
+		   
+		    }
+		  };
+		 //xhttp.open("GET", "/content/user/<%=request.getParameter("id")%>.profile?name=<%=request.getParameter("id")%>", true);
+	 // xhttp.open("GET", "/config/ehcac", true);	  
+	 xhttp.open("GET", "/portal/servlet/company/show.view?compN=<%=request.getParameter("compN")%>", true);
+		  xhttp.send();
+		}
+		
+		//    window.onload = loadDoc;
+    </script>
+    </head>
+<body>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+    <%load("../common/header.esp");%>
+     <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/ckeditor/ckeditor.js" type="text/javascript"></script>
+  <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>
+  <script> $(function() {
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        CKEDITOR.replace('editor1');
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+     
+    });
+  </script>
+
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.1.1/ekko-lightbox.min.js"></script>
+<script type="text/javascript">
+
+            
+            $(document).on('click', '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault();
+    $(this).ekkoLightbox();
+	});
+        </script>
+<script>
+ $(function() {
+ $("#idWebsiteShow").hide();
+ $("#idVisionMissionShow").hide();
+ $("#idMgTeamShow").hide();
+ $("#idProductShow").hide();
+        $('#contentFeedbackFrame').load("<%=request.getContextPath()%>/servlet/"+
+                "feedback/content.show?contentId=<%=currentNode.getIdentifier()%>"+
+                "&userId=<%=request.getRemoteUser().replace("@","_")%>&content=YYYYYYYY");
+        
+    });
+</script>
+<%							
+													
+											var companyNode=currentNode.getNode("BasicInfo");
+											%>
+<script>
+function callCompanyLink(id){
+
+if(id == 1){
+$("#idAboutUsShow").show();
+$("#idWebsiteShow").hide();
+$("#idAboutUs").addClass("active");
+$("#idWebsite").removeClass("active");
+$("#idVisionMissionShow").hide();
+$("#idVisionMission").removeClass("active");
+$("#idMgTeam").removeClass("active");
+$("#idMgTeamShow").hide();
+$("#idProduct").removeClass("active");
+$("#idProductShow").hide();
+}else if(id == 2){
+$("#idAboutUsShow").hide();
+$("#idWebsiteShow").show();
+$("#idWebsiteShow").html('<object width="100%" height="1000px" data="<%=request.getContextPath()%>/servlet/company/show.privacy?company=<%=currentNode.getName()%>" />');
+$("#idWebsite").addClass("active");
+$("#idAboutUs").removeClass("active");
+$("#idVisionMissionShow").hide();
+$("#idVisionMission").removeClass("active");
+$("#idMgTeam").removeClass("active");
+$("#idMgTeamShow").hide();
+$("#idProduct").removeClass("active");
+$("#idProductShow").hide();
+}else if(id == 3){
+$("#idVisionMissionShow").show();
+$("#idVisionMission").addClass("active");
+$("#idAboutUsShow").hide();
+$("#idWebsiteShow").hide();
+$("#idAboutUs").removeClass("active");
+$("#idWebsite").removeClass("active");
+$("#idMgTeam").removeClass("active");
+$("#idMgTeamShow").hide();
+$("#idProduct").removeClass("active");
+$("#idProductShow").hide();
+}else if(id == 4){
+$.ajax({
+				 	 	 type: 'GET',
+		  				 url:'<%=request.getContextPath()%>/servlet/service/productselection.companymanagementlst',
+						 data: 
+						 {
+						 compN:'<%=currentNode.getName()%>'
+						 },
+						 success: function(data){
+$("#idMgTeam").addClass("active");
+$("#idMgTeamShow").show();
+$("#idMgTeamShow").html(data);
+$("#idVisionMissionShow").hide();
+$("#idAboutUsShow").hide();
+$("#idWebsiteShow").hide();
+$("#idVisionMission").removeClass("active");
+$("#idAboutUs").removeClass("active");
+$("#idWebsite").removeClass("active");
+$("#idProduct").removeClass("active");
+$("#idProductShow").hide();						  }
+						});
+}else if(id == 5){
+$.ajax({
+				 	 	 type: 'GET',
+		  				 url:'<%=request.getContextPath()%>/servlet/service/productselection.companyproductlst',
+						 data: 
+						 {
+						 compN:'<%=currentNode.getName()%>'
+						 },
+						 success: function(data){
+							
+							$("#idProductShow").html(data);
+$("#idProduct").addClass("active");
+$("#idProductShow").show();
+$("#idMgTeam").removeClass("active");
+$("#idMgTeamShow").hide();
+$("#idVisionMissionShow").hide();
+$("#idAboutUsShow").hide();
+$("#idWebsiteShow").hide();
+$("#idVisionMission").removeClass("active");
+$("#idAboutUs").removeClass("active");
+$("#idWebsite").removeClass("active");							
+						  }
+						});	
+
+}
+}
+</script> <script> function getStock(){
+        $.ajax({
+            url:'<%=request.getContextPath()%>/servlet/company/show.getStock',
+            type:'POST',
+            data:'company=<%=currentNode.getName()%>',
+            success:function(data){
+                if(data!='null'){
+                  var obj = JSON.parse(data);
+                  if(obj.variation=='neg'){
+                  var response="";
+                  response = "<h3 class='text-blue'>LIVE BSE</h3><p>"+obj.time +" "+obj.rate+" "+obj.change+"("+obj.changeP+"%)";
+                  
+                  }else if(obj.variation=='pos'){
+                      var response="";
+                      response = "<h3 class='text-blue'>LIVE BSE</h3><p>"+obj.time +" "+obj.rate+" "+obj.change+"("+obj.changeP+"%)";
+                  
+                  }
+                   $("#shareId").html(response);
+                }
+             
+            }
+        });
+    }
+    getStock();
+    function showRel(id,obj){
+        $(".content-sub-link-data").hide();
+        $(".content-sub-link").children("li").removeClass("selected");
+        $(obj).parent('li').addClass("selected");
+       document.getElementById(id).style.display='block';
+    }
+    
+    function showRelMain(value){
+       $(".content-sub-tab > li").removeClass("selected");
+       $(".content-sub-link-data").hide();
+       $(".content-sub-link").children("li").removeClass("selected");
+       $("#"+value+"").addClass("selected");
+       $(".dummy_class").hide();
+        if(value=='product'){
+            $("#productId").show();
+            $("#productId").children('ul').children('li:first-child').addClass("selected");
+            var text1 = $("#productId").children('ul').children('li:first-child').children('a').text().replace(/ /g,"");
+            $("#p"+text1+"").show();
+        }else if(value=='person'){
+            $("#personId").show();
+            $("#personId").children('ul').children('li:first-child').addClass("selected");
+            var text2 = $("#personId").children('ul').children('li:first-child').children('a').text().replace(/ /g,"");
+            $("#u"+text2+"").show();
+        }else if(value=='company'){
+            $("#companyId").show();
+            $("#companyId").children('ul').children('li:first-child').addClass("selected");
+            var text3 = $("#companyId").children('ul').children('li:first-child').children('a').text().replace(/ /g,"");
+            $("#c"+text3+"").show();
+        }
+        
+    } $(function() {
+        $('#contentFeedbackFrame').load("<%=request.getContextPath()%>/servlet/"+
+                "feedback/content.show?contentId=<%=currentNode.getIdentifier()%>"+
+                "&userId=<%=request.getRemoteUser().replace("@","_")%>&content=YYYYYYYY");
+                
+        $('#socialConnectId').load("<%=request.getContextPath()%>/servlet/company/"+
+                    "show.companySocial?company=<%=currentNode.getName()%>");                 
+        
+        $("#iframe_close").click(function(){
+            $(this).parent().parent().hide();
+        });
+    });
+    $(function(){
+        $(".content-sub-tab > li:first-child").addClass("selected");
+        $("#relationDivId").children('div:first').show();
+        $("#relationDivId").children('div:first').children('ul').children('li:first-child').addClass("selected");
+        $("#relationDivId").children('div:first').children('div:first').show();
+        
+    });
+    
+    
+    function downloadFile(filePath){
+        $("#downloadId").val(filePath);
+        $("#downFormId").submit();
+    }
+    function getDelete(){
+    	 var choice = confirm("Are you sure you want to delete this company !");
+
+    	    if (choice) {
+    	       	$.ajax({
+    	            url:'<%=request.getContextPath()%>/servlet/company/save.deleteCompany',
+    	            type:'POST',
+    	            data:'company=<%=currentNode.getName()%>',
+    	            success:function(data){
+    	            	
+    	                if(data=="true"){
+    	                	window.location.href ="<%=request.getContextPath()%>/servlet/common/search.company?keywords=&paramKey=true";
+    	                }else {
+    	                alert("Company  is not deleted .");  
+    	                  }
+    	                }
+    	               	            
+    	        });
+    	    }
+    }
+   </script>
+    	
+
+<section class="company_display_page">
+		<%	var imgRemoteUser = new String(request.getRemoteUser()).valueOf();
+											var imgEmailId =	new String(currentNode.getNode("BasicInfo").creatorEmailId).valueOf();
+											var company_node = currentNode.session.getRootNode().getNode("content/company").getNode(request.getParameter("compN"));
+                    var blogger_node = currentNode.session.getRootNode().getNode("content/blogger/user");
+                    var company_title = company_node.getProperty("title").getString();
+											%>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-xs-12">
+						<div class="row">
+							<div class="col-xs-12">
+								<div class="menu-list well well-sm">
+									<ul class="nav nav-pills">
+								      <li id="idAboutUs" class="active"><a href="javascript:void(0)" onclick="callCompanyLink(1)">About Us</a></li>
+								    
+								      <%if(currentNode.hasNode("product")){%>
+								      <li id="idProduct"><a href="javascript:void(0)" onclick="callCompanyLink(5)">Product</a></li>
+								      <%}%>
+								      <%if(currentNode.hasNode("BasicInfo")){%>
+								      <li id="idVisionMission"><a href="javascript:void(0)" onclick="callCompanyLink(3)">Vision Mission</a></li>
+								      <%}%>
+								      <%if(currentNode.hasNode("managementteam")){%>
+								      <li id="idMgTeam"><a href="javascript:void(0)" onclick="callCompanyLink(4)">Management Team</a></li>
+								      <%}%>
+								      <%if((request.getRemoteUser()+"")==(companyNode.creatorEmailId+"")){%>
+								      <li id="idWebsite"><a href="javascript:void(0)" onclick="callCompanyLink(2)">Privacy</a></li>
+								      <%}%>
+								    </ul>
+								</div>
+							</div>
+							<div id="idAboutUsShow" class="col-sm-9 col-xs-12">
+								<div id="link-content">
+									<div class="about-content">
+										<div class="first-row">
+											
+											<h2>				    <%if(currentNode.hasNode("picture") && currentNode.getNode("picture").hasNode("companyLogo")){%>
+			<img src="<%=request.getContextPath()%><%=currentNode.getNode("picture").getNode("companyLogo")%>"  height="80px" width="125px" />
+			
+			<%}else{%>
+			<img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif"  height="80px" width="125px" />
+			
+			<%}%>
+  <%=companyNode.companyName?companyNode.companyName:""%>
+											<%
+											if(currentNode.hasNode("BasicInfo")){
+											if(imgRemoteUser == imgEmailId){%>
+    				 <a title="Edit" style="display:inline-block; margin:8px 0px 0px 5px;" href="<%=request.getContextPath()%>/servlet/company/show.com?id=<%=currentNode.getName()%>" id="profileEdit">
+                        <i class="fa fa-pencil edit"></i>
+                     </a>
+                     <a href="javascript:void(0);" onclick="getDelete()" >
+                     
+					<img alt="Delete" title="Delete"
+					src="<%=request.getContextPath()%>/apps/user/css/images/delete.png"
+					height="14" /></a>
+					
+					<%if(companyNode.hasProperty("companytnc")&&companyNode.companytnc.equals("accept")){
+						
+					}else{
+						//onclick="verifyproduct()"
+								%>
+					<a  href="#"  onclick="verifycompany()" class="btn btn-primary" id="verify">verify</a>
+					<%}%>
+					
+					
+					<a data-target="#productreason"   href="<%=request.getContextPath()%>/servlet/company/show.invite?compname=<%=companyNode.companyName%>&compid=<%=request.getParameter("compN")%>" 
+         class="btn btn-primary">Invite</a>
+					<%if(currentNode.hasProperty("socialMessagingId")){%>
+                          <a title="View Social Massage id for company"  id="company_social_msg" href="<%=request.getContextPath()%>/servlet/social/messages.company_view?comp=<%=request.getParameter("compN")%>" class="btn btn-primary">View SocialMassage</a>
+                    <%}else{%>
+                          <a title="Create Social Massage id for company"  id="company_social_msg" href="<%=request.getContextPath()%>/servlet/social/messages.company_view?comp=<%=request.getParameter("compN")%>" class="btn btn-primary">Create SocialMassage Id</a>
+                         <%}%>
+                         
+                      <%
+                    
+                  // out.println("company_title : "+company_title);
+                    if(blogger_node.hasNode(company_title)){%>
+				          <a title="View Blogger Id for company"  id="company_blog_view" href="<%=request.getContextPath()%>/servlet/social/mesg.blog?id=<%=company_node.getProperty("title").getString()%>" class="btn btn-primary">View BloggerId</a>
+                         
+                    <%}else{%>
+                          <a title="Create Blogger Id for company"  id="company_blog_create" href="<%=request.getContextPath()%>/servlet/blogger/view.addAccountBlog?blog_title=<%=company_node.getProperty("title").getString()%>&id=<%=company_node.getProperty("title").getString()%>" class="btn btn-primary">Create BloggerId</a>
+                         <%}%>       
+                         
+                 <%}else{%>
+                       <%if(currentNode.hasProperty("socialMessagingId")){
+                       var socialMesgId = currentNode.getProperty("socialMessagingId").getString();
+                      var nodeContent =  currentNode.session.getRootNode().getNode("content");
+                       if(nodeContent.hasNode("socialMessenger") && nodeContent.getNode("socialMessenger").hasNode("socialMessagingId") && 
+                       nodeContent.getNode("socialMessenger").getNode("socialMessagingId").hasNodes()){
+                         
+                       if(nodeContent.getNode("user").hasNode(imgRemoteUser.replace("@","_"))&&nodeContent.getNode("user").getNode(imgRemoteUser.replace("@","_")).hasProperty("socialMessagingId")){
+                         
+                         // var email_id=imgRemoteUser.replace("@","_");
+                        // out.print("email_id 123: "+email_id.toString());
+                         var social_id=nodeContent.getNode("user").getNode(imgRemoteUser.replace("@","_")).getProperty("socialMessagingId").getString();
+                         //out.print("social_id : "+social_id.toString());
+                         
+                         if(nodeContent.hasNode("socialMessenger") && nodeContent.getNode("socialMessenger").hasNode("socialMessagingId") && 
+                          nodeContent.getNode("socialMessenger").getNode("socialMessagingId").getNode(currentNode.getProperty("socialMessagingId").getString()).hasNode("Follower")
+						  && nodeContent.getNode("socialMessenger").getNode("socialMessagingId").getNode(currentNode.getProperty("socialMessagingId").getString()).getNode("Follower").hasNode(social_id)){
+                       %>
+					   <a title="Follow Social Massage id for company"  id="company_social_msg" href="javascript:void(0);" onclick="unFollowFriend('<%=request.getContextPath()%>','<%=imgRemoteUser.replace("@","_")%>','<%=socialMesgId%>')" class="btn btn-warning">UnFollow</a>
+                         <%}else{
+                       
+					   %>
+                       <a title="Follow Social Massage id for company"  onclick="followFriend('<%=request.getContextPath()%>',
+                                '<%=social_id%>','<%=socialMesgId%>')" id="company_social_msg" href="javascript:void(0);" class="btn btn-primary">Follow</a>
+                        <% }%>
+                      
+                         <%}}}else{%>
+                       
+                       <%}%>
+					   
+					   <%if(blogger_node.hasNode(company_title)){%>
+				          <a title="View Blogger Id for company"  id="company_blog_view" href="<%=request.getContextPath()%>/servlet/social/mesg.blog?id=<%=company_node.getProperty("title").getString()%>" class="btn btn-primary">View BloggerId</a>
+                         
+                    <%}%>
+					   
+					   
+                   <%}%>
+               <%}%></h2>
+											<p><a href="http://<%=companyNode.website?companyNode.website:""%>" target="_blank"><%=companyNode.website?companyNode.website:""%></a></p>
+											<p>&nbsp;</p>
+											<p><%=companyNode.description?companyNode.description:""%></p>
+										</div>
+										<div  style="margin-left: 126px;" onload=""></div>
+										<div class="second-row">
+										<div style="width:50%;float:left">
+															<%
+						if(currentNode.hasNode("Address") && currentNode.getNode("Address").hasNodes()){
+						var addressNode=currentNode.getNode("Address").getNodes();
+						for(i in addressNode){
+					%>
+										
+											<h3 class="text-blue"><%=addressNode[i].addressType?addressNode[i].addressType:""%></h3>
+											<p>
+												<%=addressNode[i].branchAddress?addressNode[i].branchAddress:""%><br>
+												<%=addressNode[i].branchCity?addressNode[i].branchCity:""%> - <%=addressNode[i].branchPostalCode?addressNode[i].branchPostalCode:""%><br>
+												Tel: <%=addressNode[i].branchWorkNumber?addressNode[i].branchWorkNumber:""%><br>
+												Mobile: <%=addressNode[i].branchMobileNumber?addressNode[i].branchMobileNumber:""%><br>
+												Contact EmailId: <%=addressNode[i].branchContactEmailId?addressNode[i].branchContactEmailId:""%>
+											</p>
+																<%
+						}
+						}
+					%>
+											</div>
+											<div style="width:50%;float:left" id="shareId">		
+											
+										 </div>
+										</div>
+											<%
+			if(privacy(imagesPrivacy)=='true'){
+		%>
+										<div class="three-row well well-sm">
+											<h3 class="text-blue">IMAGE GALLERY 
+											<%
+											
+											if(request.getRemoteUser()!=null){
+											//out.print(request.getRemoteUser());
+											
+											//out.print(currentNode.getNode("BasicInfo").creatorEmailId);
+										
+											//out.print(a+"~~"+b);
+											if(imgRemoteUser == imgEmailId){
+											//out.print(request.getRemoteUser());
+											//out.print(currentNode.getNode("BasicInfo").creatorEmailId);
+											%>
+											<small class="pull-right"><a href="<%=request.getContextPath()%>/servlet/company/show.image?comp=<%=request.getParameter("compN")%>">More Images</a></small>
+											<%}}%>
+											</h3>
+											<div class="row">
+												<div class="col-xs-12">
+													<div id="image-slider" class="flexslider ">
+								                      <ul class="slides">
+								                      <%
+						if(currentNode.hasNode("media") && currentNode.getNode("media").hasNode("Picture")
+					                            && currentNode.getNode("media").getNode("Picture").hasNodes()){
+					                        var imageCatNodes = currentNode.getNode("media").getNode("Picture").getProperty("latest").getValues();
+					                        for(var i=0;i<imageCatNodes.length;i++){
+					%>
+								                        <li>
+							                            	<a data-title="Light Box 1" data-type="image" data-gallery="multiimages" data-toggle="lightbox" href="<%=request.getContextPath()%><%=imageCatNodes[i].getString()%>/x150" id="open-image">
+							                                    <img width="160px" height="160px" class="img-responsive thumbnail" src="<%=request.getContextPath()%><%=imageCatNodes[i].getString()%>/x150">
+							                                </a>
+							                            </li>
+						<%
+						}
+					                    }else{
+					                    out.print("No image gallery is available");
+					                    }
+					%>
+								                      </ul>
+								                    </div>
+								                     
+												</div>
+											</div>
+
+											<script type="text/javascript">
+							                      $('#image-slider').flexslider({
+							                        animation: "slide",
+									                controlNav: false,
+									                //direction: "vertical",
+									                animationLoop: false,
+									                slideshow: false,
+									                itemWidth: 160,
+									                itemMargin: 15,
+									                asNavFor: '#slider'
+							                      });
+							                  </script>
+										</div>
+										<%}%>
+										<%
+			if(privacy(videoPrivacy)=='true'){
+		%>
+										<div class="three-row well well-sm">
+											<h3 class="text-blue">VIDEO GALLERY 
+											<%if(request.getRemoteUser()!=null){
+											var vidRemoteUser = new String(request.getRemoteUser()).valueOf();
+											var vidEmailId =	new String(currentNode.getNode("BasicInfo").creatorEmailId).valueOf();
+											if(vidRemoteUser == vidEmailId){
+											%>
+											<small class="pull-right"><a href="<%=request.getContextPath()%>/servlet/company/show.video?comp=<%=request.getParameter("compN")%>">More Video</a></small>
+											<%}}%>
+											
+
+											<div class="row">
+												<div class="col-xs-12">
+													<div id="video-slider" class="flexslider ">
+								                      <ul class="slides">
+								                      				<%if(currentNode.hasNode("media") && currentNode.getNode("media").hasNode("Video") 
+            && currentNode.getNode("media").getNode("Video").hasNodes()){
+			if(currentNode.getNode("media").getNode("Video").hasProperty("latestVideo")){
+			   var videoCatNodes = currentNode.getNode("media").getNode("Video").getProperty("latestVideo").getValues();
+			   for(i in videoCatNodes){ %>
+								                      
+								                        <li>
+							                            	<a data-title="Light Box 1" data-gallery="multiimages" data-toggle="lightbox" href="<%=request.getContextPath()+videoCatNodes[i].getString()%>">
+							                                    <img class="img-responsive thumbnail" src="<%=request.getContextPath()%>/apps/images/lightbox1.jpg">
+							                                </a>
+							                            </li>
+							                         <% }
+			}else{
+			if(currentNode.getNode("media").hasNode("Video")){
+			if(currentNode.getNode("media").getNode("Video").hasNodes()){
+			 var videoNodes = currentNode.getNode("media").getNode("Video").getNodes();
+			 for(i = 0;i<videoNodes.length;i++){
+			if(videoNodes[i].hasNodes()){
+                        var video = videoNodes[i].getNodes();
+                        for( j in video){ %>   
+                                    <li>
+							                            	<a data-title="Light Box 1" data-gallery="multiimages" data-toggle="lightbox" href="<%=request.getContextPath()+videoCatNodes[i].getString()%>">
+							                                    <img class="img-responsive thumbnail" src="<%=request.getContextPath()%>/apps/images/lightbox1.jpg">
+							                                </a>
+							                            </li>
+							                            <%}
+						}else{out.print("No video gallery is available");}
+						}
+				}else{out.print("No video gallery is available");}
+				}else{out.print("No video gallery is available");}	  
+			}
+     
+			}else{out.print("No video gallery is available");}
+		%>
+					
+								                      </ul>
+								                    </div>
+								                     
+												</div>
+											</div>
+											<script type="text/javascript">
+							                      $('#video-slider').flexslider({
+							                        animation: "slide",
+									                controlNav: false,
+									                //direction: "vertical",
+									                animationLoop: false,
+									                slideshow: false,
+									                itemWidth: 160,
+									                itemMargin: 15,
+									                asNavFor: '#slider'
+							                      });
+							                  </script>
+
+										</div>
+										<%}%>
+									</div>
+								</div>
+								
+								<div class="tab-content" id="myTabContent">
+							      <div aria-labelledby="dropdown1-tab" id="service1" class="tab-pane fade">
+							        <blockquote>
+							          <h4>Service 1 Title</h4>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									</blockquote>
+							      </div>
+							      <div aria-labelledby="dropdown2-tab" id="service2" class="tab-pane fade">
+							        <blockquote>
+							          <h4>Service 2 Title</h4>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									</blockquote>
+							      </div>
+							      <div aria-labelledby="dropdown3-tab" id="service3" class="tab-pane fade">
+							        <blockquote>
+							          <h4>Service 3 Title</h4>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									</blockquote>
+							      </div>
+							      <div aria-labelledby="dropdown4-tab" id="service4" class="tab-pane fade">
+							        <blockquote>
+							          <h4>Service 4 Title</h4>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis vitae sint quod quibusdam quas exercitationem quia laborum eum ullam illo aspernatur, voluptatibus perspiciatis odit magni ut et natus provident. Quos.</p>
+									</blockquote>
+							      </div>
+							    </div>
+
+
+							</div>
+							<div id="idWebsiteShow" class="col-sm-9 col-xs-12"></div>
+							<div id="idVisionMissionShow" class="col-sm-9 col-xs-12">
+							<%if(currentNode.hasNode("BasicInfo")){
+							//var cmpVsMsNode=currentNode.getNode("vissionmission");
+							%>
+							<p><span>Vission : </span><span><%=companyNode.vision?companyNode.vision:""%></span></p><br>
+							<p><span>Mission : </span><span><%=companyNode.mission?companyNode.mission:""%></span></p>
+							<%}%>
+							</div>
+							<div id="idMgTeamShow" class="col-sm-9 col-xs-12 content4">
+							</div>
+							<div id="idProductShow" class="col-sm-9 col-xs-12 content4">
+							</div>
+							<div class="col-sm-3 col-xs-12">
+						<div id="contentFeedbackFrame" ></div>	
+			                    <div class="row">
+			              <%      if(privacy(comTaxPrivacy)=='true'){
+						       if(currentNode.hasNode("BasicInfo")){
+			                    %>
+			                    	<div class="col-xs-12">
+			                    		<div class="panel panel-primary company-details">
+									      <div class="panel-heading">
+									        <h3 class="panel-title">Company Details</h3>
+									      </div>
+									      <div class="panel-body">
+								        	<p>
+								        		<span class="first text-blue">Industries</span>
+								        		<span class="second"><%=companyNode.industries?companyNode.industries:""%></span>
+								        	</p>
+								        	<%if(currentNode.hasNode("taxation")){
+			                    var taxNode = currentNode.getNode("taxation");
+			                    %>
+								        	
+								        	<p>
+								        		<span class="first text-blue">Type</span>
+								        		<span class="second"><%=taxNode.type?taxNode.type:""%></span>
+								        	</p>
+								        	<p>
+								        		<span class="first text-blue">Turn Over</span>
+								        		<span class="second"><%=taxNode.turnOver?taxNode.turnOver:""%></span>
+								        	</p>
+								        	<p>
+								        		<span class="first text-blue">SST No.</span>
+								        		<span class="second"><%=taxNode.stateSalesTax?taxNode.stateSalesTax:""%></span>
+								        	</p>
+								        	<p>
+								        		<span class="first text-blue">CST No.</span>
+								        		<span class="second"><%=taxNode.centralSalesTax?taxNode.centralSalesTax:""%></span>
+								        	</p>
+								        	<p>
+								        		<span class="first text-blue">PAN No.</span>
+								        		<span class="second"><%=taxNode.panNumber?taxNode.panNumber:""%></span>
+								        	</p>
+								        	<!--<p>
+								        		<span class="first text-blue">PAN Card Copy</span>
+								        		<span class="second">
+								        		<img src="<%=taxNode.panCard?taxNode.panCard:""%>" width="700" height="65px" />
+								        		</span>
+								        	</p>-->
+								        	<p>
+								        		<span class="first text-blue">Founded On</span>
+								        		<span class="second"><%=taxNode.founded?taxNode.founded:""%></span>
+								        	</p>
+								        	<%}%>
+									      </div>
+									    </div>
+			                    	</div>
+<%}}%>
+									
+									<%      
+							if(privacy(secureDocsPrivacy)=='true'){
+							if(currentNode.hasNode("securedoc") && currentNode.getNode("securedoc").hasNodes()) {
+							var emailValue = currentNode.getNode("securedoc").getNodes();
+			                %>
+							<div class="col-xs-12">
+			                    		<div class="panel panel-primary company-details">
+									      <div class="panel-heading">
+									        <h3 class="panel-title">Secure Document</h3>
+									      </div>
+									      <div class="panel-body">
+										  <%for (i in     emailValue) {%>
+								        	<p>
+								        		<a href="<%= emailValue[i].securl%>"  data-title="<%= emailValue[i].secfilename%>"  data-width="auto" data-toggle="lightbox"><%= emailValue[i].secfilename%></a>
+								        	</p>
+								        	<%}%>
+									      </div>
+									    </div>
+			                    	</div>
+							<%}}%>
+									
+			                    	<div class="col-xs-12">
+			                    		<div class="panel panel-primary career-width">
+									      <div class="panel-heading">
+									        <h3 class="panel-title">Career with Us</h3>
+									      </div>
+									      <div class="panel-body">
+								        	<p>
+								        		<span class="first text-blue">No of Openings</span>
+								        		<span class="second"><%
+									if(currentNode.hasNode("Career") && currentNode.getNode("Career").hasNode("Job") 
+								                            && currentNode.getNode("Career").getNode("Job").hasNodes() ){
+								%> <a
+								href="<%=request.getContextPath()%>/servlet/company/show.showCareer?compN=<%=currentNode.getName()%>"><%=currentNode.getNode("Career").getNode("Job").getNodes().length%></a>
+								<%
+									}else{
+								%> <a
+								href="<%=request.getContextPath()%>/servlet/company/show.showCareer?compN=<%=currentNode.getName()%>">0</a>
+								<%
+									}
+								%></span>
+								        	</p>
+									      </div>
+									    </div>
+			                    	</div>
+<%
+if(companyNode.hasProperty("fburl") || companyNode.hasProperty("googleurl") || companyNode.hasProperty("twurl") || companyNode.hasProperty("pinurl")){
+if(!companyNode.fburl.equals("") || !companyNode.googleurl.equals("") || !companyNode.twurl.equals("") || !companyNode.pinurl.equals("")){%>
+			                    	<div class="col-xs-12">
+			                    		<div class="panel panel-primary profile-page-box">
+									      <div class="panel-heading">
+									        <h3 class="panel-title">Social Connect</h3>
+									      </div>
+									      <div class="panel-body">
+								        	<ul class="list-group">
+											 <!-- <li class="list-group-item"><a data-target="#facebook" data-toggle="modal" href="#"><i class="fa fa-facebook-square"></i> Facebook <i class="fa fa-plus pull-right"></i></a></li>
+											  <li class="list-group-item"><a data-target="#google" data-toggle="modal" href="#"><i class="fa fa-google-plus-square"></i> Google Plus <i class="fa fa-plus pull-right"></i></a></li>
+											  <li class="list-group-item"><a data-target="#twitter" data-toggle="modal" href="#"><i class="fa fa-twitter-square"></i> Twitter <i class="fa fa-plus pull-right"></i></a></li>
+											  <li class="list-group-item"><a data-target="#pinterest" data-toggle="modal" href="#"><i class="fa fa-pinterest-square"></i> Pinterest <i class="fa fa-plus pull-right"></i></a></li>-->
+											  <%if(!companyNode.fburl.equals("")){%><li class="list-group-item"><a target="_blank" href="<%=companyNode.fburl?companyNode.fburl:""%>"><i class="fa fa-facebook-square"></i> Facebook <i class="fa fa-plus pull-right"></i></a></li><%}%>
+											  <%if(!companyNode.googleurl.equals("")){%><li class="list-group-item"><a target="_blank" href="<%=companyNode.googleurl?companyNode.googleurl:""%>"><i class="fa fa-google-plus-square"></i> Google Plus <i class="fa fa-plus pull-right"></i></a></li><%}%>
+											  <%if(!companyNode.twurl.equals("")){%><li class="list-group-item"><a target="_blank" href="<%=companyNode.twurl?companyNode.twurl:""%>"><i class="fa fa-twitter-square"></i> Twitter <i class="fa fa-plus pull-right"></i></a></li><%}%>
+											  <%if(!companyNode.pinurl.equals("")){%><li class="list-group-item"><a target="_blank" href="<%=companyNode.pinurl?companyNode.pinurl:""%>"><i class="fa fa-pinterest-square"></i> Pinterest <i class="fa fa-plus pull-right"></i></a></li><%}%>
+											</ul>
+									      </div>
+									    </div>
+			                    	</div>
+			                    	<%}
+			                    	}
+			                    	%>
+<%
+				var masterNode=currentNode.session.getNode("/content/master/company");
+			    var relCompanyNode=masterNode.getNode("company");
+			    var relUser=masterNode.getNode("user");
+			    var relProduct=masterNode.getNode("product");
+			%>
+			                    	<div class="col-xs-12">
+			                    		<div class="panel panel-primary relationship">
+									      <div class="panel-heading">
+									        <h3 class="panel-title">Relationship</h3>
+									      </div>
+									      <div class="panel-body">
+								        	<ul class="nav nav-pills content-sub-tab" id="myTab2">
+								        	<%
+							if(privacy(userRelationPrivacy)=='true'){
+						%>
+											  <li class="active"><a data-toggle="tab" href="#person">Person</a></li>
+											  <%
+							}if(privacy(compRelationPrivacy)=='true'){
+						%>
+											  <li><a data-toggle="tab" href="#company">Company</a></li>
+											  <%
+							}if(privacy(productPrivacy)=='true'){
+						%>
+											  <li><a data-toggle="tab" href="#products">Products</a></li>
+											  <%
+							}
+						%>
+											</ul>
+											<div class="tab-content" id="myTabContent">
+										      <div id="person" class="tab-pane fade active in">
+										        <div class="list-group">
+										        <%
+											var userType=relUser.userType;
+						                    for(index in userType){
+												%>
+						
+												  <a href="javascript:void(0);" onclick="showRel('u<%=(userType[index]).replace(/ /g,"")%>',this)" class="list-group-item"><%=userType[index]%></a>
+												  <%
+							}
+						%>
+												  
+												  
+												</div>
+										      </div>
+										      <div id="company" class="tab-pane fade">
+										        <div class="list-group">
+												  <%
+							var companyType=relCompanyNode.companyType;
+						                    for(index in companyType){
+						%>
+						<a href="javascript:void(0);"
+							onclick="showRel('c<%=(companyType[index]).replace(/ /g,"")%>',this)" class="list-group-item"><%=companyType[index]%></a>
+						<%
+							}
+						%>
+												</div>
+										      </div>
+										      <div id="products" class="tab-pane fade">
+										        <div class="list-group">
+										        <%
+							var productType=relProduct.productType;
+						                    for(index in productType){
+						%>
+						<a href="javascript:void(0);"
+							onclick="showRel('p<%=(productType[index]).replace(/ /g,"")%>',this)" class="list-group-item"><%=productType[index]%></a>
+						<%
+							}
+						%>
+												  
+												</div>
+										      </div>
+										    </div>
+									      </div>
+									    </div>
+			                    	</div>
+
+			                    </div>
+							</div>
+
+				
+				<div class="col-xs-12 company-news">
+					<%
+				if(privacy(comNewsPrivacy)=='true'){
+			%>
+					<ul class="nav nav-pills nav-justified1">
+				      <li class="active" role="presentation"><a href="#">Company News</a>
+				      <ul id="newsId" style="max-height: 200px;">
+					<%
+						try{
+					                var contentNode = currentNode.session.getNode("/content/contentFeedback/"+currentNode.getIdentifier());
+					                if(contentNode.hasNode("Notice") &&  contentNode.getNode("Notice").hasNodes()){
+					                var newsNode = contentNode.getNode("Notice").getNodes();
+					                for(i in newsNode){
+					%>
+					<li><%=newsNode[i].titleName%> <a target="_blank"
+						style="float: right;"
+						href="<%=request.getContextPath()%>/servlet/feedback/content.viewNotice?contentId=<%=contentNode.getName()%>&noticeId=<%=newsNode[i].getName()%>">Detail</a>
+					</li>
+					<%
+						}
+					            }}catch(e){
+					            	
+					            }
+					%>
+				</ul>
+				      </li>
+				      <!--<li role="presentation"><a href="#">Messages</a></li>-->
+				    </ul>
+				    <%}%>
+				    <%
+			if(privacy(contactPrivacy)=='true'){
+		%>
+				    <div class="tab-content" id="myTabContent">
+				    	<%
+				if(currentNode.hasNode("PointOfContact")){
+			%>
+				      <div aria-labelledby="home-tab" id="home" class="tab-pane fade well well-sm active in" role="tabpanel">
+				        <h3>Point of Contact Details</h3>
+				        <%
+						var contactNode=currentNode.getNode("PointOfContact").getNodes();
+						for(i in contactNode){
+					%>
+					<p>
+					<%=contactNode[i].contactTypeCompany?contactNode[i].contactTypeCompany:""%><br>
+						Name: <%=contactNode[i].nameContactTypeCompany?contactNode[i].nameContactTypeCompany:""%><br>
+						Tel: <%=contactNode[i].contactContactTypeCompany?contactNode[i].contactContactTypeCompany:""%><br>
+						Details: <%=contactNode[i].detailContactTypeCompany?contactNode[i].detailContactTypeCompany:""%><br>
+					</p>
+					<%
+						}
+					%>
+				      </div>
+				      <%
+				}
+			%>
+				      <div aria-labelledby="profile-tab" id="profile" class="tab-pane fade" role="tabpanel">
+				        <h3>Company News</h3>
+				        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem, illo aliquid ullam officiis ab dolores excepturi maiores error hic iure omnis et neque obcaecati tenetur aperiam laborum, dicta, magni animi.</p>
+				      </div>
+
+				    </div>
+<%}%>
+
+				</div>
+
+
+
+						</div>
+
+    
+					</div>
+
+
+
+
+
+
+
+					<div class="col-md-2 col-xs-12">
+						<div class="advertise first">
+				          <!--/* OpenX iFrame Tag v2.8.10 */-->
+
+<iframe id='adf31f0a' name='adf31f0a' src='http://34.193.219.25/openx/www/delivery/afr.php?zoneid=33&amp;cb=INSERT_RANDOM_NUMBER_HERE' frameborder='0' scrolling='no' width='168' height='258'><a href='http://34.193.219.25/openx/www/delivery/ck.php?n=a6da731f&amp;cb=INSERT_RANDOM_NUMBER_HERE' target='_blank'><img src='http://34.193.219.25/openx/www/delivery/avw.php?zoneid=33&amp;cb=INSERT_RANDOM_NUMBER_HERE&amp;n=a6da731f' border='0' alt='' /></a></iframe>
+
+				      </div>
+				      <div class="advertise last">
+<!--/* OpenX iFrame Tag v2.8.10 */-->
+
+<iframe id='abc98f8a' name='abc98f8a' src='http://34.193.219.25/openx/www/delivery/afr.php?zoneid=34&amp;cb=INSERT_RANDOM_NUMBER_HERE' frameborder='0' scrolling='no' width='168' height='258'><a href='http://34.193.219.25/openx/www/delivery/ck.php?n=ae536352&amp;cb=INSERT_RANDOM_NUMBER_HERE' target='_blank'><img src='http://34.193.219.25/openx/www/delivery/avw.php?zoneid=34&amp;cb=INSERT_RANDOM_NUMBER_HERE&amp;n=ae536352' border='0' alt='' /></a></iframe>
+
+				      </div>
+					</div>
+				</div>
+			</div>
+
+</section>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+            $(".hidelink").click(function(){
+			    $("#link-content").hide();
+			    //alert ("sds");
+			});
+			
+	
+        });
+
+</script>
+ 
+<!-- Facebook Login Modal Start  -->
+<div class="modal fade" id="facebook" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Facebook Login Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+              <a class="btn btn-block btn-social btn-facebook">
+            <i class="fa fa-facebook"></i> Sign in with Facebook
+          </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">User Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Facebook Login Modal End  -->
+
+<!-- Google Login Modal Start  -->
+<div class="modal fade" id="google" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Google Login Details</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+              <a class="btn btn-block btn-social btn-google">
+            <i class="fa fa-facebook"></i> Sign in with Google
+          </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">User Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Google Login Modal End  -->
+
+<!-- Twitter Login Modal Start  -->
+<div class="modal fade" id="twitter" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Twitter Login Details</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+              <a class="btn btn-block btn-social btn-twitter">
+            <i class="fa fa-facebook"></i> Sign in with Twitter
+          </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">User Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Twitter Login Modal End  -->
+
+<!-- Pinterest Login Modal Start  -->
+<div class="modal fade" id="pinterest" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Pinterest Login Details</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+              <a class="btn btn-block btn-social btn-pinterest">
+            <i class="fa fa-facebook"></i> Sign in with Pinterest
+          </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">User Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Pinterest Login Modal End  -->
+
+<!-- Dropbox Login Modal Start  -->
+<div class="modal fade" id="dropbox" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Pinterest Login Details</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+              <a class="btn btn-block btn-social btn-dropbox">
+            <i class="fa fa-facebook"></i> Sign in with Dropbox
+          </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">User Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Dropbox Login Modal End  -->
+
+<!-- Yahoo Login Modal Start  -->
+<div class="modal fade" id="yahoo" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Pinterest Login Details</h4>
+      </div>
+      <div class="modal-body">
+      	<div class="form-group">
+            <label class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
+              <a class="btn btn-block btn-social btn-yahoo">
+            <i class="fa fa-facebook"></i> Sign in with Yahoo
+          </a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">User Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Yahoo Login Modal End  -->   
+  <div class="modal fade aswhatmessage" tabindex="-1" id="aswhatmessage" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+     <div class="modal-content" style="font-size: 12px;font-family: Roboto, Helvetica, Tahoma, Arial, sans-serif, SimSun;">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closememessageconnection"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Select inviting as </h4>
+    
+      </div>
+      <div class="modal-body">
+      Select invite to join compay as :<select id="joinreason">
+      <% var userttType=currentNode.session.getRootNode().getNode("content").getNode("master").getNode("company").getNode("user").userType;
+   
+						                    for(z in userttType){
+      %>
+      <option value="<%=userttType[z]%>"><%=userttType[z]%></option>
+      <%}%>
+      </select>
+      
+      </div>
+		
+		 <div class="modal-footer"> 
+		  <a  href="javascript:void(0)" class="btn btn-primary" id="invitemelist" onclick="getInviteOption()" >Next</a>
+		       </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+
+  
+ <%load("../common/footer.esp");%>
+
+    
+  <%
+		function privacy(privacyVar){
+	var show="true";
+	if(currentNodeProvided && (request.getRemoteUser()!='anonymous')){
+	    if(privacyVar=='connection'){
+	        if(connectionCom=='true'){
+	            show="true"; 
+	        }else if((request.getRemoteUser()+"")==(companyNode.creatorEmailId+"")){
+	            show="true";
+	        }else{
+	            show="false";
+	        }          
+	    }else if(privacyVar=='onlyMe'){
+	        show="false";
+	        if((request.getRemoteUser()+"")==(companyNode.creatorEmailId+"")){
+	                show="true";
+	        }
+	    }else if(privacyVar=='everyOne'){
+	        show="true";
+	    }
+	 }
+	    return show;
+	}
+	%>
+        <% var invitenodeid=2; %>
+ <script>
+ var iscustom="false";//parameter for changing custom or not
+ var others="<%=request.getParameter("compN")%>";//comma seperated value for other parameter
+var eventId="<%=request.getParameter("compN")%>";
+
+ function getInviteOption(){
+    document.getElementById("closememessageconnection").click();
+  
+      others=document.getElementById("joinreason").value;
+      $("#inviteme").modal('toggle'); 
+      document.getElementById("messageBody").style.display='';
+      document.getElementById("customeMessage").style.display='none';
+      document.getElementById("finishinvite").style.display='none';
+      document.getElementById("editinvite").style.display='';
+      document.getElementById("inviteall").style.display='';
+      document.getElementById("customeinviList").style.display='none';
+      document.getElementById("registerModalLabelDraftText").style.display='none';
+      document.getElementById("registerModalLabelDraft").style.display='';
+      iscustom="false";
+       document.getElementById("iniviCount").innerHTML="("+0+")";
+      document.getElementById("iniviCountNext").innerHTML="("+0+")";
+      $("#mycont").html("");
+      checkboxesCheckedcom=[];
+    }
+    
+    
+ </script>
+ 
+ <%load("../invite/invitenetwork.esp");%>
+  
+    </body>
+</html>

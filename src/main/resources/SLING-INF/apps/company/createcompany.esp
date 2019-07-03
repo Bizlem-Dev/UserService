@@ -1,0 +1,784 @@
+<%
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null);
+currentNode=currentNode;
+%><!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <%load("../common/links.esp");%>
+    </head>
+<body>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+   
+<%load("../common/header.esp");%>
+
+
+
+ 
+<%
+var basicInfoNode;
+var taxNode;
+if(currentNodeProvided && currentNode.hasNode("BasicInfo")){
+basicInfoNode=currentNode.getNode("BasicInfo");
+}
+
+if(currentNodeProvided && currentNode.hasNode("taxation")){
+taxNode=currentNode.getNode("taxation");
+}
+
+%>
+<script src="<%=request.getContextPath()%>/apps/js/step-form.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/step-form.css">
+<script>
+
+ function onkeyupForCompanyName(id1){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value, "companyName", "/content/company/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugId"+i+"' style='color:black' onclick='selectValComp(this.id)' >"+parsed[i].companyName+"</a></br>";
+        }
+        
+     $("#suggestionCompany").css('visibility', 'visible');
+    $("#suggestionCompany").css('border-style', 'outset');
+    // $("#suggestionCompany").css('height', '80px');
+    $("#suggestionCompany").hide();
+    $("#suggestionCompany").fadeIn('slow');
+    $("#searchCompany").html(sugData);
+     var offsetHeight = document.getElementById('suggestionCompany').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionCompany").css('overflow-y', 'auto');
+     $("#suggestionCompany").css('height', '80px');
+    }  
+        }); 
+        }
+function selectValComp(id){
+document.getElementById("companyNameId").value = document.getElementById(id).innerHTML; 
+$("#suggestionCompany").hide();
+}
+    $(document).ready(function(e) {
+    
+     $("#upImg").change(function(){
+        readURL(this);
+    });
+    
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+                $('#shImg').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+        
+         $("#sf-next").click(function(){
+ 
+ //alert("value---"+$(this).text());
+       if($(this).text() == "Create Company"){
+  if (document.getElementById('agree').checked && document.getElementById("companyNameId").value != "" && document.getElementById("emailidcompany").value != "" && document.getElementById("website").value != "" && document.getElementById("industries").value != "")
+    {
+    //return true;
+    document.getElementById("companyadding").submit();
+    }else if(document.getElementById("companyNameId").value == ""){
+    //alert("please fill the blank details");
+    return "false";
+    }else if(document.getElementById("emailidcompany").value == ""){
+    return "false";
+    }else if(document.getElementById("website").value == ""){
+    return "false";
+    }else if(document.getElementById("industries").value == ""){
+    return "false";
+    } else if(!document.getElementById('agree').checked)
+    {
+    alert('Please indicate that you have read and agree to the Terms and Conditions');
+      //      return false;
+    }
+    }
+});
+        
+        $(".stepsForm").stepsForm({
+            theme:'purple'
+        }); 
+        
+        $(".container .themes>span").click(function(e) {
+            $(".container .themes>span").removeClass("selectedx");
+            $(this).addClass("selectedx");
+            $(".stepsForm").removeClass().addClass("stepsForm");
+            $(".stepsForm").addClass("sf-theme-"+$(this).attr("data-value"));
+        });
+        
+        
+         $("#datetimepicker4").datepicker({
+            format: "yyyy-mm-dd",
+            
+        })
+        .on('changeDate', function(ev){
+        var hireDate = document.getElementById('datetimepicker4').value;
+           
+            if(new Date(hireDate).getTime() > new Date().getTime())
+{
+//alert("onside if"); 
+document.getElementById('datetimepicker4').value = "";
+ $(this).datepicker('hide');
+alert("joining date should be less than or equal to current date");
+}else{
+$(this).datepicker('hide');
+}
+        });
+        
+        
+        
+   
+    });
+    
+    function validateCompLandline(value){
+    
+    UserDWRService.getCompAddLandlineMsg(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("workNumber").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+    
+    }
+    
+    function validateCompMob(value){
+    UserDWRService.getCompAddMobMsg(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("mobileNumber").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+    
+    }
+    
+    function validateCompEmail(value){
+    
+    UserDWRService.getCompAddEmailMsg(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("contactEmailId").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+    
+    }
+</script>
+<script>
+	function addBranch(){
+	var top_level_div = document.getElementById('branchDiv');
+	var count = top_level_div.getElementsByTagName('tbody').length;
+	var id1='Branch'+(count);
+	var newdiv = document.createElement('tbody');
+	newdiv.id=id1;
+		newdiv.innerHTML ="<tr><td colspan='2'><label><u><strong></strong></u></label></td>"+
+		 		"<td align='right'><a href='javascript:void(0)' class='btn btn-warning' onclick=\"removeBranch(\'"+id1+"\')\" >Remove Branch</a></td></tr>"+
+				"<input type='hidden' name='branchName' value='Branch"+(count)+"' />"+
+				"<tr><td colspan='3' width='50%' ><label>Address Type :</label><input type='text' name='addressType' /></td></tr>"+
+				 "<tr><td width='33%' ><label>Address :</label><input type='text' name='address' /></td>"+
+				 "<td width='33%' ><label>City :</label><input type='text' name='city' value='' /></td>"+
+				 "<td width='33%' ><label>Postal Code :</label><input type='text' name='postalCode'  /></td></tr>"+
+				 "<tr><td width='33%' ><label>Land Line Number :</label><input type='text' name='workNumber' id='workNumber' value='' onblur='validateCompLandline(this.value)'/></td>"+
+				 "<td width='33%' ><label>Mobile Number :</label><input type='text' name='mobileNumber' id='mobileNumber' value='' onblur='validateCompMob(this.value)'/></td>"+
+				 "<td width='33%' ><label>Contact Email ID :</label><input type='text' name='contactEmailId' id='contactEmailId' value='' onblur='validateCompEmail(this.value)'/></td></tr>";
+				 
+		
+         
+          document.getElementById("branchDiv").appendChild(newdiv);
+	
+	}
+	function removeBranch(divName){
+	
+
+	var d = document.getElementById('branchDiv');
+	  var olddiv = document.getElementById(divName);
+	  d.removeChild(olddiv);
+	}
+function addRow(tableID) {
+		
+		
+		var table = document.getElementById(tableID);
+		var rowCount = table.rows.length;
+		var row = table.insertRow(rowCount);
+		counts = rowCount - 1;
+		
+
+		
+		var cell2 = row.insertCell(0);	
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "contactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell2.appendChild(rate);
+		
+		
+		var cell3 = row.insertCell(1);
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "nameContactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell3.appendChild(rate);
+		
+		var cell4 = row.insertCell(2);
+		var rate = document.createElement("input");
+		rate.type = "text";
+		rate.name = "contactContactTypeCompany";
+		rate.setAttribute("class", "");
+		rate.id = "jsp_" + counts
+		+ "__rate";
+		cell4.appendChild(rate);
+		
+		var cell1 = row.insertCell(3);
+		var skill = document.createElement("input");
+		skill.type = "text";
+		skill.name = "detailContactTypeCompany";
+		skill.setAttribute("class", "");
+		skill.id = "jsp_" + counts
+		+ "__rate";
+		cell1.appendChild(skill);
+	}
+
+	function deleteRow(guestList) {
+		try {
+			var table = document.getElementById(guestList);
+			var rowCount = table.rows.length;
+			if (rowCount > 1) {
+				table.deleteRow(rowCount - 1);
+			}
+		} catch (e) {
+			alert(e);
+		}
+	}
+</script>
+<script type="text/javascript">
+    function deleteUserMap(node,userId,mapType,v,reject){
+        var url='<%=request.getContextPath()%>/servlet/company/save.deleteUserMap';
+        var data='userId='+userId+'&mapType='+mapType+'&companyName=<%=currentNodeProvided?currentNode.getName():""%>&nodeName='+node+'&reject='+reject;
+        if(confirm('Confirm Delete'))
+            {
+                $.ajax({
+                      type: 'POST',
+                      url: url,
+                      data: data,
+                      success: function(){
+                        $(v).parent('li').remove();
+                      }
+                  }); 
+             }else{} 
+    }
+	function openPopUpCompany(theURL, title, heightInPX, widthInPX,values)
+       { var selectedValues;
+        var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+          window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+            selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+    	   
+    	   document.getElementById("mappingCompanyTypeID").value=values;
+    	    document.getElementById("selectedCompany").value=selectedValues;
+    	    document.getElementById("formCompany").submit();
+      }
+  function openPopUpUser(theURL, title, heightInPX, widthInPX,values)
+   {var selectedValues;
+   var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+            selectedValues= window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+            selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+	  
+	   document.getElementById("mappingUserTypeID").value=values;
+	    document.getElementById("selectedPerson").value=selectedValues;
+	    document.getElementById("formUser").submit();
+  }
+  
+  function openPopUpCommon(theURL, title, heightInPX, widthInPX)
+   { var selectedValues;
+    var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+           selectedValues= window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+            selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+	  
+	   /*document.getElementById("mappingCompanyTypeID").value=values;
+	    document.getElementById("selectedCompany").value=selectedValues;
+	    document.getElementById("formCompany").submit();*/ 
+   }
+  function openPopUpProduct(theURL, title, heightInPX, widthInPX,values)
+    { var selectedValues;
+    var uMatch = navigator.userAgent.match("Chrome");
+           if(uMatch=='Chrome'){
+         selectedValues= window.open(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }else{
+           selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+           }
+     
+       document.getElementById("productTypeID").value=selectedValues;
+        document.getElementById("nodeNameID").value=values;
+        document.getElementById("formProduct").submit(); 
+     }
+    $(function() {
+		$("#tree").treeview({
+			collapsed: true,
+			animated: "medium",
+			control:"#sidetreecontrol",
+			persist: "location"
+		});
+    });
+    
+    function validateTNCForm() {
+		       if (document.getElementById('agree').checked)
+    {
+    return true;
+    } else
+    {
+    alert('Please indicate that you have read and agree to the Terms and Conditions');
+            return false;
+    }    
+    }
+    
+   function validateOfficialEmailID(value){
+   if(value != ""){
+   
+   UserDWRService.getCompOfficialIdRes(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data == "false"){
+				document.getElementById("offmailidreason").style.display = "block";
+				$("#officialMailDiv").removeClass("col-sm-6");
+				$("#officialMailDiv").addClass("col-sm-4");
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				document.getElementById("offmailidreason").style.display = "none";
+				document.getElementById("offReasonDiv").style.display = "none";
+				$("#officialMailDiv").removeClass("col-sm-4");
+				$("#officialMailDiv").addClass("col-sm-6");
+				}else {
+				alert(data);
+				$("#officialMailDiv").removeClass("col-sm-4");
+				$("#officialMailDiv").addClass("col-sm-6");
+				document.getElementById("offmailid").value = "";
+				document.getElementById("offmailidreason").style.display = "none";
+				document.getElementById("offReasonDiv").style.display = "none";
+				}
+				
+	  		});
+	  		}
+   		
+   }
+   function giveReason(){
+   
+   document.getElementById("offReasonDiv").style.display = "block";
+   }
+   
+   function validateAdminEmailID(value){
+   if(value != ""){
+   UserDWRService.getCompAdminIdRes(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("adminmailid").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+	  }
+   		
+   }
+   
+    function validateCompOffEmailID(value){
+    if(value != ""){
+   UserDWRService.getCompOffIdRes(value,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				document.getElementById("emailidcompany").value = "";
+				alert(data);
+				}else if(data == "true"){
+				//document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+	  		}
+   		
+   }
+    
+    </script>
+<script src="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.min.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.css"> 
+
+ <script src="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader-new.css"> 
+
+<style type="text/css">
+#dropzone { margin-bottom: 3rem; }
+.dropzone { border: 2px dashed #0087F7; border-radius: 5px; padding: 0px;}
+.dropzone .dz-message { font-weight: 400; }
+.dropzone .dz-message .note { font-size: 0.8em; font-weight: 200; display: block; margin-top: 1.4rem; }
+.dropzone .dz-message {
+    margin: 2em 0;
+    text-align: center;
+}
+.dropzone .dz-preview .dz-details, .dropzone-previews .dz-preview .dz-details {width: 100%; height: 30px;}
+</style>
+<section class="Profile_page">
+		
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-10 col-xs-12">
+						<div class="row">
+							<div class="col-xs-12 ">
+								<!--STEPS FORM START  -->
+        <div class="stepsForm">
+           <form method="POST" action="<%=request.getContextPath()%>/servlet/company/save.com" onsubmit="return validateTNCForm()" id="companyadding" enctype="multipart/form-data">
+                <div class="sf-steps">
+                    <div class="sf-steps-content">
+                        <div>
+                            <span></span> Relationship
+                        </div>
+                        <div>
+                            <span></span> Company
+                        </div>
+                        
+                </div>                
+                <div class="sf-steps-form sf-radius"> 
+                    <ul class="sf-content"> <!-- form step one --> 
+                         <li>
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Company RelationShip</label>
+								    <div class="col-sm-6">
+								    
+		 									<select name="mappingCompanyType" class="form-control">
+			
+			<option value="ServiceProvider">Service Provider</option>
+			<option value="Employee">Employee</option>
+			<option value="Distributor">Distributor</option>
+			<option value="Dealer">Dealer</option>
+			<option value="Customer">Customer</option>
+			<option value="Vendor">Vendor</option>
+			
+		</select>
+		 							
+								    </div>
+								</div>
+								</div>
+							</li>
+							             <li>
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Designation</label>
+								    <div class="col-sm-6">
+								    
+		 									<select name="mappingDesignationType" class="form-control">
+			
+			<option value="Manager">Manager</option>
+			<option value="Software Engineer">Software Engineer</option>
+			<option value="Implementation Engineer">Implementation Engineer</option>
+			<option value="Trainee">Trainee</option>
+			
+		</select>
+		 							
+								    </div>
+								</div>
+								</div>
+							</li>
+            
+            						             <li>
+                            <div class="sf_columns column_6">
+            <div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Official Email Id</label>
+								    <div class="col-sm-6" id="officialMailDiv">
+								      <input type="text" class="form-control" placeholder="Official Email Id" data-required="true"  name="offmailid" id="offmailid" onblur="validateOfficialEmailID(this.value)" value=""/>
+								    </div>
+								    <div class="col-sm-2">
+								      <a href="javascript:void(0)" id="offmailidreason" style="display:none" onclick="giveReason()">Give Reason for using Free Webmail</a>
+   							    </div>
+   							    <div class="col-sm-2" id="offReasonDiv" style="display:none">
+								      <input type="text" class="form-control" placeholder="Give Reason" data-required="false"  name="offReason" id="offReason"  value=""/>
+   							    </div>
+								</div>
+								</div>
+							</li>
+							
+											             <li>
+                            <div class="sf_columns column_6">
+            <div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Admin Email Id</label>
+								    <div class="col-sm-6">
+								      <input type="text" class="form-control" placeholder="Admin Email Id" data-required="false"  name="adminmailid" id="adminmailid" onblur="validateAdminEmailID(this.value)" value=""/>
+								    </div>
+								</div>
+								</div>
+							</li>
+                    </ul>
+                    
+                    <ul class="sf-content"> <!-- form step two --> 
+                <div class="col-sm-2">
+								    <%if(currentNodeProvided && currentNode.hasNode("picture") && currentNode.getNode("picture").hasNode("companyLogo")){%>
+			<img src="<%=request.getContextPath()%><%=currentNode.getNode("picture").getNode("companyLogo")%>"  height="80px" width="125px" />
+			<input id="shImg" type="file"  class="form-control" placeholder="Select logo image file" data-required="false" id="upImg"  name="file"/>
+			<%}else{%>
+			<img id="shImg" src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif"  height="80px" width="125px" />
+			<input type="file"  class="form-control" placeholder="Select logo image file" data-required="true" id="upImg"  name="file"/>
+			<%}%>
+								      
+		 							
+								    
+                </div>
+                <div class="col-sm-10">
+                       <div class="row">
+                                                                <div class="col-xs-12">
+                         <li>
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Company Name</label>
+								    <div class="col-sm-10">
+								    <input type="text" id="companyNameId" onkeyup="onkeyupForCompanyName(this.id)" name="companyName" placeholder="Name" data-required="true" class="form-control"
+		 								<%if(currentNodeProvided){%>
+		 									value="<%=basicInfoNode.companyName?basicInfoNode.companyName:""%>" /></td>
+		 								<%}else{%>
+		 										value="" />
+		 								<%}%>
+		 								<div id="suggestionCompany"  style="z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchCompany"></div>
+ </div>
+ 							    <input type="hidden" name="companyNo"  id="companyNo"
+								<%if(currentNodeProvided){%>
+								      value="<%=currentNode.companyNumber?currentNode.companyNumber:"new"%>" />
+							<%}else{%>
+ 									value="new"/>
+											<%}%>
+											
+								    </div>
+								</div>
+								</div>
+							</li>
+						
+							 <!--<li style="display:none">
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Description</label>
+								    <div class="col-sm-10">
+								      <textarea class="form-control" placeholder="Description" data-required="true" name="description"><%if(currentNodeProvided){%><%=basicInfoNode.description?basicInfoNode.description:""%><%}%></textarea>
+								    </div>
+								</div>
+								</div>
+							</li>-->
+							
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Email Id</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Email Id" data-required="true" id="emailidcompany"  name="emailidcompany" onblur="validateCompOffEmailID(this.value)" value=""/>
+								    </div>
+								</div>
+								</div>
+							</li>
+							<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Website</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Website" data-required="true" id="website" name="website" <%if(currentNodeProvided){%>
+		 							value="<%=basicInfoNode.website?basicInfoNode.website:""%>"
+		 							<%}else{%>
+		 								value=""
+		 							<%}%>
+		 							 />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Industry</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Insustry" data-required="true" id="industries" name="industries"  <%if(currentNodeProvided){%>
+		 								value="<%=basicInfoNode.industries?basicInfoNode.industries:""%>" 
+		 								<%}else{%>
+		 								value=""
+		 								<%}%> />
+								    </div>
+								</div>
+								</div>
+							</li>
+							<li>
+                            <div class="sf_columns column_6">
+							 <div class="form-group">
+								    <label for="" class="col-sm-2 control-label"></label>
+								    <div class="col-sm-10"> 
+								    
+								    <%
+								    if(request.getParameter("id") != "new"){
+								    if(basicInfoNode.companytnc == "accept"){
+									%>
+								      <input type="checkbox"  value="accept" id="agree" name="agree" data-required="false" checked/>
+								      <%}else{%>
+								      <input type="checkbox"  value="" id="agree" name="agree" data-required="false" />
+								      <%}}else{%>
+								      <input type="checkbox"  value="" id="agree" name="agree" data-required="false" />
+								      <%}%> 
+								      I have read and agree to the <a data-target="#userPic" data-toggle="modal" href="#">Terms and Conditions</a>
+								      <div class="modal fade" id="userPic" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            				 <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Terms and Condition</h4>
+      </div>
+      <div class="modal-body" style="height: 500px;overflow-y: auto;">
+        
+        <div class="form-group">
+            <div class="col-sm-9">
+              <%
+              var content=currentNode.session.getRootNode().getNode("content");
+              if(content.hasNode("termsncondition") && content.getNode("termsncondition").hasNode("companytnc")){
+              var termsncondition = content.getNode("termsncondition");
+              var companytnc = termsncondition.getNode("companytnc");
+              out.print(companytnc.getProperty("tnc").getString());
+              }else{
+              out.print("No terms and conditions available");
+              }
+              %>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+            				</div>
+								    </div>
+								</div>
+								</div>
+								</li>
+							<li style="display:none">
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Creator Email Id</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Creator Email Id" data-required="true"  name="creatorEmailId" disabled="true"  value="<%=request.getRemoteUser()%>"/>
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <!--<li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Your Title</label>
+								    <div class="col-sm-10">
+								      <input type="text" class="form-control" placeholder="Your Title" data-required="true"  name="creatorTitle"
+								 <%if(currentNodeProvided){%>
+									value="<%=basicInfoNode.creatorTitle?basicInfoNode.creatorTitle:""%>"
+								<%}else{%>
+		 								value=""
+		 							<%}%>	 />
+								    </div>
+								</div>
+								</div>
+							</li>
+							 <li>
+                            <div class="sf_columns column_6">
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Joining Date</label>
+								    <div class="col-sm-10">
+								      <input type="text" id='datetimepicker4' data-format="yyyy-MM-dd hh:mm:00" class="form-control form-date" placeholder="Joining Date" data-required="true"  name="creatorjoiningDate"
+									<%if(currentNodeProvided){%> 
+									value="<%=basicInfoNode.creatorjoiningDate?basicInfoNode.creatorjoiningDate:""%>"
+									<%}else{%>
+		 								value=""
+		 							<%}%> />
+								    </div>
+								</div>
+								
+                            </div>
+                         </li>-->
+                         </div>
+                         </div>
+                         </div>
+                         
+                    </ul>
+                       
+
+                    
+                    
+                </div>
+
+
+                
+                <div class="sf-steps-navigation sf-align-right">
+                    <span id="sf-msg" class="sf-msg-error"></span>
+                    <button id="sf-prev" type="button" class="btn btn-default">Previous</button>
+                    <button id="sf-next" type="button" class="btn btn-primary">Next</button>
+                </div>
+            </form>
+        </div></form>
+        <!--STEPS FORM END  -->
+							</div>
+						</div>
+					</div>
+
+
+
+					<!--<div class="col-sm-2 col-xs-12">
+						<div class="advertise">
+				          <img alt="advertise" src="images/advertise2.jpg">
+				      </div>
+					</div>-->
+				</div>
+			</div>
+
+</section>
+<%load("../common/footer.esp");%>
+  
+        
+    </body>
+</html>
+

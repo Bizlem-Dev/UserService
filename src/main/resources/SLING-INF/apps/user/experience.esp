@@ -1,0 +1,655 @@
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null); 
+
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+   postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<html>
+<head>
+
+<script>
+
+function onkeyupForCompanyName(id1){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value, "companyName", "/content/company/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugId"+i+"' style='color:black' onclick='selectValComp(this.id)' >"+parsed[i].companyName+"</a></br>";
+        }
+        
+     $("#suggestionCompany").css('visibility', 'visible');
+     $("#suggestionCompany").css('border-style', 'outset');
+     
+     
+    $("#suggestionCompany").hide();
+    $("#suggestionCompany").fadeIn('slow');
+    $("#searchCompany").html(sugData);
+     var offsetHeight = document.getElementById('suggestionCompany').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionCompany").css('overflow-y', 'auto');
+     $("#suggestionCompany").css('height', '80px');
+    }
+        }); 
+        }
+function selectValComp(id){
+document.getElementById("companyNameId").value = document.getElementById(id).innerHTML; 
+$("#suggestionCompany").hide();
+}
+
+
+function onkeyupForCompanyLocation(id1){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value, "distatename", "/content/address/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdLocNew"+i+"' style='color:black' onclick='selectValLoc(this.id)' >"+parsed[i].distatename+"</a></br>";
+        }
+        
+     $("#suggestionCompanyLocation").css('visibility', 'visible');
+     $("#suggestionCompanyLocation").css('border-style', 'outset');
+     
+     
+    $("#suggestionCompanyLocation").hide();
+    $("#suggestionCompanyLocation").fadeIn('slow');
+    $("#searchCompanyLocation").html(sugData);
+     var offsetHeight = document.getElementById('suggestionCompanyLocation').offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionCompanyLocation").css('overflow-y', 'auto');
+     $("#suggestionCompanyLocation").css('height', '80px');
+    }
+        }); 
+        }
+function selectValLoc(id){
+document.getElementById(id1).value = document.getElementById(id).innerHTML;
+//id1.value = document.getElementById(id).innerHTML; 
+$("#suggestionCompanyLocation").hide();
+}
+
+
+function onkeyupForCompanyName1(id1,iValue){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value, "companyName", "/content/company/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugId"+i+"' style='color:black' onclick='selectValComp1(this.id,"+id1+","+iValue+")' >"+parsed[i].companyName+"</a></br>";
+        }
+        
+     $("#suggestionCompanyyName"+iValue).css('visibility', 'visible');
+     $("#suggestionCompanyyName"+iValue).css('border-style', 'outset');
+     
+     
+    $("#suggestionCompanyyName"+iValue).hide();
+    $("#suggestionCompanyyName"+iValue).fadeIn('slow');
+    $("#searchCompanyyName"+iValue).html(sugData);
+     var offsetHeight = document.getElementById('suggestionCompanyyName'+iValue).offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionCompanyyName"+iValue).css('overflow-y', 'auto');
+     $("#suggestionCompanyyName"+iValue).css('height', '80px');
+    }
+        }); 
+        }
+function selectValComp1(id,id1,iValue){
+//alert(id1+iValue);
+id1.value = document.getElementById(id).innerHTML; 
+$("#suggestionCompanyyName"+iValue).hide();
+}
+
+function onkeyupForCompanyLocation1(id1,iValue){
+        var value=document.getElementById(id1).value;
+   //var  param=["companyName"];
+    //var paramValue=[value];
+     //var param = ["paravalue", "paraname", "path"];
+            //var paramValue = [value, "companyName", "/content/company/"];
+            while(value.indexOf(" ") > -1){
+            value = value.replace(" ","+");
+            }
+            var  param=["paravalue","paraname","path","isparent"];
+     var  isparent="0";
+    var paramValue=[value, "distatename", "/content/address/",isparent];
+        UserDWRService.callGetService("http://prod.bizlem.io:8082/portal/servlet/exhibition/flash.eventNameSuggetion",param,paramValue,function(data) {
+        
+     console.log(data);
+        var parsed=JSON.parse(data);
+            console.log(parsed);
+        var sugData="";
+        for(var i=0;i<parsed.length;i++){
+       
+        sugData=sugData+"<a href='javascript:void(0)' id='sugIdLoc"+i+"' style='color:black' onclick='selectValLoc1(this.id,"+id1+","+iValue+")' >"+parsed[i].distatename+"</a></br>";
+        }
+        
+     $("#suggestionCompanyLocation"+iValue).css('visibility', 'visible');
+     $("#suggestionCompanyLocation"+iValue).css('border-style', 'outset');
+     
+     
+    $("#suggestionCompanyLocation"+iValue).hide();
+    $("#suggestionCompanyLocation"+iValue).fadeIn('slow');
+    $("#searchCompanyLocation"+iValue).html(sugData);
+     var offsetHeight = document.getElementById('suggestionCompanyLocation'+iValue).offsetHeight;
+    //alert("after---"+offsetHeight);
+    if(offsetHeight > 80)
+    {
+    	$("#suggestionCompanyLocation"+iValue).css('overflow-y', 'auto');
+     $("#suggestionCompanyLocation"+iValue).css('height', '80px');
+    }
+        }); 
+        }
+function selectValLoc1(id,id1,iValue){
+//document.getElementById(id1).value = document.getElementById(id).innerHTML;
+id1.value = document.getElementById(id).innerHTML; 
+$("#suggestionCompanyLocation"+iValue).hide();
+}
+
+    $(document).ready(function(e) {
+        
+      /*   $("#startDate").datepicker({
+            format: "yyyy-mm-dd",
+            
+        })
+        .on('changeDate', function(ev){
+        var startDate = document.getElementById('startDate').value;
+        var endDate1 = document.getElementById('endDate1').value;   
+            if(new Date(startDate).getTime() > new Date().getTime())
+					{
+ 
+						document.getElementById('startDate').value = "";
+ 						$(this).datepicker('hide');
+						alert("start date should be less than or equal to current date");
+					}else{
+						$(this).datepicker('hide');
+					}
+        });
+        
+         $("#endDate1").datepicker({
+            format: "yyyy-mm-dd",
+            
+        })
+        .on('changeDate', function(ev){
+        var startDate = document.getElementById('startDate').value;
+        var endDate1 = document.getElementById('endDate1').value;   
+            if(new Date(endDate1).getTime() >= new Date().getTime(startDate))
+					{
+ 
+						document.getElementById('endDate1').value = "";
+ 						$(this).datepicker('hide');
+						alert("end date should be less than or equal to start date");
+					}else{
+						$(this).datepicker('hide');
+					}
+		});
+		*/
+   });
+
+
+
+
+    function work(value,pointer){
+        
+        //alert(document.getElementById("endDate1").checked);
+        
+       // alert(document.getElementById("endDate"+pointer));
+       // alert(value.checked);
+        if(value.checked==true)
+            {
+            //		alert("if");
+                    document.getElementById("endDate"+pointer).value="";
+                    document.getElementById("endDate"+pointer).readOnly=true;
+            }
+        else
+            {
+              //  alert("else");
+                document.getElementById("endDate"+pointer).readOnly=false;
+            }
+        
+        
+    }
+    
+   function setTitleValue(v){
+   		 var title=v.replace(/ /g,"");
+        document.getElementById("titleId").value=title;
+        
+        }
+    
+
+</script>
+</head>
+<body>
+<%
+
+if(currentNodeProvided){
+//out.print(currentNodeProvided);
+//out.print(currentNode);
+if(currentNode.hasNode("Experience")){
+var expNodes = currentNode.getNode("Experience").getNodes();
+//out.print(expNodes[0]);
+%>
+<form  method="POST" id="ExpForm" modelAttribute="addExperience" action="<%=request.getContextPath()%>/content/user/save.ex">
+<input type="hidden" value="<%= getCurrentNodeValue("title") %>"  id="titleId" name="title" />
+<div id="experiencediv">
+<script type="text/javascript">
+<%if(currentNode.hasNode("Experience") && currentNode.getNode("Experience").hasNodes()){%>
+                                                                        var globalcountexp3=1+<%=currentNode.getNode("Experience").getNodes().length%>;
+                                                                        <%}else{
+                                                                        %>
+                                                                        var globalcountexp3=1;
+                                                                        <%}%>
+                                                                                $(document).ready(function() {
+                                                                                    var addDiv = $('#experiencediv');
+                                                                                   // var i = parseInt($('#experiencediv').size()) + 1;
+                                                                                    $('#addForm').on('click', function() {
+                                                                                     var i = globalcountexp3++;
+                                                                                   $("<div class='row remove2" + i + "' id='removeForm'><hr style='border-top:1px solid;width:96%'><div class='col-xs-10'><div class='form-group' id='removeForm'><div class='col-sm-3'><label for=''>Company Name</label><input id='companyName"+i+"' onkeyup='onkeyupForCompanyName1(this.id,"+i+")' name='companyName' value=''  onblur='setTitleValue(this.value)' type='text' class='form-control' placeholder='Company Name'><div id='suggestionCompanyyName"+i+"'  style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchCompanyyName"+i+"'></div></div></div><div class='col-sm-3'><label for=''>Company Location</label><input onkeyup='onkeyupForCompanyLocation1(this.id,"+ i +")' id='companyLocation"+ i +"' name='companyLocation' value='' type='text' class='form-control' placeholder='Company Location'><div id='suggestionCompanyLocation"+ i +"' style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchCompanyLocation"+ i +"'></div></div></div><div class='col-sm-3'><label for=''>Company Website</label><input name='companyWebsite' value='' type='text' class='form-control' placeholder='Company Website'></div><div class='form-group'><div class='col-sm-10'><label for=''>Experience Summary</label><textarea name='companyDesc' class='form-control' placeholder='Company Description'></textarea></div></div><div class='form-group'><div class='col-sm-5'><label for=''>Designation</label><input type='text' class='form-control' name='jobTitle' value='' placeholder='Designation'></div><div class='col-sm-5'><label for=''>Roles</label><input type='text' name='jobDesc' value='' class='form-control' placeholder='Roles'></div></div><div class='form-group'><div class='col-sm-5'><label for=''>Start Date</label><input name='startDate' id='startDate"+i+"' value='' type='text' class='form-control' placeholder='Start Date'></div><input type='checkbox' name='currentlyWork'  value='Present' id='"+i+"' onchange='work(this,this.id)'style='width:auto !important; display:inline !important; margin:0px 5px 0px 10px;'/><em style='font-weight:normal; font-size:10px; color:#666;'>Currently Working</em></label><div class='col-sm-5'><label for=''>End Date</label><input type='text' name='endDate1' value=''  id='endDate"+i+"' class='form-control' placeholder='End Date'></div></div></div></div><div class='col-xs-2'><span id='remForm' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remForm', function() {
+                                                                                        $(this).parents('#removeForm').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+
+<%
+for(var i=0 ; i<expNodes.length ; i++){
+%>
+
+<div class="col-xs-12">
+                  		<div class="form-group">
+      						<div class="col-sm-4">
+      							<label for="">Name</label>
+      							<input name="companyName" value="<%= expNodes[i].companyName?expNodes[i].companyName:"" %>"  onblur="setTitleValue(this.value)" type="text" class="form-control" placeholder="Company Name">
+      						</div>
+      						<div class="col-sm-4">
+      							<label for="">Location</label>
+      							<input name="companyLocation" value="<%= expNodes[i].companyLocation?expNodes[i].companyLocation:"" %>" type="text" class="form-control" placeholder="Company Location">
+      						</div>
+      						<div class="col-sm-4">
+      							<label for="">Website</label>
+      							<input name="companyWebsite" value="<%= expNodes[i].companyWebsite?expNodes[i].companyWebsite:"" %>" type="text" class="form-control" placeholder="Company Website">
+      						</div>
+      					</div>
+
+      					<div class="form-group">
+      						<div class="col-sm-12">
+      							<label for="">Experience Summary</label>
+      							<textarea name="companyDesc" class="form-control" placeholder="Company Description"><%=expNodes[i].companyDesc?expNodes[i].companyDesc:"" %></textarea>
+      						</div>
+      					</div>
+
+<%
+if(expNodes[i].hasNode(expNodes[i].childNode?expNodes[i].childNode:"")){
+
+var jobNode = expNodes[i].getNode(expNodes[i].childNode?expNodes[i].childNode:"");%>
+      					<div class="form-group">
+      						<div class="col-sm-6">
+      							<label for="">Designation</label>
+      							<input type="text" class="form-control" name="jobTitle" value="<%=jobNode.jobTitle?jobNode.jobTitle:""%>" placeholder="Designation">
+      						</div>
+      						<div class="col-sm-6">
+      							<label for="">Roles</label>
+      							<input type="text" name="jobDesc" value="<%=jobNode.jobDesc?jobNode.jobDesc:""%>" class="form-control" placeholder="Roles">
+      						</div>
+      					</div>
+
+
+      					<div class="form-group">
+      						<div class="col-sm-6">
+      							<label for="">Start Date</label>
+      							<input name="startDate" id="startDate" value="<%= jobNode.startDate?jobNode.startDate:"" %>" type="text" class="form-control" placeholder="Start Date">
+      						</div>
+      						<%if(jobNode.currentlyWork?jobNode.currentlyWork:""=="Present"){%>
+						<input type="checkbox" name="currentlyWork" checked="checked"  value="Present" onchange="work(this)"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+						<em style="font-weight:normal; font-size:10px; color:#666;">Currently Working</em></label>
+	                     
+                          <%}else{%>
+    						<div class="col-sm-6">
+      							<label for="">End Date</label>
+      							<input type="text" name="endDate1"  value="<%=jobNode.endDate1?jobNode.endDate1:""%>"  id="endDate1" class="form-control" placeholder="End Date">
+      						</div> 
+                             <%}%>
+      						
+      					</div>
+
+<%}%>
+                  	</div>
+                  	</div>
+                  	<%}%>
+                  	<%
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+//var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+var param = request.getParameter("id");
+%>
+                  	
+                  	<input name="redirect" type="hidden" value="<%=param%>"/>
+                  	<div class="col-xs-12">
+						<a href="javascript:void()" onclick="document.getElementById('ExpForm').submit();" class="btn btn-primary">Add Experience</a>
+						<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" id="cancelEdit" class="btn btn-warning">Cancel</a>
+					</div>
+</form>
+
+<%}else{%>
+<script type="text/javascript">
+<%if(currentNode.hasNode("Experience") && currentNode.getNode("Experience").hasNodes()){%>
+                                                                        var globalcountexp2=1+<%=currentNode.getNode("Experience").getNodes().length%>;
+                                                                        <%}else{
+                                                                        %>
+                                                                        var globalcountexp2=1;
+                                                                        <%}%>
+                                                                                $(document).ready(function() {
+                                                                                    var addDiv = $('#experiencediv');
+                                                                                   // var i = parseInt($('#experiencediv').size()) + 1;
+                                                                                    $('#addForm').on('click', function() {
+                                                                                     var i = globalcountexp2++;
+                                                                                   $("<div class='row remove2" + i + "' id='removeForm'><hr style='border-top:1px solid;width:96%'><div class='col-xs-10'><div class='form-group' id='removeForm'><div class='col-sm-3'><label for=''>Company Name</label><input id='companyName"+i+"' onkeyup='onkeyupForCompanyName1(this.id,"+i+")' name='companyName' value=''  onblur='setTitleValue(this.value)' type='text' class='form-control' placeholder='Company Name'><div id='suggestionCompanyyName"+i+"'  style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchCompanyyName"+i+"'></div></div></div><div class='col-sm-3'><label for=''>Company Location</label><input onkeyup='onkeyupForCompanyLocation1(this.id,"+ i +")' id='companyLocation"+ i +"' name='companyLocation' value='' type='text' class='form-control' placeholder='Company Location'><div id='suggestionCompanyLocation"+ i +"' style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchCompanyLocation"+ i +"'></div></div></div><div class='col-sm-3'><label for=''>Company Website</label><input name='companyWebsite' value='' type='text' class='form-control' placeholder='Company Website'></div><div class='form-group'><div class='col-sm-10'><label for=''>Experience Summary</label><textarea name='companyDesc' class='form-control' placeholder='Company Description'></textarea></div></div><div class='form-group'><div class='col-sm-5'><label for=''>Designation</label><input type='text' class='form-control' name='jobTitle' value='' placeholder='Designation'></div><div class='col-sm-5'><label for=''>Roles</label><input type='text' name='jobDesc' value='' class='form-control' placeholder='Roles'></div></div><div class='form-group'><div class='col-sm-5'><label for=''>Start Date</label><input name='startDate' id='startDate"+i+"' value='' type='text' class='form-control' placeholder='Start Date'></div><input type='checkbox' name='currentlyWork'  value='Present' id='"+i+"' onchange='work(this,this.id)'style='width:auto !important; display:inline !important; margin:0px 5px 0px 10px;'/><em style='font-weight:normal; font-size:10px; color:#666;'>Currently Working</em></label><div class='col-sm-5'><label for=''>End Date</label><input type='text' name='endDate1' value=''  id='endDate"+i+"' class='form-control' placeholder='End Date'></div></div></div></div><div class='col-xs-2'><span id='remForm' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remForm', function() {
+                                                                                        $(this).parents('#removeForm').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+<form  method="POST" id="ExpForm" modelAttribute="addExperience" action="<%=request.getContextPath()%>/content/user/save.ex">
+<input type="hidden" value="<%= getCurrentNodeValue("title") %>"  id="titleId" name="title" />
+
+<div  id="experiencediv">
+<div class="col-xs-10"> 
+								
+                  		<div class="form-group">
+      						<div class="col-sm-3">
+      							<label for="">Name</label>
+      							<input id="companyNameId" onkeyup="onkeyupForCompanyName(this.id)" name="companyName" value=""  onblur="setTitleValue(this.value)" type="text" class="form-control" placeholder="Company Name">
+      							<div id="suggestionCompany"  style="width:90%;z-index:1;position:absolute;background:white">
+  <div class="searchterm" id="searchCompany"></div>
+ </div>
+      						</div>
+      						<div class="col-sm-3">
+      							<label for="">Location</label>
+      							<input id="companyLocation" name="companyLocation" onkeyup="onkeyupForCompanyLocation1(this.id)" value="" type="text" class="form-control" placeholder="Company Location">
+      							<div id="suggestionCompanyLocation" style="width: 90%;z-index:1;position:absolute;background:white">
+  								<div class="searchterm" id="searchCompanyLocation"></div>
+ 								</div>
+      						</div>
+      						<div class="col-sm-3">
+      							<label for="">Website</label>
+      							<input name="companyWebsite" value="" type="text" class="form-control" placeholder="Company Website">
+      						</div>
+      					</div>
+
+      					<div class="form-group">
+      						<div class="col-sm-10">
+      							<label for="">Experience Summary</label>
+      							<textarea name="companyDesc" class="form-control" placeholder="Company Description"></textarea>
+      						</div>
+      					</div>
+      					
+      					<div class="form-group">
+      						<div class="col-sm-5">
+      							<label for="">Designation</label>
+      							<input type="text" class="form-control" name="jobTitle" value="" placeholder="Designation">
+      						</div>
+      						<div class="col-sm-5">
+      							<label for="">Roles</label>
+      							<input type="text" name="jobDesc" value="" class="form-control" placeholder="Roles">
+      						</div>
+      					</div>
+					<div class="form-group">
+      						<div class="col-sm-5">
+      							<label for="">Start Date</label>
+      							<input name="startDate" id="startDate0" value="" type="text" class="form-control" placeholder="Start Date">
+      						</div>
+      						
+						 
+                          
+    						<div class="col-sm-5">
+      						<label for="">Currently Working</label>
+      						 <input type="checkbox" name="currentlyWork" value="Present"  onclick="work(this,'0')"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+      						</div> 
+                            <div class="col-sm-5" style="display:block">
+      							<label for="">End Date</label>
+      							<input type="text" name="endDate1" value=""  id="endDate0" class="form-control" placeholder="End Date">
+      						</div> 
+      						
+      					</div>
+					
+
+                  	</div>
+                  	<div class='col-xs-2'><span id="addForm" class="glyphicon glyphicon-plus btn btn-default"></span></span></div>
+                  	</div>
+                  	<%
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+//var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+var param = request.getParameter("id");
+%>
+                  	
+                  	<input name="redirect" type="hidden" value="<%=param%>"/>
+                  	<div class="col-xs-12">
+						<a href="javascript:void()" onclick="document.getElementById('ExpForm').submit();" class="btn btn-primary">Add Experience</a>
+						<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" id="cancelEdit" class="btn btn-warning">Cancel</a>
+						
+					</div>
+</form>
+<%}%>
+
+<%}
+else{
+//out.print(currentNodeProvided);
+//out.print(currentNode);
+var expNodes = currentNode.getNodes();
+//out.print(expNodes[0]);
+%>
+<div class="row">
+<script type="text/javascript">
+<%if(currentNode.hasNodes()){%>
+                                                                        var globalcountexp1=1+<%=currentNode.getNodes().length%>;
+                                                                        <%}else{
+                                                                        %>
+                                                                        var globalcountexp1=1;
+                                                                        <%}%>
+                                                                                $(document).ready(function() {
+                                                                                    var addDiv = $('#experiencediv');
+                                                                                   // var i = parseInt($('#experiencediv').size()) + 1;
+                                                                                    $('#addForm').on('click', function() {
+                                                                                     var i = globalcountexp1++;
+                                                                                   $("<div class='row remove2" + i + "' id='removeForm'><hr style='border-top:1px solid;width:96%'><div class='col-xs-10'><div class='form-group' id='removeForm'><div class='col-sm-3'><label for=''>Company Name</label><input id='companyName"+i+"' onkeyup='onkeyupForCompanyName1(this.id,"+i+")' name='companyName' value=''  onblur='setTitleValue(this.value)' type='text' class='form-control' placeholder='Company Name'><div id='suggestionCompanyyName"+i+"'  style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchCompanyyName"+i+"'></div></div></div><div class='col-sm-3'><label for=''>Company Location</label><input onkeyup='onkeyupForCompanyLocation1(this.id,"+ i +")' id='companyLocation"+ i +"' name='companyLocation' value='' type='text' class='form-control' placeholder='Company Location'><div id='suggestionCompanyLocation"+ i +"' style='width: 90%;z-index:1;position:absolute;background:white'><div class='searchterm' id='searchCompanyLocation"+ i +"'></div></div></div><div class='col-sm-3'><label for=''>Company Website</label><input name='companyWebsite' value='' type='text' class='form-control' placeholder='Company Website'></div><div class='form-group'><div class='col-sm-10'><label for=''>Experience Summary</label><textarea name='companyDesc' class='form-control' placeholder='Company Description'></textarea></div></div><div class='form-group'><div class='col-sm-5'><label for=''>Designation</label><input type='text' class='form-control' name='jobTitle' value='' placeholder='Designation'></div><div class='col-sm-5'><label for=''>Roles</label><input type='text' name='jobDesc' value='' class='form-control' placeholder='Roles'></div></div><div class='form-group'><div class='col-sm-5'><label for=''>Start Date</label><input name='startDate' id='startDate"+i+"' value='' type='text' class='form-control' placeholder='Start Date'></div><input type='checkbox' name='currentlyWork'  value='Present' id='"+i+"' onchange='work(this,this.id)'style='width:auto !important; display:inline !important; margin:0px 5px 0px 10px;'/><em style='font-weight:normal; font-size:10px; color:#666;'>Currently Working</em></label><div class='col-sm-5'><label for=''>End Date</label><input type='text' name='endDate1' value=''  id='endDate"+i+"' class='form-control' placeholder='End Date'></div></div></div></div><div class='col-xs-2'><span id='remForm' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+                                                                                    });
+
+                                                                                    $(document).on('click', '#remForm', function() {
+                                                                                        $(this).parents('#removeForm').remove();
+                                                                                    });
+                                                                                });
+                                                                            </script>
+<form  method="POST" id="ExpForm" modelAttribute="addExperience" action="<%=request.getContextPath()%>/content/user/save.ex">
+<input type="hidden" value="<%= getCurrentNodeValue("title") %>"  id="titleId" name="title" />
+<div  id="experiencediv">
+
+<%
+var counte = 0;
+for(var i=0 ; i<expNodes.length ; i++){
+counte++;
+%>
+<div class='row remove2<%=counte%>' id='removeForm'>
+
+<%if(i == 0){%>
+
+<%}else{%>
+<hr style='border-top:1px solid;width:96%'>
+<%}%>
+<div class="col-xs-10">
+
+                  		<div class="form-group">
+      						<div class="col-sm-3">
+      							<label for="">Name</label>
+      							<input id="companyName<%=i%>" onkeyup="onkeyupForCompanyName1(this.id,<%=i%>)" name="companyName" value="<%= expNodes[i].companyName?expNodes[i].companyName:"" %>"  onblur="setTitleValue(this.value)" type="text" class="form-control" placeholder="Company Name">
+      							<div id="suggestionCompanyyName<%=i%>"  style="width: 90%;z-index:1;position:absolute;background:white">
+  								<div class="searchterm" id="searchCompanyyName<%=i%>"></div>
+ 								</div>
+      						</div>
+      						<div class="col-sm-3">
+      							<label for="">Location</label>
+      							<input name="companyLocation" id="companyLocation<%=i%>" onkeyup="onkeyupForCompanyLocation1(this.id,<%=i%>)" value="<%= expNodes[i].companyLocation?expNodes[i].companyLocation:"" %>" type="text" class="form-control" placeholder="Company Location">
+      							<div id="suggestionCompanyLocation<%=i%>" style="width: 90%;z-index:1;position:absolute;background:white">
+  								<div class="searchterm" id="searchCompanyLocation<%=i%>"></div>
+ 								</div>
+      						</div>
+      						<div class="col-sm-3">
+      							<label for="">Website</label>
+      							<input name="companyWebsite" value="<%= expNodes[i].companyWebsite?expNodes[i].companyWebsite:"" %>" type="text" class="form-control" placeholder="Company Website">
+      						</div>
+      					</div>
+
+      					<div class="form-group">
+      						<div class="col-sm-10">
+      							<label for="">Experience Summary</label>
+      							<textarea name="companyDesc" class="form-control" placeholder="Company Description"><%=expNodes[i].companyDesc?expNodes[i].companyDesc:"" %></textarea>
+      						</div>
+      					</div>
+
+      					<%
+if(expNodes[i].hasNode(expNodes[i].childNode?expNodes[i].childNode:"")){
+
+var jobNode = expNodes[i].getNode(expNodes[i].childNode?expNodes[i].childNode:"");%>
+      					<div class="form-group">
+      						<div class="col-sm-5">
+      							<label for="">Designation</label>
+      							<input type="text" class="form-control" name="jobTitle" value="<%=jobNode.jobTitle?jobNode.jobTitle:""%>" placeholder="Designation">
+      						</div>
+      						<div class="col-sm-5">
+      							<label for="">Roles</label>
+      							<input type="text" name="jobDesc" value="<%=jobNode.jobDesc?jobNode.jobDesc:""%>" class="form-control" placeholder="Roles">
+      						</div>
+      					</div>
+      					
+
+      					<div class="form-group">
+      						<div class="col-sm-5">
+      							<label for="">Start Date</label>
+      							<input name="startDate" id="startDate<%=i%>" value="<%= jobNode.startDate?jobNode.startDate:"" %>" type="text" class="form-control" placeholder="Start Date">
+      						</div>
+      						<%if(jobNode.currentlyWork?jobNode.currentlyWork:""=="Present"){%>
+						<input type="checkbox" name="currentlyWork" checked="checked"  value="Present" onchange="work(this,'<%=i%>')"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+						<em style="font-weight:normal; font-size:10px; color:#666;">Currently Working</em></label>
+	                     <div class="col-sm-5" style="display:block">
+      							<label for="">End Date</label>
+      							<input type="text" name="endDate1" value="" readOnly  id="endDate<%=i%>" class="form-control" placeholder="End Date">
+      						</div> 
+                          <%}else{%>
+                          <input type="checkbox" name="currentlyWork"   value="Present" onchange="work(this,'<%=i%>')"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+						<em style="font-weight:normal; font-size:10px; color:#666;">Currently Working</em></label>
+    						<div class="col-sm-5">
+      							<label for="">End Date</label>
+      							<input type="text" name="endDate1" value="<%=jobNode.endDate?jobNode.endDate:""%>"  id="endDate<%=i%>" class="form-control" placeholder="End Date">
+      						</div> 
+                             <%}%>
+      						
+      					</div>
+      					
+      					
+      					
+
+<%}%>
+                  </div>
+                 
+                 <%if(i == 0){%>
+                 <div class='col-xs-2'><span id="addForm" class="glyphicon glyphicon-plus btn btn-default"></span></span></div>
+                 <%}else{%>
+                 <div class='col-xs-2'><span id="remForm" class="glyphicon glyphicon-minus btn btn-default"></span></span></div>
+                 <%}%>
+                  </div> 
+  <%}%>           
+  	</div>
+  	     	
+                  	<%
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+//var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+var param = request.getParameter("id");
+%>
+                  	
+                  	<input name="redirect" type="hidden" value="<%=param%>"/>
+                  	<div class="col-xs-12">
+						<a href="javascript:void()" onclick="document.getElementById('ExpForm').submit();" class="btn btn-primary">Add Experience</a>
+						<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" id="cancelEdit" class="btn btn-warning">Cancel</a>
+						
+					</div>
+</form>
+</div>
+<%}%>
+</body>
+</html>

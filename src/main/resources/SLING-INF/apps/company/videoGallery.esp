@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<head>
+<script type="text/javascript" src="<%=request.getContextPath()%>/wro/company.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/wro/company.css" type="text/css" />
+<script>
+    $(function(){
+        /*$.ajax({
+            url:'<%=request.getContextPath()%>/servlet/company/show.addCategory',
+            type:'POST',
+            data:'type=Picture&category=',
+            success:function(){
+            
+            }
+          });
+            */
+            
+            $("#categoryAddId").click(function(){
+                $("#categoryDivId").show();
+            });
+            $("#categoryCancelId").click(function(){
+                $("#categoryDivId").hide();
+            });
+            $(".iframe_close").click(function(){
+                $("#iframeDivId").hide();
+            });
+            
+            $(".collapseId").toggle(function(){
+                $(this).parent().parent().next('div').slideUp();
+                $(this).html("Expand &nbsp;<span class='arrow-img-up arrow-img-down'></span>");
+            }, function() {
+                $(this).parent().parent().next('div').slideDown();
+                $(this).html("Collapse &nbsp;<span class='arrow-img-up arrow-img-down arrow-img-upV'></span>");
+            });
+        });
+    
+
+    function addCategory(){
+        if($("#categoryId").val()!=""){
+            $.ajax({
+                url:'<%=request.getContextPath()%>/servlet/company/show.addCategory',
+                type:'POST',
+                data:'type=Video&company=<%=request.getParameter("comp")%>&category='+$("#categoryId").val(),
+                success:function(){
+                    window.location.reload();
+                }
+            });
+        }else{
+            alert("Field Required !");
+        }
+    }
+    
+    function iframeLoad(){
+        window.location.reload();
+    }
+    
+    function addImageLink(category){
+      
+        document.getElementById("setCategoryId").value=category;
+        $("#iframeDivId").show();
+    }
+    
+    function getFileSize(){
+        var fileSize = document.getElementById('fileinputId').files[0].size;
+        if(fileSize<15000000){
+            $("#loadDivId").show();
+            $("#videoFormId").submit();
+        }else{
+            alert(" File Size Exceeds ! ");
+        }
+    }
+</script>
+
+
+</head>
+<body>
+
+
+<%
+
+
+    if(currentNode.hasNode("BasicInfo")){
+        var companyNode=currentNode.getNode("BasicInfo");
+    
+    }
+
+%>
+<div class="container-fluid company-profile">
+   <h1 class="spacing-left">
+    <div class="company-icon">
+        <% if(companyNode.hasProperty("companyLogo")){
+           %>
+           <img src="<%=companyNode.companyLogo?companyNode.companyLogo:request.getContextPath()+"/apps/user/css/images/photo.gif"%>"  />
+           <%}
+           else{  %>
+           <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+         <%}%>
+    </div>
+    <%=companyNode.companyName?companyNode.companyName:""%>
+    <br />
+    <a href="http://<%=companyNode.website?companyNode.website:""%>" target="_blank" class="sub-link"><%=companyNode.website?companyNode.website:""%></a>
+    <a href="javascript:void(0);" id="categoryAddId" class="category_a" style="color:#1230B3"> + Add Category</a>
+    
+  </h1>
+  <hr />    
+  <%if(currentNode.hasNode("media") && currentNode.getNode("media").hasNode("Video") 
+            && currentNode.getNode("media").getNode("Video").hasNodes()){
+        var videoNodes = currentNode.getNode("media").getNode("Video").getNodes();
+        for(i in videoNodes){
+        %>
+          <div class="image_container image_containe_box">
+              <div class="image_container_heading"><%=videoNodes[i].categoryName%>
+                <span>
+                        <a class="category_a" href="javascript:void(0);" 
+                           onclick="addImageLink('<%=videoNodes[i].getName()%>')">+Add Video</a>
+                        <a class="category_a collapseId" href="javascript:void(0);" > 
+                            Collapse &nbsp;<span class="arrow-img-up arrow-img-down arrow-img-upV"></span></a> 
+               </span>
+             </div>
+             <div class="content"> 
+                 <!--<h2>
+                    <%=videoNodes[i].categoryName%>
+                    <a class="category_a" href="javascript:void(0);" 
+                       onclick="addImageLink('<%=videoNodes[i].getName()%>')">+Add Video</a>
+                   <%if(videoNodes[i].hasNodes()){ %>
+                        <a class="category_a collapseId" href="javascript:void(0);" > 
+                            Collapse &nbsp;<span class="arrow-img-up arrow-img-down arrow-img-upV">
+                            </span>
+                        </a>
+                   <%}%>    
+                 </h2>-->
+                 <%if(videoNodes[i].hasNodes()){
+                        var video = videoNodes[i].getNodes();
+                        for( j in video){
+                        %><div>
+                            <video width="250" height="140" controls>
+                                  <source src="<%=request.getContextPath()+video[j]+"/"+video[j].getName()+".avi.webm"%>" type="video/webm">
+                                  Your browser does not support the video tag.
+                             </video> 
+                          </div>  
+                        <%
+                        }
+                 }%>
+             </div>
+          </div>
+        <%}%>  
+  <%}else{
+    out.println("Content Not Present");
+  }%>
+  
+</div>       
+        
+  
+  
+  
+<div id="categoryDivId" style="display:none;">
+    <div class="cred_bg-disable"></div>
+    <div class="category_div">
+        Category: 
+        <input type="text" value="" id="categoryId" placeholder="Category Name"/>
+        <input type="button" value="Add Category" class="btn btn-primary" onclick="addCategory()" />
+        <input type="button" value="Cancel" class="btn btn-danger" id="categoryCancelId" />
+    </div>    
+</div>
+<div id="iframeDivId" style="display:none;">
+    <div class="cred_bg-disable"></div>
+    <div class="iframe_div">
+        <a href="javascript:void(0);" class="iframe_close"></a>
+        <form action="<%=request.getContextPath()%>/servlet/company/show.addVideo" 
+                method="POST" enctype="multipart/form-data" id="videoFormId">
+          <table style="width:100%;">           
+            <tbody>
+                <tr><td colspan="2"> <h2>Add Video</h2></td></tr>
+                <tr>
+                    <td><h3>Video Name : </h3></td>        
+                    <td><input type="text" name="videoName"></td>
+                </tr>
+                <tr>
+                    <td><h3>Video Description: </h3></td>        
+                    <td><textarea name="videoDesc"></textarea></td>
+                </tr>
+                <tr>
+                    <td><h3>Upload Video:</h3></td>        
+                    <td><input type="file" name="myFile" id="fileinputId" class="custom-button custom-button-danger">
+                        <br><em><span>(Video size must be less than 15 MB )</span></em>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input value="" type="hidden"  id="setCategoryId" name="category"></td>        
+                    <td><input type="hidden" value="<%=currentNode.getName()%>" name="company"></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="button" value="Submit" class="custom-button custom-button-primary" onclick="getFileSize()">
+                        &nbsp;&nbsp;&nbsp;
+                        <div id="loadDivId" style="display:none;">Loading... 
+                            <img height="20px" src="<%=request.getContextPath()%>/apps/user/css/images/loading.gif">
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+       </table>
+      </form>
+    </div>    
+<div>
+    
+</body>
+</html>

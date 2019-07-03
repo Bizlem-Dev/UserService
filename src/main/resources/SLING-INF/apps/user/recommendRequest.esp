@@ -1,0 +1,75 @@
+
+                      
+<% currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));
+var countRecommend=0;	  
+	  	if(currentNode.hasNode("Recommendation")){
+			   		if(currentNode.getNode("Recommendation").hasNode("Reciever")){
+					  	var recommendNode=currentNode.getNode("Recommendation").getNode("Reciever").getNodes();
+					  	for(i in recommendNode){
+					  		var recommendJobNode=recommendNode[i].getNodes();
+					  		for( j in recommendJobNode){
+					  			
+						  		if(recommendJobNode[j].pending=='pending'){
+						  			countRecommend++;
+						  		}
+					  		}
+					  	}
+					 }
+				}
+var recommendNode;
+var userNode;
+var recommendToNode;
+var recommendTypeNode;
+var count=0;
+if(countRecommend>0){%>
+<div id="people" class="tab-pane fade active in">
+                  <div class="content-tab mCustomScrollbar">
+                    <div class="tab-three-12">
+						<div class="people-visited">
+                      
+                      <%
+if(currentNode.hasNode("Recommendation")){
+	if(currentNode.getNode("Recommendation").hasNode("Reciever")){
+		recommendNode=currentNode.getNode("Recommendation").getNode("Reciever").getNodes();
+		for(i in recommendNode){
+			var size=countRecommend;
+				recommendTypeNode=recommendNode[i].getNodes();
+				for(j in recommendTypeNode){
+						userNode=currentNode.session.getRootNode().getNode("content/user").getNode(recommendTypeNode[j].userId);
+							if(recommendTypeNode[j].pending=='pending'){
+							%>
+									<div class="tumbnail-login">
+                        <div class="thumbnail">
+                        
+                          <% if(userNode.hasProperty("profileImage")){
+								               %>
+													<img src="<%=userNode.profileImage%>" style="width:121px;height:130px" />
+								            <%}else{  %>
+								           <img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="width:121px;height:130px" />  
+					                   <%}%>
+                          <div class="caption">
+                            <h3 style="text-align: center;"><a href="#"><%=userNode.name%> </a></h3>
+                            <p>says Can you endorsed me for</p>
+                            <p><%=recommendTypeNode[j].requestType?recommendTypeNode[j].requestType:""%> ?</p>
+                            <p> Message :
+												 <%=recommendTypeNode[j].message?recommendTypeNode[j].message:""%> </p>
+                            <p> <a target="_blank"class="custom-button"  href="<%=request.getContextPath()%>/servlet/recommendation/show.write?userId=
+															<%=request.getRemoteUser().replace("@","_")%>&title=<%=recommendNode[i].getName()+"/"+recommendTypeNode[j].getName()%>">Write recommendation</a>			
+										</p>
+                          </div>
+                        </div>
+                      </div>
+							   	
+							
+	<% }}}
+}}%>
+</div>
+                      
+                </div>
+
+
+                  </div>
+                </div>
+<% }else{
+	  out.print("No recommendation request");
+} %>

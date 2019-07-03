@@ -1,0 +1,110 @@
+<%load("includes/header.esp");%>
+<script>
+$(window).load(function(){
+$('#next').click(function() {
+    $('.current').removeClass('current').hide()
+        .next().show().addClass('current');
+    if ($('.current').hasClass('last')) {
+        $('#next').attr('disabled', true);
+    }
+    $('#prev').attr('disabled', null);
+});
+
+$('#prev').click(function() {
+    $('.current').removeClass('current').hide()
+        .prev().show().addClass('current');
+    if ($('.current').hasClass('first')) {
+        $('#prev').attr('disabled', true);
+    }
+    $('#next').attr('disabled', null);
+});
+});
+
+</script>
+<style type="text/css">		
+	.content_5{overflow:auto;width:300px;margin:0 auto;}	
+</style>
+</head>
+<body>
+
+<%var countRecommend=0;	  
+	  	if(currentNode.hasNode("Recommendation")){
+			   		if(currentNode.getNode("Recommendation").hasNode("Sender")){
+					  	var recommendNode=currentNode.getNode("Recommendation").getNode("Sender").getNodes();
+					  	for(i in recommendNode){
+					  		var recommendJobNode=recommendNode[i].getNodes();
+					  		for( j in recommendJobNode){
+					  			
+						  		if(recommendJobNode[j].pending=='Accepted'){
+						  			countRecommend++;
+						  		}
+					  		}
+					  	}
+					 }
+				}
+%>
+				
+<div>
+	<% if(countRecommend>2){%>
+	<button id="prev" class="btn btn-primary" disabled="disabled">Prev</button>
+	<button id="next" class="btn btn-primary">Next</button>
+	<%}%>
+	<label style="display: block;text-align: center;"><strong>You have <%=countRecommend%> Recommendations</strong></label>
+</div>	
+<div id="main" class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+  
+   
+
+<%
+var count=0;
+if(currentNode.hasNode("Recommendation")){
+			if(currentNode.getNode("Recommendation").hasNode("Sender")){
+					var size=countRecommend;
+    				var recommendNode=currentNode.getNode("Recommendation").getNode("Sender").getNodes();
+                    for(i in recommendNode){
+                                  
+                                    var userNode=currentNode.session.getRootNode().getNode("content/user/")
+                                                                    .getNode(recommendNode[i].getName());
+                                    
+                                    var titleNode=recommendNode[i].getNodes();
+                                    for(j in titleNode){
+                                      if(titleNode[j].pending=='Accepted'){
+                                      	if(count=='0'  && size>'2'){
+	                                     %>
+	                                       	<div id="div<%=count%>" class="first current">
+	                                     <%	
+	                                     }else if(count>=(size-2) && count>=2 && (count*count)%2==0){ 
+	                                     %>
+	                                     	</div> 
+	                                        <div id="div<%=count%>" class="last" style="display:none;">
+	                                     <%
+	                                     }else if((count*count)%2==0 && count!=1 && count<(size-2) ){
+	                                       
+	                                     %>
+	                                        </div>
+	                                        <div id="div<%=count%>"  style="display:none;">
+	                                     <%}%>
+                                     		
+                                     	
+                                    <li class="ui-state-default ui-corner-top" style="height:100px">								
+                                    	<div>
+                                    	<h3><%=titleNode[j].requestType?titleNode[j].requestType:""%></h3> <br />
+                                    	 <%=userNode.name?userNode.name:""%> <%=userNode.lastName?userNode.lastName:""%>,
+                                    	 
+                                    	 
+                                         <% var colleagueTitleNode=userNode.session.getNode(titleNode[j].colleagueTitle);
+                                         	out.println(colleagueTitleNode.getName());
+											%>
+											<br /><%=titleNode[j].relatonship?titleNode[j].relatonship:""%>
+                                    	</div>
+
+                                    <%}
+                                    }
+                                   
+
+                       }
+			}
+}
+
+%>

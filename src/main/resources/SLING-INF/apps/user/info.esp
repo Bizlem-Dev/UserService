@@ -1,0 +1,260 @@
+
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined")); 
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+   postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<html>
+<head>
+
+<script>
+    function changeWebsiteType(i) {
+        var a = i;
+        document.getElementById('websitetype').className = 'website-type ' + a;
+        document.getElementById('webTypeId').value = i;
+    }
+    function changeDynamic(i,v) {
+        var a = i;
+        var iconType="websitetype"+v;
+        var type="webTypeId"+v;
+        document.getElementById(iconType).className = 'website-type ' + a;
+        document.getElementById(type).value = i;
+    }
+</script>
+
+<script language="javascript">
+    var counts;
+    function addRow(tableID) {
+
+        var table = document.getElementById(tableID);
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        counts = rowCount - 1;
+
+        var cell3 = row.insertCell(0);
+        var rate = document.createElement("input");
+        rate.type = "text";
+        rate.name = "websites";
+        rate.setAttribute("class", "");
+        rate.id = "jsp_" + counts + "__rate";
+        cell3.appendChild(rate);
+        
+        var cell2 = row.insertCell(1);
+        var selector = document.createElement('select');
+        selector.id = 'selBidReceivedIsPM';
+        selector.name = 'webType';
+        cell2.appendChild(selector);
+        var option = '';
+        var skill = "Office,Personal,Blog,Rss";
+        var token = skill.split(",");
+        option = document.createElement('option');
+        for(var i = 0;i<token.length;i++){  
+        option = document.createElement('option');
+        option.value = token[i];
+        option.appendChild(document.createTextNode(token[i]));
+        selector.appendChild(option);
+        }
+
+        var cell1 = row.insertCell(2);
+        var skill = document.createElement("label");
+        skill.id = "jsp_" + counts + "__skill";
+        skill.setAttribute("class", "");
+        cell1.appendChild(skill);
+    }
+
+    function deleteRow(guestList) {
+        try {
+            var table = document.getElementById(guestList);
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                table.deleteRow(rowCount - 1);
+            }
+        } catch (e) {
+            alert(e);
+        }
+    }
+</script>
+<title>Insert title here</title>
+</head>
+<body>
+<%if(currentNodeProvided){
+    var userNode=currentNode.getParent();
+    var groupNode;
+	if(userNode.hasNode("Groups") && userNode.getNode("Groups").hasNode("GroupsAdded") 
+		&& userNode.getNode("Groups").getNode("GroupsAdded").hasNodes() ){
+			groupNode=userNode.getNode("Groups").getNode("GroupsAdded").getNodes();
+	}
+}
+
+//out.print(currentNode);
+if (currentNode.hasNode("AdditionalInformation")) {
+                                                currentNode = currentNode.getNode("AdditionalInformation");
+                                                }
+%>
+    <form method="POST" id="InfoForm" action="<%=request.getContextPath()%>/content/user/save.info">
+          <input type="hidden" name="title" value="info" />
+          
+          
+                  <div class="col-xs-12">
+
+
+
+      					<div class="form-group" style="margin-bottom: 0px;">
+          					<div class="col-sm-10">
+          						<script type="text/javascript">
+								    $(document).ready(function () {
+								    var addDiv = $('#keywordList-website');
+								    var i = parseInt($('#keywordList-website .row').size()) + 1;
+								    $('#addNew5').on('click', function() {
+								        $("<div class='row remove2"+ i +"' id='remove5'><div class='col-xs-5'><input class='form-control' type='text' name='websites' placeholder='Website'></div><div class='col-xs-5'><select name='webType' class='form-control'><option value='Office'>Office</option><option value='Personal'>Personal</option><option value='Blog'>Blog</option><option value='RSS'>RSS</option></select></div><div class='col-xs-2'><span id='remNew5' class='glyphicon glyphicon-minus btn btn-default'></span></div></div>").appendTo(addDiv);
+								    });
+
+								    $(document).on('click','#remNew5', function() {
+								            $(this).parents('#remove5').remove();
+								    });
+								});
+								    </script>
+								<div id="keywordList-website">
+								<div class="row">
+									<label class="col-xs-5">Web Sites</label>
+									<label class="col-xs-5">Type</label>
+								</div>
+								
+								      <%
+                           if(currentNodeProvided && currentNode.hasProperty("websites") && currentNode.getProperty("websites").getDefinition().isMultiple() ){
+                          
+                           var webValue=getCurrentNodeValue("websites");
+                           var webTypeValue=getCurrentNodeValue("webType");
+                           for(j in webValue)
+                           {
+                         %>
+								
+	                            <div class="row remove2" id='remove5' style="margin-bottom: 15px;">
+	                      
+	                                <div class="col-xs-5"><input type="text" name="websites" class="form-control" placeholder="Website" name="skill" value="<%=webValue[j]%>"></input></div>
+	                                <div class="col-xs-5">
+	                          <select name="webType" class="form-control">
+                                                      <%
+                                                var webVal=["Office","Personal","Blog","RSS"]
+                                               for(i in webVal) {
+                                               if(webTypeValue[j]==webVal[i]){
+                                               %>
+                                                   <option value="<%=webVal[i]%>" selected="selected" ><%=webVal[i]%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=webVal[i]%>"><%=webVal[i]%></option>   
+  
+                                                    <%  }} %>
+                                                     </select>
+	                                </div>
+	                                <%if(j == 0){%>
+	                                <div class="col-xs-2"><span id="addNew5" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+	                                <%}else{%>
+	                                <div class='col-xs-2'><span id='remNew5' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+	                                <%}%>
+	                            </div>     
+	                                <%}} else {%>
+	                            <div class="row remove2" id='remove5' style="margin-bottom: 15px;">
+	                      
+	                                <div class="col-xs-5"><input type="text" name="websites" class="form-control" placeholder="Website" name="skill" value="<%= getCurrentNodeValue("websites") %>"></input></div>
+	                                <div class="col-xs-5">
+	                          <select name="webType" class="form-control">
+                                                      <%
+                                                var webVal=["Office","Personal","Blog","RSS"]
+                                               for(i in webVal) {
+                                               if(getCurrentNodeValue("webType")==webVal[i]){
+                                               %>
+                                                   <option value="<%=webVal[i]%>" selected="selected" ><%=webVal[i]%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=webVal[i]%>"><%=webVal[i]%></option>   
+  
+                                                    <%  }} %>
+                                                     </select>
+	                                </div>
+	                                <%if(j == 0){%>
+	                                <div class="col-xs-2"><span id="addNew5" class="glyphicon glyphicon-plus btn btn-default"></span></div>
+	                                <%}else{%>
+	                                <div class='col-xs-2'><span id='remNew5' class='glyphicon glyphicon-minus btn btn-default'></span></div>
+	                                <%}%>
+	                            </div>                                     
+	                        <%}%>        
+	                                
+	                                
+	                           
+	                        </div>
+
+          					</div>
+          					</div>
+
+
+
+                  
+        
+        
+        
+                          		<div class="form-group">
+      						<div class="col-sm-12">
+      							<label for="">Interests</label>
+      							<textarea name="interests" class="form-control" placeholder="Interests"><%= currentNode.interests ? currentNode.interests:"" %></textarea>
+      						</div>
+      					</div>
+
+      					<div class="form-group">
+      						<div class="col-sm-12">
+      							<label for="">Honours & Awards</label>
+      							<textarea name="honorsAwards" class="form-control" placeholder="Honours & Awards"><%= getCurrentNodeValue("honorsAwards") %></textarea>
+      						</div>
+      					</div>
+        
+        	</div>
+        
+                           <%
+                    var path=postPath;
+                    var last=path.lastIndexOf("/");
+                    var redirect=path.substring(0,path.lastIndexOf("/"));
+                    //var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+                    var param = request.getParameter("id");
+                    
+                    %>
+                    <input name="redirect" type="hidden" value="<%=param%>"/>
+                          	<div class="col-xs-12">
+						<a href="javascript:void()" onclick="document.getElementById('InfoForm').submit();" class="btn btn-primary">Save Changes</a>
+						<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>" class="btn btn-warning">Cancel</a>
+					</div>
+             
+          
+          
+          
+          
+          
+          
+            </form>
+</body>
+</html>

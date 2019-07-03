@@ -1,0 +1,586 @@
+@import "custom_new.css";
+html {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+body{background:url(images/page_bg.gif) 0px 0px repeat #5babd3 !important;}
+/* body {
+    background: url("images/page_bg.jpg") repeat-y scroll 50% 0 #fff !important;
+    color: #666666 !important;
+    font-family: Arial,Helvetica,sans-serif !important;
+    font-size: 12px !important;
+} */
+footer {
+    border: medium none !important;
+}
+footer span, footer a, footer a:hover {
+    color: #FFFFCC;
+}
+a {
+    outline: medium none !important;
+}
+* {
+    outline: medium none;
+}
+.form input, .form select, .form textarea {
+    color: #666666 !important;
+    font-family: Arial,Helvetica,sans-serif !important;
+    font-size: 11px !important;
+    margin-right: 5px;
+    width: 93% !important;
+}
+.form textarea {
+    resize: none;
+    width: 96% !important;
+}
+.form input[type="button"], .form input[type="submit"], .form input[type="reset"] {
+    margin-left: 8px !important;
+    margin-right: 0 !important;
+    width: auto !important;
+}
+.navbar {
+    margin-bottom: 0 !important;
+}
+.container-fluid {
+    background: url("images/container-tile.gif") repeat-y scroll 0 0 #FFFFFF !important;
+    margin: 40px auto 0 !important;
+    padding: 0 !important;
+    width: 911px !important;
+}
+.section-left {
+    background: url("images/container-top.png") no-repeat scroll 0 0 transparent !important;
+    display: table;
+    float: left !important;
+    margin: 0 0 10px !important;
+    width: 100% !important;
+}
+.section-right, .ui-tabs, .ui-tabs-panel {
+    border-top: 3px solid #1871B5 !important;
+    float: left !important;
+}
+.ui-tabs {
+    padding-left: 0 !important;
+}
+.section-right {
+    display: none !important;
+    float: right !important;
+    margin: 0 15px 10px 0 !important;
+    width: 270px !important;
+}
+.ui-tabs, .ui-widget-header {
+    background: none repeat scroll 0 0 transparent !important;
+    border: medium none !important;
+    box-shadow: none !important;
+}
+.ui-tabs .ui-tabs-nav {
+    padding: 0 !important;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
+    background-color: #F9F8F8 !important;
+    background-image: none !important;
+    border: medium none !important;
+    font-weight: normal !important;
+}
+.ui-tabs .ui-tabs-nav li {
+    float: none !important;
+}
+.ui-helper-reset {
+    font-size: 12px;
+}
+.ui-tabs-panel {
+    border-radius: 0 0 0 0 !important;
+}
+.profile-user-thumb, .profile-info-visible {
+    display: block;
+    float: left;
+    margin-right: 10px;
+}
+#personProfileContent .profile-info-visible, .profile-user-thumb {
+    margin-left: 10px !important;
+    margin-top: 10px !important;
+}
+.profile-info-visible {
+    clear: right;
+}
+.separator {
+    border-bottom: 1px solid #FDFDFD;
+    border-top: 1px solid #E4E4E4;
+    float: left;
+    margin: 5px 0;
+    width: 100%;
+}
+.btn, input.btn {
+    color: #FFFFFF !important;
+    float: none !important;
+    font-size: 10px !important;
+    font-weight: bold;
+    line-height: normal !important;
+    margin: 0 6px 0 4px !important;
+    padding: 1px 5px !important;
+}
+.btn a {
+    color: #FFFFFF !important;
+}
+h2 {
+    color: #006699 !important;
+    font-family: 'Dosis',serif !important;
+    font-size: 36px !important;
+    font-weight: normal !important;
+    line-height: 36px !important;
+    margin: 0 0 5px !important;
+}
+h3 {
+    color: #1871B5 !important;
+    font-family: 'Dosis',serif !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    line-height: normal !important;
+    margin-bottom: 0 !important;
+}
+h3 em {
+    font-style: normal !important;
+    margin-right: 10px !important;
+}
+h3 {
+    margin-bottom: 8px !important;
+}
+.profile-info-visible ul {
+    list-style: none outside none;
+    margin: 0;
+    padding: 0;
+}
+.profile-info-visible ul li {
+    clear: both;
+    color: #333333;
+    display: table;
+    font-size: 11px !important;
+    font-weight: normal !important;
+    line-height: 14px !important;
+    margin-bottom: 8px !important;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    padding: 0;
+    white-space: normal !important;
+}
+#personProfileContent .profile-info-visible ul li {
+    margin-bottom: 3px !important;
+}
+.profile-info-visible ul li.special {
+    color: #1871B5 !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
+.profile-info-visible span {
+    color: #1871B5 !important;
+    margin-right: 5px;
+}
+.icon {
+    background: url("images/icons.png") no-repeat scroll 0 0 transparent;
+    padding-left: 15px !important;
+}
+/* .social-media {
+    float: right;
+    margin: 20px 60px 7px 7px;
+} */
+.social-media a {
+    border: medium none !important;
+    display: block !important;
+    float: left !important;
+    margin-right: 7px;
+}
+.social-media a img.icon {
+    background: url("images/icon-sm.png") no-repeat scroll 0 0 transparent !important;
+    float: left !important;
+    height: 16px !important;
+    padding: 0 !important;
+    width: 16px !important;
+}
+.icon.birth {
+    background-position: 0 -24px;
+}
+.icon.anniversary {
+    background-position: 0 -36px;
+}
+.icon.email {
+    background-position: 0 -60px;
+}
+.icon.im {
+    background-position: 0 -72px;
+}
+.icon.number {
+    background-position: 0 -48px;
+}
+.icon.address {
+    background-position: 0 -12px;
+}
+.social-media img.icon.facebook {
+    background-position: 0 0 !important;
+}
+.social-media img.icon.linkedin {
+    background-position: 0 -16px !important;
+}
+.social-media img.icon.yahoo {
+    background-position: 0 -32px !important;
+}
+.social-media img.icon.google {
+    background-position: 0 -48px !important;
+}
+.social-media img.icon.twitter {
+    background-position: 0 -64px !important;
+}
+.form label {
+    color: #006699;
+    font-size: 11px;
+    font-weight: bold;
+}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+    background-color: transparent !important;
+    color: #000000 !important;
+    font-family: 'Dosis',serif !important;
+    font-size: 18px !important;
+}
+.ui-tabs {
+    padding: 0 !important;
+    position: inherit !important;
+}
+#tabs, #tabs1 {
+    clear: right !important;
+    float: right !important;
+    margin: 0 20px 15px 0 !important;
+    width: 570px !important;
+}
+#tabs2, #tabs3 {
+    clear: left !important;
+    float: left !important;
+    margin: 0 50px 15px 0 !important;
+    width: 270px !important;
+}
+#tabs .ui-tabs-panel, #tabs1 .ui-tabs-panel, #tabs.ui-tabs .ui-tabs-nav li a, #tabs1.ui-tabs .ui-tabs-nav li a {
+    float: left !important;
+    padding-left: 1px;
+    width: 520px !important;
+}
+#tabs2 .ui-tabs-panel, #tabs3 .ui-tabs-panel, #ui-tab-common .ui-tabs-panel {
+    padding: 10px 2px 10px 13px !important;
+    width: 255px !important;
+}
+#tabs2 .ui-tabs-nav li a, #tabs3 .ui-tabs-nav li a, #ui-tab-common .ui-tabs-nav li a {
+    padding: 10px 2px 10px 13px !important;
+}
+#nav {
+    float: right;
+    font-size: 0;
+    font-weight: normal;
+    list-style: none outside none;
+    margin: 5px 0 0;
+    padding: 0;
+}
+#nav ul {
+    margin: 0;
+    padding: 0;
+    z-index: 98;
+}
+#nav li {
+    background: url("images/icon_arrow_down.gif") no-repeat scroll 0 0 transparent;
+    float: left;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: 16px;
+}
+#nav a {
+    color: #333333;
+    display: block;
+    padding: 0 1px;
+    text-decoration: none;
+}
+#nav a:hover {
+}
+#nav ul {
+    background: none repeat scroll 0 0 rgba(255, 255, 255, 0);
+    left: -9999px;
+    list-style: none outside none;
+    position: absolute;
+}
+#nav ul li {
+    background: none repeat scroll 0 0 transparent;
+    border-bottom: 1px dotted #1871B5 !important;
+    float: none;
+    font-size: 10px !important;
+    margin: 0 0 1px;
+    padding: 5px 0;
+}
+#nav ul li:hover {
+    background: none repeat scroll 0 0 #F36010;
+}
+#nav ul li:hover a, #nav ul li:hover a:hover {
+    color: #FFFFFF !important;
+}
+#nav ul a {
+    white-space: nowrap;
+}
+#nav li:hover ul {
+    background: none repeat scroll 0 0 padding-box #FFFFFF;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-color: -moz-use-text-color rgba(0, 0, 0, 0.65) rgba(0, 0, 0, 0.65);
+    border-style: none solid solid;
+    border-width: medium 1px 1px;
+    box-shadow: 0 0 10px #303030;
+    left: 0;
+    z-index: 99;
+}
+#nav ul li:hover a {
+    color: #333333;
+    text-decoration: underline;
+}
+#nav li:hover ul a {
+    background-image: none;
+    text-decoration: none;
+}
+#nav li:hover ul li {
+    clear: both;
+    float: left;
+    margin: 0;
+    width: 120px;
+}
+#nav li:hover ul li a, #nav li ul li a, #nav li ul li {
+    line-height: 20px !important;
+}
+.website-type {
+    float: left;
+    height: 16px;
+    margin: 0 3px;
+    width: 16px;
+}
+.website-type.personal {
+    background: url("images/icon_personal.png") no-repeat scroll 0 0 transparent !important;
+}
+.website-type.office {
+    background: url("images/icon_office.png") no-repeat scroll 0 0 transparent !important;
+}
+.website-type.blog {
+    background: url("images/icon_blog.png") no-repeat scroll 0 0 transparent !important;
+}
+.website-type.rss {
+    background: url("images/icon_rss.png") no-repeat scroll 50% 50% transparent !important;
+}
+#nav li:hover ul #tabs.friendList, #tabs1.friendList, #tabs.friendList .ui-tabs-panel, #tabs1.friendList .ui-tabs-panel, #tabs.friendList.ui-tabs .ui-tabs-nav li a, #tabs1.friendList.ui-tabs .ui-tabs-nav li a {
+    padding: 0 !important;
+    position: absolute;
+    width: auto !important;
+}
+#tabs.friendList {
+    clear: left !important;
+    float: left !important;
+    margin: 10px 0 0 10px !important;
+    white-space: normal !important;
+    width: 870px !important;
+}
+#tabs.friendList #tabs1, #tabs.friendList .ui-tabs-panel {
+    clear: right !important;
+    float: left !important;
+    margin: 0 !important;
+    position: relative;
+    top: 0 !important;
+    width: 560px !important;
+    z-index: 96;
+}
+.friendList .ui-state-default, .friendList .ui-widget-content .ui-state-default, .friendList .ui-widget-header .ui-state-default {
+    border: medium none !important;
+    margin: 0 !important;
+}
+.friendList .ui-helper-clearfix:after {
+    clear: none !important;
+}
+.friendList ul:first-child {
+    float: left !important;
+    margin-right: 1px !important;
+    margin-top: 20px !important;
+    position: relative;
+    width: 258px;
+}
+.friendList.search-result ul:first-child {
+    margin-left: 20px !important;
+    position: inherit;
+    width: auto !important;
+}
+.friendList ul li {
+    display: inherit !important;
+}
+.friendList.ui-tabs .ui-tabs-nav li img {
+    border: 1px solid #FFFFFF;
+    box-shadow: 0 0 1px #303030;
+    margin: 5px 5px 0;
+}
+.friendList.ui-tabs .ui-tabs-nav li {
+    background: url("images/sub_tab.gif") repeat-x scroll 0 0 #E2E2E2;
+    border: 1px solid #AEAEAE !important;
+    border-radius: 5px 5px 5px 5px;
+    clear: both !important;
+    float: left !important;
+    height: 65px;
+    margin-bottom: 5px !important;
+    position: relative;
+    top: 75px;
+    width: 250px !important;
+}
+.friendList.search-result.ui-tabs .ui-tabs-nav li {
+    clear: none !important;
+    margin: 0 20px 20px 0 !important;
+    position: inherit !important;
+    top: auto !important;
+}
+.friendList.ui-tabs .ui-tabs-nav li.ui-state-active {
+    border-radius: 5px 0 0 5px;
+    border-right: medium none !important;
+    position: absolute;
+    top: 0;
+    width: 258px !important;
+    z-index: 99;
+}
+.friendList.ui-tabs .ui-tabs-nav li a {
+    padding: 5px !important;
+}
+.friendList .profile-info-visible, .friendList .profile-user-thumb {
+    margin: 0 !important;
+}
+.friendList h2:first-child, .friendList a h2:first-child {
+    font-size: 14px !important;
+    font-weight: bold !important;
+    line-height: normal !important;
+    margin: 0 !important;
+}
+.friendList h3:first-child {
+    color: #1871B5 !important;
+    font-size: 12px !important;
+    font-weight: normal !important;
+}
+.friendList .profile-info-visible h2 {
+    color: #1871B5 !important;
+    font-size: 24px !important;
+    font-weight: bold !important;
+    line-height: normal !important;
+    margin: 0 !important;
+}
+.friendList.ui-tabs, .friendList .ui-tabs-panel {
+    border: medium none !important;
+}
+.friendList .profile-info-visible h3, .friendList.search-result h3 {
+    color: #1871B5 !important;
+    font-size: 14px !important;
+    font-weight: normal !important;
+}
+.friendList.search-result h3 {
+    margin-bottom: 0 !important;
+    overflow: hidden !important;
+    width: 180px !important;
+}
+.friendList .profile-info-visible {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    display: inherit;
+    font-size: 12px !important;
+    padding: 6px;
+    width: auto !important;
+}
+.friendList .ui-tabs-panel .profile-info-visible {
+    background-color: #FBFBFB;
+    border-radius: 5px 5px 5px 5px;
+    border-width: medium 1px 1px;
+    box-shadow: 0 0 3px #303030;
+    margin-top: 10px !important;
+    z-index: 97;
+}
+.friendList .ui-tabs-panel .profile-info-visible .profile-user-thumb {
+    display: table !important;
+    float: right !important;
+}
+.friendList .profile-info-visible:first-child {
+    display: table !important;
+    font-size: 12px !important;
+    padding: 6px;
+    width: 100% !important;
+}
+.friendList .profile-info-visible:first-child img {
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 0 1px #303030;
+    margin-top: 6px;
+}
+.friendList .profile-info-visible span {
+    clear: both !important;
+    font-size: 12px !important;
+    font-weight: bold !important;
+}
+.friendList .profile-info-visible {
+}
+h3 a.link {
+    color: #1871B5 !important;
+    float: right !important;
+    font-size: 11px !important;
+    font-weight: normal !important;
+}
+#ui-tab-common .profile-info-visible {
+    margin-right: 0 !important;
+}
+#ui-tab-common h3 {
+    width: 255px !important;
+}
+.search {
+    background: url("images/icon_search.png") no-repeat scroll 225px 5px #FFFFFF;
+    border: 1px solid #333333;
+    border-radius: 5px 5px 5px 5px;
+    box-shadow: 0 0 1px #303030;
+    height: 27px;
+    position: absolute;
+    right: 310px;
+    top: 7px;
+    width: 250px;
+}
+.search input[type="text"] {
+    border: medium none;
+}
+.friendList.ui-tabs.tab-big h2 {
+    position: relative;
+}
+.friendList.ui-tabs.tab-big .ui-tabs-nav li {
+    background-color: #E2E2E2;
+    height: 153px;
+    line-height: 20px;
+    top: 75px;
+    width: 400px !important;
+}
+.friendList.ui-tabs.tab-big .profile-user-thumb {
+    margin-right: 15px !important;
+}
+.friendList.ui-tabs.tab-big .ui-tabs-nav li div {
+    float: left;
+    font-size: 11px;
+}
+.friendList.ui-tabs.tab-big .ui-tabs-nav li div span {
+    color: #006699;
+}
+.friendList.ui-tabs.tab-big input[type="checkbox"] {
+    font-size: inherit;
+    line-height: normal !important;
+}
+.friendList.ui-tabs.tab-big .regular-checkbox + label {
+    left: 245px !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    position: absolute !important;
+    top: 5px !important;
+}
+.friendList.ui-tabs.tab-big .regular-checkbox:checked + label:after {
+    left: 2px !important;
+    top: -5px !important;
+}
+.search .search-icon {
+    cursor: pointer;
+    height: 28px;
+    position: relative;
+    top: -4px;
+    width: 30px;
+}

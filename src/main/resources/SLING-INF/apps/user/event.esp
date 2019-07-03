@@ -1,0 +1,72 @@
+<%
+currentNode1=currentNode.session.getRootNode().getNode("content").getNode("exhibition");
+if(currentNode1.hasNodes()){
+currentNode2=currentNode.session.getRootNode().getNode("content").getNode("exhibition").getNodes();
+for(var k=0; k<currentNode2.length; k++){
+//out.print(currentNode2[k].getName());
+var eventnode=currentNode.session.getRootNode().getNode("content").getNode("exhibition").getNode(currentNode2[k].getName());
+ %>
+ <div class="item">
+                     <p class="message">
+                  		<a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=eventnode.getName()%>" class="name">
+                           
+                             <% if(eventnode.hasNodes()){
+                             if(eventnode.hasNode("image")){
+                             var imgNodes=eventnode.getNode("image");
+                             var imgNode=imgNodes.getNodes();
+                             %>
+                             <img src="<%=imgNode[0].imgPath%>" alt="user image" class="online" style="width:80px;"/> 
+                             
+                             <%}
+                             }
+                             %>
+                               
+                               </a>
+                                <a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=eventnode.getName()%>" style="color:#6D6D7B"><%=eventnode.eventName%> -  <%=eventnode.from_date%></a><br>
+                             
+                             <% if(eventnode.hasNodes()){
+                             if(eventnode.hasNode("cate")){
+                             var catNodes=eventnode.getNode("cate");
+                             var catNode=catNodes.getNodes();
+                             %>
+                                <%=catNode[0].catName%>
+                                
+                                <%}
+                             }
+                             %>
+                                </p>
+                                       
+                                    </div><% 
+}
+}
+%>
+
+<%--
+currentNode=currentNode.session.getRootNode().getNode("content").getNode("exhibition");
+
+var resultList=request.getAttribute("userevent");
+if(resultList.size()<1){
+
+}else{
+for(var k=0; k<resultList.size(); k++){
+var eventnode=resultList.get(k);
+ %>
+ <div class="item">
+                     <p class="message">
+                  		<a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=eventnode.getName()%>" class="name">
+                           
+                             <% if(eventnode.hasNodes()){
+                             var imgNode=eventnode.getNodes();
+                             %>
+                             <img src="<%=imgNode[0].imgPath%>" alt="user image" class="online" style="width:80px;"/> 
+                             
+                             <%}%>
+                               
+                               </a>
+                                <a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=eventnode.getName()%>" style="color:#6D6D7B"><%=eventnode.eventName%> -  <%=eventnode.from_date%></a><br>
+                                <%=eventnode.selected_category%>
+                                </p>
+                                       
+                                    </div><% }
+}
+--%>

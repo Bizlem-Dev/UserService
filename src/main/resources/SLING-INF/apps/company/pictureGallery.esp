@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<head>
+<script type="text/javascript" src="<%=request.getContextPath()%>/wro/company.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/wro/company.css" type="text/css" />
+<script>
+    $(function(){
+        /*$.ajax({
+            url:'<%=request.getContextPath()%>/servlet/company/show.addCategory',
+            type:'POST',
+            data:'type=Picture&category=',
+            success:function(){
+            
+            }
+          });
+            */
+            $(".iframe_close").click(function(){
+                $(this).parent().parent().hide();
+            });
+            $("#categoryAddId").click(function(){
+                $("#categoryDivId").show();
+            });
+            $("#categoryCancelId").click(function(){
+                $("#categoryDivId").hide();
+            });
+
+            $(".collapseId").toggle(function(){
+                $(this).parent().parent().next('div').slideUp();
+                $(this).html("Expand &nbsp;<span class='arrow-img-up arrow-img-down'></span>");
+            }, function() {
+                $(this).parent().parent().next('div').slideDown();
+                $(this).html("Collapse &nbsp;<span class='arrow-img-up arrow-img-down arrow-img-upV'></span>");
+            });
+        });
+    
+
+    function addCategory(){
+        if($("#categoryId").val()!=""){
+            $.ajax({
+                url:'<%=request.getContextPath()%>/servlet/company/show.addCategory',
+                type:'POST',
+                data:'type=Picture&company=<%=request.getParameter("comp")%>&category='+$("#categoryId").val(),
+                success:function(){
+                    window.location.reload();
+                }
+            });
+        }else{
+            alert("Field Required !");
+        }
+    }
+    
+    function iframeLoad(){
+        window.location.reload();
+    }
+    
+    function addImageLink(category){
+        $("#iframeDivId").show();
+        $("#frameId").attr("src","<%=request.getContextPath()%>/content/company/*.uploadAll?type=picture&company=<%=currentNode.getName()%>&category="+category);
+    }
+    
+    function viewImage(value){
+        $("#imageId").attr("src","");
+        $("#imageId").attr("src","<%=request.getContextPath()%>"+value+"/xOp");
+        $("#imageViewId").show();
+       
+    }
+</script>
+
+
+</head>
+<body>
+
+
+<%
+
+
+    if(currentNode.hasNode("BasicInfo")){
+        var companyNode=currentNode.getNode("BasicInfo");
+    
+    }
+
+%>
+<div class="container-fluid company-profile">
+  <h1 class="spacing-left">
+    <div class="company-icon">
+        <% if(companyNode.hasProperty("companyLogo")){
+           %>
+           <img src="<%=companyNode.companyLogo?companyNode.companyLogo:request.getContextPath()+"/apps/user/css/images/photo.gif"%>"  />
+           <%}
+           else{  %>
+           <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+         <%}%>
+    </div>
+    <%=companyNode.companyName?companyNode.companyName:""%>
+    <br />
+    <a href="http://<%=companyNode.website?companyNode.website:""%>" target="_blank" class="sub-link"><%=companyNode.website?companyNode.website:""%></a>
+    <a class="custom-button custom-button-primary category_a" style="padding: 1px;margin-right: 5%;" href="<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=request.getParameter("comp")%>">View</a>
+    <a href="javascript:void(0);" id="categoryAddId" class="category_a" style="color:#1230B3"> + Add Category</a>
+    
+  </h1>
+  <hr />    
+  <%if(currentNode.hasNode("media") && currentNode.getNode("media").hasNode("Picture") 
+            && currentNode.getNode("media").getNode("Picture").hasNodes()){
+        var pictureNodes = currentNode.getNode("media").getNode("Picture").getNodes();
+        
+        for(i in pictureNodes){
+        %>
+          <div class="image_container image_containe_box">
+          <div class="image_container_heading"><%=pictureNodes[i].categoryName%>
+            <span>
+                    <a class="category_a" href="javascript:void(0);" 
+                       onclick="addImageLink('<%=pictureNodes[i].getName()%>')">+Add Images</a>
+                    <a class="category_a collapseId" href="javascript:void(0);" > 
+                        Collapse &nbsp;<span class="arrow-img-up arrow-img-down arrow-img-upV"></span></a> 
+           </span>
+         </div>
+             <div class="content"> 
+                 <!--<h2>
+                    <%=pictureNodes[i].categoryName%>
+                    <a class="category_a" href="javascript:void(0);" 
+                       onclick="addImageLink('<%=pictureNodes[i].getName()%>')">+Add Images</a>
+                    <a class="category_a collapseId" href="javascript:void(0);" > 
+                        Collapse &nbsp;<span class="arrow-img-up arrow-img-down arrow-img-upV">
+                        </span>
+                    </a>   
+                 </h2>-->
+                 <%if(pictureNodes[i].hasNodes()){
+                 %>
+                
+                 <%
+                        var pictures = pictureNodes[i].getNodes();
+                        for( j in pictures){
+                        %><div>
+                            <img src="<%=request.getContextPath()+pictures[j]%>/x150" onclick="viewImage('<%=pictures[j]%>')" height="100px" ></img>
+                          </div>  
+                        <%
+                        }%>
+                  <%      
+                 }%>
+             </div>
+          </div>
+        <%}%>  
+  <%}else{
+    out.println("Content Not Present");
+  }%>
+  
+</div>       
+        
+  
+  
+  
+<div id="categoryDivId" style="display:none;">
+    <div class="cred_bg-disable"></div>
+    <div class="category_div">
+        Category: 
+        <input type="text" value="" id="categoryId" placeholder="Category Name"/>
+        <input type="button" value="Add Category" class="btn btn-primary" onclick="addCategory()" />
+        <input type="button" value="Cancel" class="btn btn-danger" id="categoryCancelId" />
+    </div>    
+</div>
+<div id="iframeDivId" style="display:none;">
+    <div class="cred_bg-disable"></div>
+    <div class="iframe_div">
+        <a href="javascript:void(0);" class="iframe_close"></a>
+        <iframe height="301px" width="479px" frameborder="0" id="frameId"
+            src="" ></iframe>
+    </div>    
+</div>
+<div id="imageViewId" style="display:none;">
+    <div class="cred_bg-disable"></div>
+    <div class="imageView">
+        <a href="javascript:void(0);" class="iframe_close"></a>
+        <img  id="imageId" style="max-height: 560px;" src="<%=request.getContextPath()%>/content/company/GrasimIndustries/media/Picture/Misc/9105119710098006/xOp" />
+    </div>    
+<div>
+    
+</body>
+</html>

@@ -1,0 +1,48 @@
+<%/*
+if(currentNode.hasNode("connection")){
+	var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+	var friendNode;
+		for(i in connectionNode){
+			friendNode=connectionNode[i].getName();
+			var userFriendNode=currentNode.session.getRootNode().getNode("content/user/"+friendNode);
+			//    **********  Second Degree ******************
+			if(userFriendNode.hasNode("connection")){
+				var userFriendConnectionNode=userFriendNode.getNode("connection").getNode("friend").getNodes();
+				var secondDegreeNode;
+				for(j in userFriendConnectionNode){
+					secondDegreeNode=userFriendConnectionNode[j].getName();
+					if((secondDegreeNode!=currentNode.getName()) &&
+								 (!currentNode.getNode("connection").getNode("friend").hasNode(secondDegreeNode))){
+					
+						out.println("2nd Degree--"+secondDegreeNode);
+					}
+					
+					// ******************* Third Degree *****************
+					var thirdDegreeFriendNode=currentNode.session.getRootNode().getNode("content/user/"+secondDegreeNode);
+					if(thirdDegreeFriendNode.hasNode("connection")){
+						var thirdDegreeConnectionNode=thirdDegreeFriendNode.getNode("connection").getNode("friend").getNodes();
+						var thirdDegreeNode;
+						for(k in thirdDegreeConnectionNode){
+							thirdDegreeNode=thirdDegreeConnectionNode[k].getName();
+							if((thirdDegreeNode!=currentNode.getName()) &&
+										 (!currentNode.getNode("connection").getNode("friend").hasNode(thirdDegreeNode)) &&
+										 (!userFriendNode.getNode("connection").getNode("friend").hasNode(thirdDegreeNode))
+										 ){
+							
+								out.println("3rd Degree--"+thirdDegreeNode);
+							}
+						}
+					}
+					
+				}
+			}	
+		}
+}*/
+%>
+
+
+<%
+var a=sling.getService(Packages.org.profile.servlet.ProfileService);
+out.println(a.friendSuggestion("pranavarya99_gmail.com"));
+
+%>

@@ -1,0 +1,53 @@
+<%load("../user/includes/header.esp");%>
+<script>
+	
+ 	function loadContent2(elementSelector, userId) {
+ 		var searchKeyword=document.getElementById("searchGroup").value;		
+            $(""+elementSelector+"").load("<%=request.getContextPath()%>/servlet/common/search.groupDiv?keywords="+searchKeyword+"&userId="+userId+"");
+            
+        }
+        
+        
+      function join(url,group,userId,id){
+      	var data='userId='+userId+'&groupName='+group+'&accept=no';
+      	
+      	$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				 
+				  success: function(){
+				 
+				  	document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("joined"+id).style.display='block';
+				  }
+				
+			});
+      }  
+</script>
+
+</head>
+<body onload="loadContent2('#searchDiv1','<%=request.getParameter("userId")%>')" >
+<div class="container-fluid navbar-spacer">
+
+<div class="section-left">
+	<div class="search-internal-top">
+	  <input type="text" tabindex="0" id="searchGroup" value="<%=request.getParameter("keywords")%>" 
+	  				name="textfield" onkeyup="loadContent2('#searchDiv1','<%=request.getParameter("userId")%>')" />
+	 
+	  	<a href="javascript:loadContent2('#searchDiv1','<%=request.getParameter("userId")%>');"  ></a>
+	  	<%if(request.getParameterMap().containsKey("paramKey")){
+        %>
+        <a style="margin-top: 17px !important;" class="btn btn-info" href="<%=request.getContextPath()%>/servlet/group/show.view?id=new&userId=<%=request.getParameter("userId")%>">Create Group</a>
+        <%}%>
+
+	</div>
+	
+			 <div id="" class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+
+ 
+ 			<div id="searchDiv1">
+ </div>
+</ul>
+

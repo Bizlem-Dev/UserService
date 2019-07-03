@@ -1,0 +1,164 @@
+<html>
+<head>
+
+<link rel="stylesheet" href="<%=request.getContextPath()%>/wro/profileSearch.css" type="text/css" />
+<script type="text/javascript" src="<%=request.getContextPath()%>/wro/profileSearch.js"></script>
+<!--
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/user/css/checkbox.css" type="text/css" />
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/user/css/custom.css" type="text/css" />
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/user/css/rave.css" type="text/css" />
+<script type="text/javascript" src="<%=request.getContextPath()%>/apps/user/js/jquery.js"></script>
+-->
+<%
+//load("../user/includes/header.esp");
+%>
+
+ <script>
+ $(function() {
+  loadContent3("",'10');
+    $.fn.delayKeyup = function(callback, ms){
+         var timer = 0;
+         var el = $(this);
+         $(this).keyup(function(){                   
+             clearTimeout (timer);
+             timer = setTimeout(function(){
+                 callback(el)
+                     }, ms);
+         });
+         return $(this);
+     };
+    
+    $('#searchCompany').delayKeyup(function(el){       
+           loadContent3(el.val(),'10');
+    });
+    
+  });
+ 	function setDiv(){
+ 		
+ 		
+ 		window.returnValue = document.getElementById("t").value;
+		window.close();
+		
+		return false;
+ 		/*var value=document.getElementById("t").value;
+ 		
+ 		document.getElementById('selectedCompany').value=value; */
+ 	}
+ 
+ </script>
+
+<script>
+	function connect(url,id){
+		var userId=document.getElementById("userId").value;
+		var friendValue=document.getElementById("friendGet"+id).value;
+		var friendPathValue=document.getElementById("friendPath"+id).value;
+		var data='userId='+userId+'&friend='+friendValue+'&friendPath='+friendPathValue;
+		
+		$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				  success: function(){
+				  	document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("acceptRequest"+id).style.display='block';
+				  }
+				
+			});
+	
+	}
+
+	function next(v,id){
+
+              var searchKeyword=document.getElementById("searchCompany").value;
+               loadContent3(searchKeyword,v);
+    }
+    function loadContent3(searchKeyword,page) {
+            var page1=parseInt(page)-10;
+            var page2=page;
+                $("#searchDiv").load("<%=request.getContextPath()%>/servlet/common/search.companyDiv?keywords="
+                                        +searchKeyword+"&fromPage="+page1+"&toPage="+page2+"", function() {
+                    var keySize=document.getElementById("keySize").value;
+                    var length=Math.ceil(parseInt(keySize)/10);
+                    
+                    var content="";
+                    for(var i=1;i<=length;i++){
+                        if(page==i*10){
+                            content+="<a href='javascript:void(0);' class='bold' onclick=\"next(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                            
+                         }else{
+                            content+="<a href='javascript:void(0);'  onclick=\"next(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                         }
+                    }
+                    document.getElementById("pageID").innerHTML=content;
+                   
+            });
+    }
+    
+    function loadContent4()
+    {
+        var searchKeyword=document.getElementById('searchCompany').value;
+        $("#searchDiv").load("<%=request.getContextPath()%>/servlet/common/search.companyDiv?keywords="+searchKeyword+"");    
+    }
+</script>
+<%
+load("../user/includes/menu.esp");
+%>
+<div class="section-left">
+			<div class="search-internal-top">
+				  <input type="text" tabindex="0" id="searchCompany" value="<%=request.getParameter("keywords")%>" 
+				  				name="textfield"  />
+				 
+				  	<a href="javascript:loadContent4();"  ></a>
+				  	<%if(request.getParameterMap().containsKey("paramKey")){
+				  	%>
+				  	<a style="margin-top: 17px !important;" class="btn btn-info" 
+				  	   href="<%=request.getContextPath()%>/servlet/company/show.com?id=new">Create Company Profile</a>
+				  	<%}%>
+				  	
+			
+			</div>
+			<div align="center" id="pageID" ></div>
+			<table>
+			<%
+			if(request.getParameterMap().containsKey("companyName")){			
+			%>
+				<tr><td align="right"><a rel="facebox" class="btn btn-info" href="#div1" onclick="setDiv()" >Click Selected</a></td></tr>
+			<%}else{%>
+				<tr><td align="right"><a class="btn btn-info"  onclick="setDiv()">Click Selected</a></td></tr>
+			<%}%>
+			</table>
+			 <div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+ 
+ <div id="searchDiv">
+ </div>
+</ul>
+
+<div id="div1" style="display:none;">
+<form method="POST" action="<%=request.getContextPath()%>/servlet/company/save.mapCompany">
+
+Map the selected Company as a: <br />
+		<select name="mappingCompanyType">
+			<option value="Dealer">Dealer</option>
+			<option value="ServiceProvider">Service Provider</option>
+			<option value="Distributor">Distributor</option>
+			<option value="Customer">Customer</option>
+			<option value="Vendor">Vendor</option>
+			<option value="Advisor">Advisor</option>
+			<option value="ValueAddedServicesProvider">Value Added Services Provider</option>
+			<option value="ServicePoint">ServicePoint</option>
+			<option value="Others">Others</option>
+			
+			
+		</select>
+		<input type="hidden" name="mapCompanyName"  value="<%=request.getParameter("companyName")%>" />		
+		<%if(request.getParameter("companyName")!='newCompany'){%>		
+			<input type="hidden" id="selectedCompany" name="mappingName"  />	
+		<%}%>
+		<br />
+		<input type="submit" value="Map Company" class="btn btn-primary" />
+
+</form>
+</div>
+</body>
+</html>

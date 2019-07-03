@@ -1,0 +1,77 @@
+<div class="tab-three">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">People Visited your profile</h3>
+        </div>
+        <div class="panel-body people-visited">
+<%currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));%>
+             
+                 
+                  <%
+var visitorNode;
+var userNode;
+var dateNode;
+var timeNode;
+var visitNodes;
+var visitorType='false';
+if(currentNode.hasNode("Visitor") && currentNode.getNode("Visitor").hasProperty("visitorName")){%>
+    <div class="flexslider login-hot-product" id="hot-people">
+ <ul class="slides">
+<%visitNodes =  currentNode.getNode("Visitor").getProperty("visitorName").getValues();
+for( var i= 0;i<visitNodes.length;i++){
+    //out.print(visitNodes[i].getString());
+    userNode=currentNode.session.getRootNode().getNode("content/user/"+visitNodes[i].getString());
+    if(userNode.hasNode("Privacy") && userNode.getNode("Privacy").hasNode("Identity")
+      && userNode.getNode("Privacy").getNode("Identity").hasProperty("visitorPrivacy")
+      && userNode.getNode("Privacy").getNode("Identity")
+         .getProperty("visitorPrivacy").getString() =="annonymous"){
+              visitorType='true';
+              
+    }
+    visitorNode=currentNode.getNode("Visitor").getNode(visitNodes[i].getString());
+    dateNode = visitorNode.getNodes();
+    timeNode=dateNode[dateNode.length-1].getNodes();
+    %>
+                  
+                    <li>
+                    <%if(visitorType=='true'){%>
+                    <img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="height:70px"/>
+        <h3>Annonymous</h3> 
+        <% }else{%>
+                      <a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" ><img src="<%=userNode.profileImage?userNode.profileImage:request.getContextPath()+
+                                "/apps/images/nmg.jpg"%>" style="height:70px" /></a>
+                      <div class="text">
+                        <p class="text-danger"><a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" > <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%></a></p>
+                        <a href="#"><small><%=timeNode[timeNode.length-1].date%><br /><%=timeNode[timeNode.length-1].time%></small></a>
+                        </div>
+                          <%}%> 
+                    </li>
+                   
+<%   }%>
+
+                    
+                    
+                    <!-- items mirrored twice, total of 12 -->
+                  </ul>
+       
+                </div>
+				       
+                <script type="text/javascript">
+                  $(window).load(function() {
+                      $('#hot-people').flexslider({
+                        animation: "slide",
+                        animationLoop: false,
+                        itemWidth: 95,
+                        itemMargin: 20
+                      });
+                    });
+              </script>
+<% }else{
+out.println("Nobody has visit your profile yet.");
+}
+%>
+
+        </div>
+  
+      </div>
+    </div>

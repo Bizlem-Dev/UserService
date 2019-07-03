@@ -1,0 +1,261 @@
+ <script>
+function statusSubmit(){
+	var data="userStatus="+$("#userStatusId").val()+"&userid=<%=request.getRemoteUser().replace("@","_")%>";
+	if($("#userStatusId").val().trim()==""){
+	alert("Please fill some status !");
+	}else{
+
+    $.ajax({
+        type:'POST',
+        url:'<%=request.getContextPath()%>/content/user/save.setUserStatus',
+        data:data,
+        dataType: 'html',
+         success: function(msg){
+         document.getElementById("userStatusId").value="";
+        $('#resposegallery').modal('toggle');
+          }
+    });
+    }
+}
+function getNotificationShowDone(){
+		$.ajax({
+				 	 	 type: 'GET',
+		  				 url:'<%=request.getContextPath()%>/servlet/friend/show.notifyOff',
+						 data: "",
+						 success: function(dataa){
+						// alert(dataa);
+						 document.getElementById("notifyOnfMe").style.display="none";
+							 document.getElementById("notifyOffMe").style.display="";									
+					  	
+						  }
+						});	
+  				
+}
+function getGallery(){
+var url="<%=request.getContextPath()%>/content/user/.galleryUpload?userId=<%=request.getRemoteUser().replace("@","_")%>";
+$('#galleryUpload').load(url);
+	$('#contactgallery').modal('toggle');
+}
+</script>
+    
+    <!--response success msg botstrpa code-->
+    <div class="modal fade" id="resposegallery" role="dialog">
+    <div class="modal-dialog">
+    
+      <div class="alert alert-success">
+    <strong>Your status updated successfully !!</strong> .
+  </div>
+      
+    </div>
+  </div>
+  
+   
+<!--end-->
+    
+    
+<%currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));%>
+
+          
+            <%var countFriend1=0;	  
+	if(currentNode.hasNode("connection")){
+                var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+              	
+			  	
+				  
+				  	for(var i = 0;i<connectionNode.length;i++){
+				  		if(connectionNode[i].request=='accept' ){
+				  			countFriend1++;
+				  		}
+				  	}
+			}	 
+			var gcount=0;
+	if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded") 
+ 		&& currentNode.getNode("Groups").getNode("GroupsAdded").hasNodes()){
+                       		var gcount=currentNode.getNode("Groups").getNode("GroupsAdded").getNodes();
+                       		 }	
+%>
+            <div class="tab-one">
+              <ul class="nav nav-tabs" id="myTab">
+                <li class="active"><a data-toggle="tab" href="#people">Connections</a></li>
+                <li><a data-toggle="tab" href="#group">Groups</a></li>
+                <% currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));
+var countFriend=0;	  
+			 
+			  	if(currentNode.hasNode("connection") && currentNode.getNode("connection") 
+			  			&& currentNode.getNode("connection").getNode("friend").hasNodes()){
+				  	var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+				  	for(i in connectionNode){
+				  		if(connectionNode[i].request=='pending' && connectionNode[i].requestType=='reciever' ){
+				  			countFriend++;
+				  		}
+				  	}
+				 }
+		var countFriendNoti=0;		 
+				 if(currentNode.hasNode("connection") && currentNode.getNode("connection") 
+			  			&& currentNode.getNode("connection").getNode("friend").hasNodes()){
+				  	var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+				  	for(i in connectionNode){
+				  		if(connectionNode[i].request=='pending' && connectionNode[i].requestType=='reciever' && connectionNode[i].notify=='true'){
+				  			countFriendNoti++;
+				  		}
+				  	}
+				 }
+				 %>
+                <% if(countFriendNoti>0){%>
+                <li><a data-toggle="tab" href="#requestnew" onclick="getNotificationShowDone()" style="color:red" id="notifyOnfMe">Requests(<%=countFriendNoti%>)</a></li>
+               <li><a data-toggle="tab" href="#conrequest" id="notifyOffMe" style="display:none">Connection Requests</a></li>
+                <%}else{%>
+                <li><a data-toggle="tab" href="#requestnew" id="notifyOffMe">Requests</a></li>
+                <%}%>
+                <!--<li><a data-toggle="tab" href="#grorequest">Group Requests</a></li>-->
+                <!--<li><a data-toggle="tab" href="#recom">Recommendation</a></li>-->               
+               
+                <li><a data-toggle="tab" href="#activity">Activity</a></li>
+                <li><a data-toggle="tab" href="#shared">Shared</a></li>
+                <li><a data-toggle="tab" href="#gallery">Gallery</a></li>
+              </ul>
+
+              <div class="tab-content" id="myTabContent">
+              <div id="people" aria-hidden="false" class="tab-pane fade active in">
+              
+              <%if(countFriend1>0){%>
+                
+                  <div class="content-tab mCustomScrollbar">
+                    <div class="tab-three-12">
+
+                      <div class="people-visited">
+                      
+                      <%if(currentNode.hasNode("connection")){	 
+    var size=countFriend;   
+        for(i in connectionNode){
+           if(connectionNode[i].request=='accept'){     
+                var userNode=currentNode.session.getRootNode()
+                                .getNode("content/user/")
+                                .getNode(connectionNode[i].getName());
+                %>  
+                      <div class="tumbnail-login">
+                        <div class="thumbnail">
+                         
+                          <% if(userNode.hasProperty("profileImage")){
+                       %>
+                       <a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" ><img src="<%=userNode.profileImage%>"  style="width:100px;height:100px" /></a>
+                       <%}
+                       else{  %>
+                     <a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" ><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="width:100px;height:100px"/> </a>
+                     <%}%> <%var check=userNode.serviceCheck?userNode.serviceCheck:"false";%>
+                          <div class="caption">
+                            <h3 style="text-align: center;"><a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" > <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%></a></h3>
+                            <%if(userNode.headline != ""){%>
+                            <p style="width: 100%;float: left;overflow: hidden;display: block;white-space: nowrap;text-overflow: ellipsis;"> <%=userNode.headline%> </p>
+                            <%}else{%>
+                           <p style="width: 100%;float: left;overflow: hidden;display: block;white-space: nowrap;text-overflow: ellipsis;">No Profile Headline</p>
+                           <%}%>
+                          </div>
+                        </div>
+                      </div>
+                      <% } }}%>
+                      </div>
+                      
+                    </div>
+					</div>
+
+                  
+                 <%}else{%>
+            You have no connections.
+            <%}%>
+                </div> 
+               <div aria id="group" class="tab-pane fade">
+               
+               <% if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded") 
+ 		&& currentNode.getNode("Groups").getNode("GroupsAdded").hasNodes()){%>
+                 
+                  <div class="content-tab mCustomScrollbar">
+                    <div class="tab-three-12">
+
+                      <div class="people-visited">
+                       <% if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded") 
+ 		&& currentNode.getNode("Groups").getNode("GroupsAdded").hasNodes()){
+                       		var groups=currentNode.getNode("Groups").getNode("GroupsAdded").getNodes();
+                       		
+                       		for(i=0;i<groups.length;i++){
+                       		
+                       		
+                       		if(currentNode.session.getRootNode().getNode("content").getNode("group").hasNode(groups[i].getName())){
+                       		
+                       		var groupNode=currentNode.session.getRootNode().getNode("content").getNode("group").getNode(groups[i].getName());
+                       		%>
+                        <div class="tumbnail-login">
+                        <div class="thumbnail">
+                        <% if(groupNode.hasNode("picture")){%>
+                       <a href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=groups[i].getName()%>&userId=<%=request.getRemoteUser().replace("@","_")%>" class="btn btn-outline"><img src="<%=request.getContextPath()%>/content/group/<%=groupNode.getName()%>/<%=groupNode.getNode("picture").getName()%>" alt="Groups" style="width:100px;height:100px"></a>
+                         <%}else{%>
+                      	 <a href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=groups[i].getName()%>&userId=<%=request.getRemoteUser().replace("@","_")%>" class="btn btn-outline"><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" alt="Groups" style="width:100px;height:100px"></a>
+                         <%}%>
+                          <div class="caption">
+                            <h3 style="text-align: center;"><a href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=groups[i].getName()%>&userId=<%=request.getRemoteUser().replace("@","_")%>" class="btn btn-outline"><%=groupNode.groupName?groupNode.groupName:""%></a></h3>
+                          <% if(groups[i].getProperty("groupRequest").getString()=='accepted'){%>
+                           <p style="margin-bottom: 0px;  width: 100%;float: left;  overflow: hidden;  display: block;  white-space: nowrap;  text-overflow: ellipsis;">Added</p>
+                          <% }else{%>
+                           <p style="margin-bottom: 0px;  width: 100%;float: left;  overflow: hidden;  display: block;  white-space: nowrap;  text-overflow: ellipsis;">Request Pending</p>
+                           
+                          <% }
+                            %>                          
+                           <p>
+                           		<a href="#"><i class="fa fa-facebook-square"></i></a>
+					            <a href="#"><i class="fa fa-twitter-square"></i></a>
+					            <a href="#"><i class="fa fa-envelope"></i></a>
+					            <a href="#"><i class="fa fa-phone"></i></a>
+					        <p>
+                            
+                          </div>
+                        </div>
+                      </div>
+                     <% }}}%>
+					   </div>
+                  
+           		</div>
+           </div>
+            <%}else{%>
+           You are not connected to any group.
+            <%}%>
+         
+            </div>
+            <div ar id="requestnew" class="tab-pane fade">
+                   <div class="tab-one">
+                   <ul class="nav nav-tabs" id="myTab1">
+                   <li class="active"><a data-toggle="tab" href="#conrequest" id="notifyOffMe">Connection Requests</a></li>
+                   <li><a data-toggle="tab" href="#grorequest">Group Requests</a></li>
+                    <li><a data-toggle="tab" href="#recom">Recommendation</a></li>  
+                   </ul>
+                    <div class="tab-content" id="myTabContent1">
+                     <div ar id="conrequest" class="tab-pane fade active in">
+                   <%load("connectionRequest.esp");%>
+                </div>
+                <div aria id="grorequest" class="tab-pane fade">
+                   <%load("groupRequest.esp");%>
+                </div>
+                 <div aria id="recom" class="tab-pane fade">
+                   <%load("recommendRequest.esp");%>
+                </div>
+                    </div>
+                   </div>
+                </div>     
+           
+               
+                <div aria id="activity" class="tab-pane fade">
+      				      <%load("activityWidget.esp");%>
+    			  </div>
+    			  <div aria id="shared" class="tab-pane fade">
+      				      No Shared File
+    			  </div>
+    			  <div id="gallery" aria-hidden="false" class="tab-pane fade">
+              	      <%load("usergallery_new.esp");%>
+              
+                </div> 
+    			  
+      
+     		  </div>
+
+            </div>
+
+           

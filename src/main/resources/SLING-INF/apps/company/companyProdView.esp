@@ -1,0 +1,84 @@
+
+									            		<%
+            		var count=request.getAttribute("total");
+			
+ var result = (count/8);
+var integerPart = Math.floor(result);
+if(count-(integerPart*10)!=0){
+integerPart=integerPart+1;
+}
+
+			var	prodNode=request.getAttribute("productslist");
+%>
+<%
+for(i = 0;i<prodNode.size();i++){
+
+var pdNode=prodNode.get(i);
+pdNode = pdNode.getName();
+pdNode = pdNode.replace(/_/g , "");
+
+pdNode = currentNode.session.getRootNode().getNode("content").getNode("product").getNode("products").getNode(pdNode);
+%>
+                        <div class="search-list-mobile">
+                            <div class="thumbnail">
+                              <div class="thumb">
+                                      <% if(pdNode.hasNode("media")){
+                	if(pdNode.getNode("media").hasNode("images")){
+                		if(pdNode.getNode("media").getNode("images").hasNodes()){
+                			var o=pdNode.getNode("media").getNode("images").getNodes();
+                		
+                			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+o[0].imgpath+"'>");
+                		
+ 						
+                		}else{
+                			//String img="<img alt="+"64x64"+" class="+"media-object"+" src="+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg>";
+                			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg'>");
+                		}
+                	}else{
+                		//String img="<img alt="+"64x64"+" class="+"media-object"+" src="+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg>";
+            			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg'>");  	
+                	}
+                	
+                }else{
+                	//String img="<img alt="+"64x64"+" class="+"media-object"+" src="+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg>";
+    			out.print("<img alt="+"64x64"+" class="+"media-object"+" src='"+request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()+"/apps/images/nmg.jpg'>");  	
+        	} %>
+             
+                              </div>
+                            <div class="caption">
+                              <h3><a href="<%=request.getContextPath()%>/servlet/service/productselection.brief?pid=<%=pdNode.getName()%>"><%=pdNode.name?pdNode.name:""%></a></h3>
+                              <h3><a href="#">Product Code [<%=pdNode.prd_code?pdNode.prd_code:""%>]</a></h3>
+                              <p class="foo1">
+                                  <%=pdNode.discription?pdNode.discription:""%>
+                              </p>
+                            </div>
+                            <div class="all-btn">
+                              
+                              <div class="price">Moq: <%=pdNode.moq?pdNode.moq:""%> &nbsp;&nbsp; Price: <%=pdNode.price?pdNode.price:""%></div>
+                              <input type="hidden" id="<%=pdNode.prd_code?pdNode.prd_code:""%>" value="<%=pdNode.price?pdNode.price:""%>"/>
+                             
+                                 </div>
+                          </div>
+                        </div>
+
+<%}%>
+
+						            	<div class="demo demo4_bottom"></div>
+						            
+						                 <script type="text/javascript">
+						                        $('.demo4_bottom,.demo4_top').bootpag({
+						                             total: <%=integerPart%>,
+						                            page: 1,
+						                            maxVisible: 15,
+						                            
+						                        }).on("page", function(event, num){
+						                            //show
+						                            $(".pace-active").show();
+						                            $(".content4").load("<%=request.getContextPath()%>/servlet/service/productselection.companyproductlst?from="+ num +"&to=10", function(){
+						                              $(".pace-active").hide();
+						                              //hide
+						                            });
+						                            // or some ajax content loading...
+						                        }).find('.pagination');
+						                        
+						                    </script>

@@ -1,0 +1,128 @@
+@charset "utf-8";
+/* CSS Document */
+html { font-size:16px;}
+body { font-size:62.5%;}
+body, html {
+          height: 100%;
+          margin: 0;
+          -webkit-font-smoothing: antialiased;
+          font-weight: 100;
+          background: #aadfeb;
+          text-align: center;
+          font-family: helvetica;
+		  
+      }
+       
+      .tabs input[type=radio] {
+          position: absolute;
+          top: 134px;
+          left: 0;
+          visibility: hidden;
+      }
+      .tabs {
+        min-width: 320px;
+		max-width:100%;
+		min-height:320px;
+        float: none;
+        list-style: none;
+        position: relative;
+        padding: 0;
+		margin:0;
+		
+		
+		
+       
+      }
+      .tabs li{
+        float: left;
+		
+		
+      }
+      .tabs label {
+          display: block;
+          padding: 5px 10px;
+          border-radius: 5px 5px 0 0;
+          color: #f9f9f9;
+          font-size: 1.1em;
+          font-weight: normal;
+         
+          background: #08c;
+          cursor: pointer;
+          position: relative;
+          top: 3px;
+          -webkit-transition: all 0.2s ease-in-out;
+          -moz-transition: all 0.2s ease-in-out;
+          -o-transition: all 0.2s ease-in-out;
+          transition: all 0.2s ease-in-out;
+      }
+      .tabs label:hover {
+        background: #00aaff;
+        top: 0;
+		color:#f9f9f9;
+      }
+       
+      [id^=tab]:checked + label {
+        background: #555;
+        color: #f9f9f9;
+        top: 0;
+      }
+       
+      [id^=tab]:checked ~ [id^=tab-content] {
+          display: block;
+		 
+      }
+      .tab-content{
+        z-index: 2;
+        display: none;
+        text-align: left;
+        width: 100%;
+        font-size: 1.5em;
+        line-height: 140%;
+       border-top: 3px solid #555555;
+        background: #eee;
+        color: #555;
+        position: absolute;
+       
+        left: 0;
+        box-sizing: border-box;
+        -webkit-animation-duration: 0.5s;
+        -o-animation-duration: 0.5s;
+        -moz-animation-duration: 0.5s;
+        animation-duration: 0.5s;
+      }
+	  .tab-content p { margin:0;}
+	  .tab-content > ul { margin:0; padding:0; list-style:none; position:relative;}
+	  .tab-content > ul > li { border-bottom: 1px dotted #555555; display: block;  padding:0.5% 0; width: 100%; transition: all 1s ease 0s;  }
+	  .tab-content > ul > li:hover { background:#999; }
+	  .tab-content > ul > li:hover .name-user > strong, .tab-content > ul > li:hover .email-user > strong { color:#fff ;}
+	  .tab-content > ul > li:hover .name-user > span, .tab-content > ul > li:hover .email-user > span { color:#fff ;} 
+	  
+	 
+	  .tab-content > ul > li:last-child { border:none;}
+	  .name-user > strong, .email-user > strong { margin-left:1%; font-size: 0.9.5em; color:#3d3d3d;}
+	  .name-user > span, .email-user > span {  color:#666; font-size: 0.8em;}
+	  .tab-content > ul > li input[type="checkbox"] { display:inline-block; vertical-align:top; margin-top: 0.3%;}
+	  .user-info { display:inline-block; width:90%;}
+	  .email-user > span {margin: 0 0 0 2%;}
+	  .name-user > span {margin: 0 0 0 2.5%;}
+	  .tab-content a { background-color: #63BB4A;
+    background-image: -moz-linear-gradient(center top , #83C96F 0%, #63BB4A 50%, #4E9939 100%);
+    border-color: #63BB4A #3B742B #3B742B #63BB4A;
+    border-radius: 5px;
+    color: #FFFFFF;
+    display: inline-block;
+	margin-left:10px;
+	clear:right;
+    max-width: 60px;
+    padding: 0% 0.2%;
+    text-align: center;
+    text-decoration: none;
+    text-shadow: 0 1px 2px #458632;
+    width: 60px;   clear:both; } 
+	.tab-content a:visited {background-color: #BF4040;
+    background-image: -moz-linear-gradient(center top , #CC6666 0%, #BF4040 50%, #993333 100%);
+    border-color: #BF4040 #732626 #732626 #BF4040;}
+	.tab-content a:hover {background-image: -moz-linear-gradient(center top , #93D082 0%, #73C25D 50%, #4E9939 100%);}
+	.select-all-tab { border-bottom:2px solid #ccc; padding:0.5% 0; background-color: #CCCCCC;}
+	.message-body{text-align: left;padding: 5px;position: fixed;transform: translate(-50%, -50%); -webkit-transform: translate(-50%, -50%);height:200px;width:283px;background: none repeat scroll 0 0 #F1FAFB;top:50%;left:50%;z-index: 999;}
+	.cred_bg-disable {background-color: rgba(0, 0, 0, 0.7);height: 100%;left: 0;position: fixed;top: 0;width: 100%;z-index: 2;}

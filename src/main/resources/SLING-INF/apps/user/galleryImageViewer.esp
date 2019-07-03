@@ -1,0 +1,449 @@
+<html><head>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/gallery/css/style.css" />
+<link href="<%=request.getContextPath()%>/apps/gallery/css/album.css" rel="stylesheet" type="text/css" />
+<script src="<%=request.getContextPath()%>/apps/gallery/js/jquery.min.js"></script>
+<% var currentNodeProvided = ((typeof currentNode != "undefined"));  %>
+<script src='<%=request.getContextPath()%>/apps/gallery/js/jquery.autosize.js'></script>
+
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/FlexSlider/flexslider.css" type="text/css" media="screen" /> 
+
+        <script src="<%=request.getContextPath()%>/apps/js/jquery.min.js"></script>
+        <script src="<%=request.getContextPath()%>/apps/js/bootstrap.min.js"></script>
+        <script src="<%=request.getContextPath()%>/apps/js/FlexSlider/jquery.flexslider.js"></script>
+       
+        <script type="text/javascript">
+          $(document).ready(function(){
+            $('.nav-pills, .nav-tabs').tabdrop()
+        }); 
+          </script>
+
+      <!-- Google CDN jQuery with fallback to local -->
+        <script src="<%=request.getContextPath()%>/apps/js/scrollbar/minified/jquery-1.11.0.min.js"></script>
+        <!-- custom scrollbar plugin -->
+        <script src="<%=request.getContextPath()%>/apps/js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/scrollbar/jquery.mCustomScrollbar.css">
+<script>
+    $(function(){
+        $('.commentText').autosize();
+        var popHeight = $(".picture-div").height();
+        $(".picture-comments").css("min-height",popHeight);
+    });
+    $(window).load(function() {
+    	 $('#commenters').flexslider({
+             animation: "slide",
+             animationLoop: false,
+              itemWidth: 1150,
+             	itemMargin: 10
+           });
+
+         });
+</script>
+<script>
+    $(function(){
+        $("#loadImage").click(function(){
+                var link=$("#nextImageId").attr('href');
+               window.location.href=link;
+        });
+        $("body").keydown(function(e) {
+          if(e.keyCode == 37) { // left
+                var link=$("#previousImageId").attr('href');
+               window.location.href=link;
+         }
+          else if(e.keyCode == 39) { // right
+                var link=$("#nextImageId").attr('href');
+               window.location.href=link;
+            
+          }
+        });
+        $('#commentId').keypress(function(e) {
+            if(e.which == 13 && $.trim($(this).val())!='' && !e.shiftKey) {
+            	
+                var comment=$(this).val();
+                $.ajax({
+                    type:'POST',
+                    url: '<%=request.getContextPath()%>/servlet/gallery/show.commentPhoto',
+                    data:'userId=<%=request.getParameter("userId")%>&albumId=<%=
+                            request.getParameter("album")%>&photoId=<%=
+                            request.getParameter("photoId")%>&commentId=0&comment='+
+                            comment,
+                    dataType:'html',
+                    success:function(data){
+                        $("#commentDivId").append("<div class='user-info'><div class='user-pic'>"+
+                                     "<img src='"+$("#requestUserProfileId").val()+"' class='picture'></div>"
+                                     +"<span class='user-name'>"+$("#requestUserNameId").val()
+                                     +" </span><span class='user-comments'>"+comment+"<div class='comment-action'>"
+                                     +"<%=request.getAttribute("todayDate")%> <span class='divider'>.</span> <span class='divider'>.</span>"
+                                     +" <a href='#'><img align='absmiddle' onclick='editCommentDiv(this)'"
+                                     +"href='javascript:void(0);' src='<%=request.getContextPath()%>/apps/gallery/images"
+                                     +"/icon_edit_link.gif' style='display:inherit;height:20px;width:20px'></a><span class='divider'>.</span> <a href='#'>"
+                                     +"<img align='absmiddle' onclick=\"deleteComment(this,\'"+data+"\')\" href='javascript:void(0);'"
+                                     +" src='<%=request.getContextPath()%>/apps/gallery/images/icon_delete_link.gif'  style='display:inherit;height:20px;width:20px'></a>"
+                                     +"</div></span><span class='editCommentDiv' style='display:none;'>"
+                                     +"<textarea class='commentText' placeholder='Write a comment...' "
+                                     +"style='height:21px;resize:none;border-radius:2px;'>"+comment
+                                     +"</textarea><input type='button' value='Save' "
+                                     +"onclick=\"editComment(this,\'"+data+"\')\"' "
+                                     +"style='background:#696868;font-size: 11px;height: "
+                                     +"16px;margin-bottom: 10px;padding: 0 2px;' /></span></div>");
+                        $("#commentId").val('');
+                        var number = parseInt($("#commentCheckId-").val());
+                        $("#commentCheckId-").val(number+1);
+                        $("#commentNumId-").text("("+(number+1)+")");
+                    }
+                });
+                
+            }
+        });
+        
+    });
+    
+    function clickLike(obj){
+    	var a=obj.split("-");
+     
+    	$.ajax({
+            type:'POST',
+            url: '<%=request.getContextPath()%>/servlet/gallery/show.likePhoto',
+            data:'userId=<%=request.getParameter("userId")%>&albumId=<%=
+                    request.getParameter("album")%>&photoId='+a[1],
+            success:function(){
+            	
+                var number = parseInt($("#likeCheckId-"+a[1]).val());
+               
+                if(a[0].trim()=='likeId'){
+                	number=number+1;
+                	
+                    $("#likeId-"+a[1]).hide();
+                    $("#unlikeId-"+a[1]).show();
+                    $("#likeFlashId-"+a[1]).show();
+                    $("#likeCheckId-"+a[1]).val(number);
+                    $(".likeNumId-"+a[1]).text("("+(number)+")");
+                }else if(a[0]=='unlikeId'){
+                    $("#unlikeId-"+a[1]).hide();
+                    $("#likeId-"+a[1]).show();
+                    $("#likeFlashId-"+a[1]).hide();
+                    $("#likeCheckId-"+a[1]).val(number-1);
+                    $(".likeNumId-"+a[1]).text("("+(number-1)+")");
+                } 
+            }
+        });
+    }
+    
+    function editComment(obj,commentId){
+   
+        var value=$(obj).prev('textarea').val();
+        $.ajax({
+            type:'POST',
+            url: '<%=request.getContextPath()%>/servlet/gallery/show.editComment',
+            data:'userId=<%=request.getParameter("userId")%>&albumId=<%=
+                    request.getParameter("album")%>&photoId='+obj.id+'&commentId='+
+                    commentId+'&comment='+value,
+            success:function(){
+                $(obj).parent("span").hide();
+                $(obj).parent("span").prev("span").show();
+                $(obj).parent("span").prev("span").prev("span").show();
+                $("#newCommentId").show();
+                var divObj=$(obj).parent("span").prev("span").children("div").clone();
+               // divObj
+                $(obj).parent("span").prev("span").html(value+"<div class='comment-action'>"+divObj.html()+"</div>");
+                //$(obj).parent("a").parent("div").parent("span").next("span").show();
+            }
+        });
+    }
+    
+    function deleteComment(obj,commentId){
+    	
+        $.ajax({
+            type:'POST',
+            url: '<%=request.getContextPath()%>/servlet/gallery/show.deleteComment',
+            data:'userId=<%=request.getParameter("userId")%>&albumId=<%=
+                    request.getParameter("album")%>&photoId='+obj.id+'&commentId='+
+                    commentId,
+            success:function(){
+                $(obj).parent("a").parent("div").parent("span").parent("div").remove();
+                var number = parseInt($("#commentCheckId-"+obj.id).val());
+                        $("#commentCheckId-"+obj.id).val(number-1);
+                        $("#commentNumId-"+obj.id).text("("+(number-1)+")");
+            }
+        });
+    }
+    function editCommentDiv(obj){
+       // $(".user-comments").show();
+       // $(".user-name").show();
+        $(obj).parent("a").parent("div").parent("span").hide();
+        $(obj).parent("a").parent("div").parent("span").prev("span").hide();
+        $("#newCommentId").hide();
+        $(obj).parent("a").parent("div").parent("span").next("span").show();
+        
+    }
+    function postYComment(e,obj){
+  var a=obj.id.split("-");
+
+var comment=document.getElementById(obj.id).value;
+
+    	 if(e.which == 13 && $.trim(comment)!='' && !e.shiftKey) {     
+                var d = new Date();
+                getCurrentFormattedDate(d);
+               var date=getCurrentFormattedDate(d);
+                $.ajax({
+                    type:'POST',
+                    url: '<%=request.getContextPath()%>/servlet/gallery/show.commentPhoto',
+                    data:'userId=<%=request.getParameter("userId")%>&albumId=<%=
+                            request.getParameter("album")%>&photoId='+a[1]+'&commentId=0&comment='+
+                            comment,
+                    dataType:'html',
+                    success:function(data){
+                        $("#commentDivId"+a[1]).append("<div class='user-info'><div class='user-pic'>"+
+                                     "<img src='"+$("#requestUserProfileId").val()+"' class='picture'></div>"
+                                     +"<span class='user-name'>"+$("#requestUserNameId").val()
+                                     +" </span><span class='user-comments'>"+comment+"<div class='comment-action'>"+date
+                                     +" <span class='divider'>.</span> <span class='divider'>.</span>"
+                                     +" <a href='#'><img align='absmiddle' id='"+a[1]+"' onclick='editCommentDiv(this)'"
+                                     +"href='javascript:void(0);' src='<%=request.getContextPath()%>/apps/gallery/images"
+                                     +"/icon_edit_link.gif' style='display:inherit;height:20px;width:20px'></a><span class='divider'>.</span> <a href='#'>"
+                                     +"<img align='absmiddle' id='"+a[1]+"' onclick=\"deleteComment(this,\'"+data+"\')\" href='javascript:void(0);'"
+                                     +" src='<%=request.getContextPath()%>/apps/gallery/images/icon_delete_link.gif'  style='display:inherit;height:20px;width:20px'></a>"
+                                     +"</div></span><span class='editCommentDiv' style='display:none;'>"
+                                     +"<textarea class='commentText' placeholder='Write a comment...' "
+                                     +"style='height:21px;resize:none;border-radius:2px;'>"+comment
+                                     +"</textarea><input type='button' value='Save' "
+                                     +"onclick=\"editComment(this,\'"+data+"\')\"' "
+                                     +"style='background:#696868;font-size: 11px;height: "
+                                     +"16px;margin-bottom: 10px;padding: 0 2px;' /></span></div>");
+                        $("#commentId-"+a[1]).val('');
+                        var number = parseInt($("#commentCheckId-"+a[1]).val());
+                        $("#commentCheckId-"+a[1]).val(number+1);
+                        $("#commentNumId-"+a[1]).text("("+(number+1)+")");
+                    }
+                });
+                
+            }
+            
+    }
+    function getMonthStrings() {
+            return [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ];
+        }
+
+        function getCurrentFormattedDate(date) {
+            return (function () {
+                return getMonthStrings()[this.getMonth()] + ' ' + (function (d) {
+                    var s = d.toString(), l = s[s.length - 1];
+                    return s + (['st', 'nd', 'rd'][l - 1] || 'th');
+                })(this.getDate()) + ', ' + this.getFullYear() + ' ' + ('0' + (this.getHours() % 12 || 12)).slice(-2) + ':' + ('0' + this.getMinutes()).slice(-2) + ':' + ('0' + this.getSeconds()).slice(-2) + ' ' + (this.getHours() >= 12 ? 'PM' : 'AM');
+            }).call(date || new Date());
+        }
+        
+</script>
+</head>
+<body style="background-color: #333333;">
+<div class="flexslider hot-product" id="commenters">
+      <ul class='slides'>
+<%
+var photoNode1=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("userId"));
+var photoNode;
+if(photoNode1.hasNode("media")){
+	if(photoNode1.getNode("media").hasNode("photo")){
+		currentNode=photoNode1.getNode("media").getNode("photo").getNode(request.getParameter("album"));
+		var nodes1=photoNode1.getNode("media").getNode("photo").getNode(request.getParameter("album")).getNodes();
+		
+	for(j in nodes1){
+		photoNode=nodes1[j];
+		%>
+<li>
+<div class="picture-div">
+    <div class="picture-frame">
+            <div class="picture-layer"><img src="<%=request.getContextPath()+photoNode.getNode("xOp")%>"   style='display:inherit;height:500px;width:500px'id="loadImage" />
+               
+               
+            </div>
+    </div>     
+       
+    <% 
+    var userNode=currentNode.getAncestor(3); %>
+    <div class="picture-comments">
+        <div class="user-info owner">
+            <div class="user-pic">
+                <% if(userNode.hasProperty("profileImage")){
+                 %>
+                    <img src="<%=userNode.profileImage%>" class="picture" />
+                <%}else{  %>
+                     <img  class="picture" src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+                <%}%>
+            </div>
+            <span class="user-name">
+                <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%>
+            </span>
+            <div class="comment-action"><%=photoNode.photoDate%></div> <br />
+            <span class="user-comments"><%=photoNode.photoDescription?photoNode.photoDescription:""%>
+                <div class="comment-action">
+               <%    if(photoNode.hasNode("Feature")){
+    
+     if(photoNode.getNode("Feature").hasNode("Like") 
+        && photoNode.getNode("Feature").getNode("Like").hasNodes()){
+        var userLikeNode=photoNode.getNode("Feature")
+                           .getNode("Like").getNodes(); if(photoNode.getNode("Feature")
+                                   .getNode("Like").hasNode(request.getParameter("userId").replaceAll("@", "_"))){
+        %>
+                     <a href="javascript:void(0);" id="likeId-<%=photoNode.getName()%>" style="display:none" onclick="clickLike(this.id)" >Like <span class="likeNumId-<%=photoNode.getName()%>">(0)</span></a>           
+                    
+                     <a href="javascript:void(0);" id="unlikeId-<%=photoNode.getName()%>" onclick="clickLike(this.id)">Unlike <span class="likeNumId-<%=photoNode.getName()%>">(<%=userLikeNode.length%>)</span></a>
+                  <script type="text/javascript">
+              $(window).load(function() {
+               
+            	  $("#likeFlashId-<%=photoNode.getName()%>").show();
+                });
+                </script>
+                    <%}else{ %>
+                    <a href="javascript:void(0);" id="likeId-<%=photoNode.getName()%>"  onclick="clickLike(this.id)" >Like <span class="likeNumId-<%=photoNode.getName()%>">(0)</span></a>           
+                    <a href="javascript:void(0);" id="unlikeId-<%=photoNode.getName()%>" style="display:none" onclick="clickLike(this.id)">Unlike <span class="likeNumId-<%=photoNode.getName()%>">(0)</span></a>
+                    
+                        <% }}else{%>
+                        	<a href="javascript:void(0);" id="likeId-<%=photoNode.getName()%>"  onclick="clickLike(this.id)" >Like <span class="likeNumId-<%=photoNode.getName()%>">(0)</span></a>           
+                     <a href="javascript:void(0);" id="unlikeId-<%=photoNode.getName()%>" style="display:none" onclick="clickLike(this.id)"> Unlike<span class="likeNumId-<%=photoNode.getName()%>">(0)</span></a>
+                           
+                      <%  }
+                        }else{%>
+                        	<a href="javascript:void(0);" id="likeId-<%=photoNode.getName()%>"  onclick="clickLike(this.id)" >Like <span class="likeNumId-<%=photoNode.getName()%>">(0)</span></a>           
+                            <a href="javascript:void(0);" id="unlikeId-<%=photoNode.getName()%>" style="display:none" onclick="clickLike(this.id)"> Unlike<span class="likeNumId-<%=photoNode.getName()%>">(0)</span></a>
+                        	
+                       <% }%>
+                            <span class="divider">.</span> 
+                    <a href="#">Comment <span id="commentNumId-<%=photoNode.getName()%>">(0)</span></a> <span class="divider">.</span> 
+                </div>
+            </span> 
+        </div>
+        <div class="user-info" id="likeFlashId-<%=photoNode.getName()%>" style="display:none;">
+            You like this  
+        </div>
+    
+    <%
+    if(photoNode.hasNode("Feature")){
+    
+     if(photoNode.getNode("Feature").hasNode("Like") 
+        && photoNode.getNode("Feature").getNode("Like").hasNodes()){
+        var userLikeNode=photoNode.getNode("Feature")
+                           .getNode("Like").getNodes();
+        if(photoNode.getNode("Feature")
+                           .getNode("Like").hasNode(request.getParameter("userId").replaceAll("@", "_"))){
+          %>
+            <script>
+               
+            </script>  
+          <%  
+        }%>
+        <script>
+            $(function(){
+                $(".likeNumId-<%=photoNode.getName()%>").text("(<%=userLikeNode.length%>)");  
+            });
+        </script>  
+        <input type="hidden" id="likeCheckId-<%=photoNode.getName()%>" value="<%=userLikeNode.length%>" />   
+     <%}else{%>
+    	  <input type="hidden" id="likeCheckId-<%=photoNode.getName()%>" value="0" />
+     <%}}else{%>
+        <input type="hidden" id="likeCheckId-<%=photoNode.getName()%>" value="0" />
+     <%}%>
+     
+        <div class="scroll-comments" id="commentDivId<%=photoNode.getName()%>">   
+        <% 
+         if(photoNode.hasNode("Feature") && 
+                photoNode.getNode("Feature").hasNode("Comment") &&
+                photoNode.getNode("Feature").getNode("Comment").hasNodes()){
+           var commentNode=photoNode.getNode("Feature").getNode("Comment").getNodes();
+           %>
+            <script>
+            $(window).load(function() {
+                
+            	 $("#commentNumId-<%=photoNode.getName()%>").text("(<%=commentNode.length%>)");  
+              });
+                   
+                
+            </script>
+            <input type="hidden" id="commentCheckId-<%=photoNode.getName()%>" value="<%=commentNode.length%>" />
+           <%
+           for( k=0;k<commentNode.length;k++){
+        
+            var commentUserNode=photoNode.session.getNode("/content/user/"+commentNode[k].userId);
+            %>  <div class="user-info">
+                    <div class="user-pic">
+                        <% if(commentUserNode.hasProperty("profileImage")){
+                         %>
+                            <img class="picture" src="<%=commentUserNode.profileImage%>" />
+                        <%}else{  %>
+                             <img class="picture" src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+                        <%}%>
+                    </div>    
+                    <input type="hidden" class="photoEditId" value="<%=commentNode[k]%>" />
+                    <span class="user-name"><%=commentUserNode.name%> <%=commentUserNode.lastName?commentUserNode.lastName:""%></span>
+                    <span class="user-comments"><%=commentNode[k].comment%>
+                        <div class="comment-action"><%=commentNode[k].commentDate%> <span class="divider">.</span>
+                            <span class="divider">.</span> <a href="#">
+                                <img src="<%=request.getContextPath()%>/apps/gallery/images/icon_edit_link.gif" href="javascript:void(0);" 
+                                    onclick="editCommentDiv(this)" align="absmiddle" style="display:inherit;height:20px;width:20px"/>
+                            </a> 
+                            <span class="divider">.</span> <a href="#">
+                                <img id="<%=photoNode.getName()%>" src="<%=request.getContextPath()%>/apps/gallery/images/icon_delete_link.gif" href="javascript:void(0);" 
+                                        onclick="deleteComment(this,'<%=commentNode[k].getName()%>')" align="absmiddle"  style="display:inherit;height:20px;width:20px"/>
+                            </a>
+                            
+                        </div>
+                    </span> 
+                    <span class="editCommentDiv" style="display:none;">
+                        <textarea class="commentText" id="textarea" placeholder="Write a comment..." 
+                            style="height:21px;resize:none;border-radius:2px;"  
+                            ><%=commentNode[k].comment%></textarea>
+                            <input type="button" value="Save" id="<%=photoNode.getName()%>" onclick="editComment(this,'<%=commentNode[k].getName()%>')" 
+                                style="background:#696868;font-size: 11px;height: 16px;margin-bottom: 10px;padding: 0 2px;" />
+                    </span>
+                </div>
+            <%
+           }
+         }else{%>
+            <input type="hidden" id="commentCheckId-<%=photoNode.getName()%>" value="0" />
+         <%}%>
+         </div>
+        
+        
+        <%var requestUserNode=photoNode.session.getNode("/content/user").getNode(request.getRemoteUser().replaceAll("@", "_"));%>
+        <input type="hidden" id="requestUserNameId" value="<%=requestUserNode.name%> <%=
+                                requestUserNode.lastName?requestUserNode.lastName:""%>"  />
+        <% if(requestUserNode.hasProperty("profileImage")){
+         %>
+            <input type="hidden" id="requestUserProfileId" value="<%=requestUserNode.profileImage%>"  />
+        <%}else{  %>
+            <input type="hidden" id="requestUserProfileId" value="<%=request.getContextPath()
+            %>/apps/user/css/images/photo.gif"  />
+        <%}%>
+        
+            <div class="user-info" id="newCommentId">
+                <div class="user-pic">
+                    <img src="<%=request.getContextPath()%>/apps/gallery/images/image1.png" class="picture" />
+                </div>
+                <span class="user-comments">
+              
+                    <textarea name="textfield" id="commentId-<%=photoNode.getName()%>" onkeypress="postYComment(event,this);"></textarea>
+                    <!--<input type="button" onclick="editComment(this,'5')"
+                        style="background:#696868;font-size: 11px;height: 16px;margin-bottom: 10px;padding: 0 2px;" 
+                     value="Save">-->
+                </span> 
+            </div>
+        </div>
+</div><% out.print("</li>");}
+	}
+
+}%>
+</ul>
+</div>
+</body>
+</html>

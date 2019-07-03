@@ -1,0 +1,191 @@
+<html>
+<head>
+<link href="<%=request.getContextPath()%>/wro/common.css" rel="stylesheet" type="text/css" />
+<script src="<%=request.getContextPath()%>/wro/common.js"></script>
+<style>
+body{
+font-family: Comic Sans MS !important;
+background: none repeat scroll 0 0 #FFFFFF !important;
+}
+.mail_table{
+    
+}
+
+.mail_table td{
+    padding:0px 5px 0px 5px !important;
+}
+
+</style>
+<script>
+    function getMailNumb(providerId){
+        
+        $("#"+providerId+"LoadId").show();
+        $.ajax({
+                type:'POST',
+                url:'<%=request.getContextPath()%>/servlet/security/verify.getMailNumb',
+                data:'providerId='+providerId,
+                dataType: 'html',
+                success:function(data){
+                
+                   $("#"+providerId+"Id").html(data+'');
+                   $("#"+providerId+"LoadId").hide();
+                }
+            });
+    }
+
+    function checkCred(){
+    $("#lodingDivId").show();
+        $.ajax({
+            type:'POST',
+            url:'<%=request.getContextPath()%>/servlet/security/verify.checkCred',
+            data:$("#credFormId").serialize(),
+            dataType:'html',
+            success:function(data){
+            $("#lodingDivId").hide();
+            
+                if(data=='error'){
+                    $("#failId").show();
+                    setTimeout(function() {
+                        $("#failId").hide();
+                    }, 5000);
+                }else if(data=='done'){
+                    $("#credFormId input").not('input[type="submit"]').attr("readOnly", true);
+                    $('select option:not(:selected)').attr("disabled", true);
+                    $("#successId").show();
+                    $("#verifyCredId").hide();
+                    $("#modifyCredId").show();
+                    $("#saveCredId").show();
+                    setTimeout(function() {
+                        $("#successId").hide();
+                    }, 5000);
+                }
+            }
+        });
+    }
+    
+    function configure(){
+        $("#showMailId").hide();
+        $("#setCredId").show();
+    }
+    function modifyCred(){
+        $("#saveCredId").hide();
+        $("#verifyCredId").show();
+        $("#modifyCredId").hide();
+        $("#credFormId input").attr("readOnly", false);
+        $("select option").attr("disabled", false);
+    }
+    function submitForm(){
+        $.ajax({
+                type:'POST',
+                url:'<%=request.getContextPath()%>/servlet/security/verify.saveMailCred',
+                data:$("#credFormId").serialize(),
+                success:function(){
+                   // window.location.reload();
+                }
+            });
+    }
+</script>
+</head>
+<body>
+
+<table id="showMailId" class="mail_table">
+
+    <tr><td>Mail Provider</td><td>No. Of Unread Emails</td><td>Refresh</td></tr>
+     <tr>
+        <td>Gmail</td>
+        <td id="GmailId">Loading ...</td>
+        <td><a href="javascript:void(0);" onclick="getMailNumb('Gmail')"  
+                ><img src="<%=request.getContextPath()%>/apps/user/css/images/refresh.png" /></a>
+            <div id="GmailLoadId" style="display:none;float: right;"><img src="<%=request.getContextPath()%>/apps/user/css/images/loader.gif" /></div>               
+        </td>
+        </tr>
+      <tr>
+        <td>Yahoo</td>
+        <td id="YahooId">Loading ...</td>
+        <td><a href="javascript:void(0);" onclick="getMailNumb('Yahoo')" 
+                ><img src="<%=request.getContextPath()%>/apps/user/css/images/refresh.png" /></a>
+            <div id="YahooLoadId" style="display:none;float: right;"><img src="<%=request.getContextPath()%>/apps/user/css/images/loader.gif" /></div>
+        </td>
+      </tr>
+      <tr>
+        <td>Hotmail</td>
+        <td id="HotmailId">Loading ...</td>
+        <td><a href="javascript:void(0);" onclick="getMailNumb('Hotmail')" 
+                    ><img src="<%=request.getContextPath()%>/apps/user/css/images/refresh.png" /></a>
+             <div id="HotmailLoadId" style="display:none;float: right;"><img src="<%=request.getContextPath()%>/apps/user/css/images/loader.gif" /></div>
+        </td>
+      </tr>
+      <tr>
+        <td>SocialAware</td>
+        <td id="SocialAwareId">Not Configured</td>
+        <td><a href="javascript:void(0);" onclick="getMailNumb('SocialAware')" 
+                ><img src="<%=request.getContextPath()%>/apps/user/css/images/refresh.png" /></a>
+             <div id="SocialAwareLoadId" style="display:none;float: right;"><img src="<%=request.getContextPath()%>/apps/user/css/images/loader.gif" /></div>
+        </td>
+      </tr>
+      <tr>
+            <td colspan='3'>
+                <a href="javascript:void(0);" onclick="configure()" 
+                    >Configure <img src="<%=request.getContextPath()%>/apps/user/css/images/two_way.png" /></a>
+            </td>    
+      </tr>  
+</table>
+
+<div style="display:none;" id="setCredId">
+    <h2>Enter Your Credentials</h2>
+    <form method="POST" id="credFormId" action="<%=request.getContextPath()%>/servlet/security/verify.saveMailCred">
+        <table class="mail_table">
+            <tr>
+                <td>Provider</td>
+                <td>
+                    <select name="host">
+                        <option value="Gmail" >GMail</option>
+                        <option value="Yahoo" >Yahoo</option>
+                        <option value="Hotmail" >HotMail</option>
+                        <option value="SocialAware" >SocialAware</option>
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>UserName</td>
+                <td><input type="text" name="userName" style="height:100%" autocomplete="off"/></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Password</td>
+                <td><input type="password" name="password" style="height:100%"/></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td id="verifyCredId"><a class="custom-button custom-button-primary" href="javascript:void(0);" onclick="checkCred()">Verify Credentials</a></td>
+                <td style="display:none;" id="saveCredId"><input type="submit" href="javascript:void(0);" class="custom-button custom-button-primary" value="Save Credentials" /></td>
+                <td style="display:none;" id="modifyCredId"><a class="custom-button custom-button-primary" href="javascript:void(0);" onclick="modifyCred()">Modify Credentials</a></td>
+                <td id="verifyCredId"><a class="custom-button custom-button-danger" href="javascript:void(0);" onclick="window.location.reload();">Cancel</a></td>
+            </tr>
+        </table>
+    </form> 
+</div>
+<div style="display:none;" id="lodingDivId">
+        <div class="cred_bg-disable"></div>
+        <div class="cred_loding_div" style="left:17%;top:30%;width:232px;height:50px;">
+            <span class="cred_loading" >Loading...</span>
+        </div>    
+</div>
+<div id="successId" style="display:none;">
+    <div class="alert alert-success navbar-spacer"  style="display: block; position: fixed; bottom: 0px; margin: 0px 0.5%;
+          width: 95%; padding: 8px 2%; z-index: 9999; border-radius: 4px 4px 0px 0px;">
+            Authentication Verified !</div>
+</div>
+<div id="failId" style="display:none;">
+    <div class="alert alert-danger navbar-spacer"  style="display: block; position: fixed; bottom: 0px; margin: 0px 0.5%;
+          width: 95%; padding: 8px 2%; z-index: 9999; border-radius: 4px 4px 0px 0px;">
+            Authentication Failed !</div>
+</div> 
+<script>
+    getMailNumb('Gmail');
+    getMailNumb('Yahoo');
+    getMailNumb('Hotmail');
+</script>                       
+</body>
+</html>

@@ -1,0 +1,1250 @@
+<style>
+.main-header-field {
+    font-size: 18px;
+    line-height: 22px;
+    color: #434649;
+}
+
+.field {
+    margin-bottom: 4px;
+}
+
+.sub-header-field {
+    font-size: 16px;
+    line-height: 20px;
+    color: #66696a;
+}
+
+.date-header-field {
+    font-size: 13px;
+    line-height: 17px;
+    color: #66696a;
+}
+
+</style>
+
+<%
+//out.print("welcome to without cache page");
+resource = Packages.java.util.ResourceBundle.getBundle("server");
+%>
+<%
+
+
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null);
+
+currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getParameter("id"));
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+/* Global variable */
+
+
+var degree="";
+var showEmail="true";
+var showPhone="true";
+/* */
+
+/* Following are privacy variables  */
+var emailPrivacy="";
+var contactPrivacy=""
+var productPrivacy="";
+var companyPrivacy="";
+var connectionPrivacy="";
+var groupPrivacy="";
+var activityPrivacy="";
+var galleryPrivacy = "";
+var photostoryPrivacy = "";
+/*  */
+
+
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+	postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<%
+function privacy(privacyVar){
+if(privacyVar !=""){
+var show="true";
+if(currentNodeProvided && request.getParameterMap().containsKey("id")){
+    if(privacyVar=='connection' && degree=='first'){
+           show="true";
+        }else if(privacyVar=='onlyMe'){
+                show="false";
+        }else if(privacyVar=='everyOne'){
+                show="true";
+        }else if(privacyVar=='connection' && degree!='first'){
+               show="false";
+     }
+     var id = ""
+     if(request.getParameter('id').indexOf("#") != -1){
+  	 id = request.getParameter('id').split("#");
+     }else {
+     id = request.getParameter('id');
+     }
+     if(privacyVar=='connection' && request.getRemoteUser().replace("@", "_").equals(id)){
+               show="true";
+     }else if(privacyVar=='connection' && !request.getRemoteUser().replace("@", "_").equals(id)){
+              var freindNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(id);
+              if(freindNode.hasNode('connection') && freindNode.getNode('connection').hasNode('friend') && freindNode.getNode('connection').getNode('friend').hasNodes()){
+              var friendNodes = freindNode.getNode('connection').getNode('friend').getNodes();
+              for(var i = 0;i<friendNodes.length;i++){
+              if(friendNodes[k].getName().equals(request.getRemoteUser().replace("@", "_"))){
+              	show="true";
+              	break;
+              }
+              }
+              show="false";
+              }else {
+              show="false";
+              }
+     }
+ }
+    return show;
+    }else {
+    return "true";
+    }
+}
+
+%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <%load("../common/links.esp");%>
+        
+        
+        
+      <!--  <script src="http://code.jquery.com/jquery-git.min.js" type="text/javascript" ></script> -->
+        <script>
+			function myFunction() {
+			    alert("Hello! I am an alert box!!!!");
+				}
+				//window.onload = myFunction;
+		</script>
+   <script>
+		function loadDoc() {
+	//	alert("start");
+		    var xhttp;
+		    var page;
+		    if (window.XMLHttpRequest) {
+		         // code for modern browsers
+		         xhttp = new XMLHttpRequest();
+		    } 
+		    else {
+		        // code for IE6, IE5
+		         xhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		     }
+		    xhttp.onreadystatechange = function() {
+		  //  alert(this.status+"---"+this.readyState);
+		      if (this.readyState == 4 && this.status == 200) {
+		       
+		      page= this.responseText.toString();
+		      //alert(page);
+		      console.log("page--"+page);
+		      var url = '<%=request.getContextPath()%>/servlet/friend/show.ehcache';
+		     $.ajax({
+		    	  type:'POST',
+		    	  url:url,
+		    	  data:{
+		    		vpage:page,
+		    		id:'<%=request.getParameter("id")%>'
+		    		//alert(request.getParameter("id"));
+		    	  },
+		    	  success: function(result){
+		    	       // $("#div1").html(result);
+		    	       //alert("sucess---"+result);
+		    	    }
+		      })
+		   
+		    }
+		  };
+		 //xhttp.open("GET", "/content/user/<%=request.getParameter("id")%>.profile?name=<%=request.getParameter("id")%>", true);
+	 // xhttp.open("GET", "/config/ehcac", true);	  
+	 xhttp.open("GET", "/portal/content/user/info?id=<%=request.getParameter("id")%>", true);
+		  xhttp.send();
+		}
+		
+		  //  window.onload = loadDoc;
+    </script>
+        
+         <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/ckeditor/ckeditor.js" type="text/javascript"></script>
+  <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>
+  <script> $(function() {
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        console.log("editor---"+document.getElementById("editor1"))
+        CKEDITOR.replace('editor1');
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+     
+    });
+    
+    function getPostMessage(){
+
+  $("#connectionMessage").modal('toggle'); 
+}
+    </script>
+        <!--<script type="text/javascript" src="<%=request.getContextPath()%>/apps/js/apprise-1.5.full.js"></script>-->
+    
+<%
+
+if(currentNodeProvided && request.getParameterMap().containsKey("id")){
+if(currentNode.hasNode("Privacy") && currentNode.getNode("Privacy").hasNode("Personal")){
+    var personalPrivacy=currentNode.getNode("Privacy").getNode("Personal");
+     emailPrivacy=personalPrivacy.emailPrivacy?personalPrivacy.emailPrivacy:"";
+     contactPrivacy=personalPrivacy.contactPrivacy?personalPrivacy.contactPrivacy:"";
+     galleryPrivacy=personalPrivacy.galleryPrivacy?personalPrivacy.galleryPrivacy:"";
+     photostoryPrivacy=personalPrivacy.photostoryPrivacy?personalPrivacy.photostoryPrivacy:"";
+    // out.print(galleryPrivacy+"###"+photostoryPrivacy);
+     connectionPrivacy=personalPrivacy.connectionPrivacy?personalPrivacy.connectionPrivacy:"";
+     groupPrivacy=personalPrivacy.groupsPrivacy?personalPrivacy.groupsPrivacy:"";
+     activityPrivacy=personalPrivacy.activityPrivacy?personalPrivacy.activityPrivacy:"";
+     productPrivacy=personalPrivacy.productPrivacy?personalPrivacy.productPrivacy:"";
+     companyPrivacy=personalPrivacy.companyPrivacy?personalPrivacy.companyPrivacy:"";
+} 
+%>
+
+    <script type="text/javascript">
+        
+        function activateFeedback(path,check,node,identifier){
+	var url=path+"/servlet/feedback/content.activate";
+	var data='activateNode='+node+'&activate='+check+'&identifier='+identifier;
+	$.ajax({
+									  type: 'POST',
+									  url: url,
+									  data: data,
+									  success: function(){
+									  	window.location.reload();
+									  }
+									});
+	
+	}
+	
+    </script>  
+    <script>
+        $.ajax({
+              type: 'POST',
+              url: '<%=request.getContextPath()%>/content/user/save.visit',
+              data: 'userId=<%=request.getParameter("id")%>&visitor=<%=request.getRemoteUser().replace("@","_")%>',
+              success: function(a){}
+              });
+    </script>
+<%}%>
+
+
+
+
+<script src="<%=request.getContextPath()%>/apps/js/jquery.raty.js"></script>
+<script>
+function sentVerification(url,verification,userId,flag,verificationFor,userName){
+				
+				
+				
+				 
+				if(flag=='email'){
+				var data='userId='+userId+'&verification='+verification+'&flag=EmailID&userName='+userName+'&verificationFor='+verificationFor;
+				var r=confirm('Send Verification Mail on Selected Email Id');
+		   		
+				if(r) { 
+						$.ajax({
+						  type: 'POST',
+						  url: url,
+						  data: data,
+						  success: function(){
+						  	submitVerification1(userId,verification);
+							  }
+							});	
+						 }					
+						        
+				   } else if(flag=='mobile'){
+				   
+				  
+				   
+				   var data='userId='+userId+'&verification='+verification+'&flag=Phone&userName='+userName+'&verificationFor='+verificationFor;
+				   		var r=confirm('Send Verification Code on Selected Mobile Number');
+				   		
+						if(r) { 
+							
+									$.ajax({
+									  type: 'POST',
+									  url: url,
+									  data: data,
+									  success: function(){
+									  	submitVerification1(userId,verification);
+									  }
+									});	
+								 }
+				
+				   }
+								
+        }
+        
+       <%
+     //  out.print(currentNodeProvided);
+       if(currentNodeProvided && request.getParameterMap().containsKey("id")){%>
+            jQuery(document).ready(function($) {
+            	$("#contentFeedbackFrame").load("<%=request.getContextPath()%>/servlet/"+
+                        "feedback/content.show?contentId=<%=currentNode.getIdentifier()%>"+
+                        "&userId=<%=request.getParameter('id')%>&content=YYYYYYYY");
+            });
+
+        <%}else if(currentNodeProvided)
+		{%>
+            $(function() {
+         
+               	$("#contentFeedbackFrame").load("<%=request.getContextPath()%>/servlet/"+
+                            "feedback/content.show?contentId=<%=currentNode.getIdentifier()%>"+
+                            "&userId=<%=request.getParameter('id')%>&content=YYYYYYYY");
+                            
+                    $('#socialConnectId').load("<%=request.getContextPath()%>/servlet/"+
+                            "/social/service.socialConnect?userId=<%=request.getParameter('id')%>");        
+                            
+                });
+             
+             $(function() {
+                    $('#suggestFrame').load("<%=request.getContextPath()%>/servlet/"+
+                            "suggest/content.view?suggestURL=<%=request.getRequestURL().append('?').append(request.getQueryString())%>"+
+                            "&userId=<%=request.getParameter('id')%>");
+                });
+            $(function() {
+                    $('#commFrame').load("<%=request.getContextPath()%>/servlet/"+
+                            "common/search.call?param=dummy"+
+                            "&userId=<%=request.getParameter('id')%>");
+                });    
+           <%}%></script><%load("../common/header.esp");%>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+<section class="Profile_page">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12 ">
+                        <div class="row">
+                        
+                        <div class="col-sm-8 col-xs-12 profile-content">
+                            
+                                <div class="row">
+                                    <div class="col-sm-3 col-xs-4 custom-width">
+                                         <% if(currentNodeProvided && currentNode.hasProperty("profileImage")){
+                           %>
+                           <img src="<%=getCurrentNodeValue("profileImage")%>" alt="" style="height:180px" />
+                           <%}
+                           else{  %>
+                         <img src="<%=request.getContextPath()%>/apps/images/photo.gif" style="height:180px;" /> 
+                         <%}%>
+                                    </div>
+                                    <div class="col-sm-9 col-xs-8 custom-width">
+                                       
+                                         <h3>  <%if(currentNodeProvided){%>
+                                    <a href="#"><%=currentNode.name? currentNode.name: ""%>&nbsp;<%=currentNode.maidenName? currentNode.maidenName: ""%>&nbsp;<%=currentNode.lastName? currentNode.lastName: ""%></a>
+                                 <%}%>
+                                    <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+                                      <a title="Edit Profile" href="<%=request.getContextPath()%>/servlet/service/event.profileEdit?id=<%=request.getRemoteUser().replace("@","_")%>"><i class="fa fa-pencil edit"></i></a>
+                                      <a  id="invitemelist" onclick="getContactForInvite()" href="#" style="color:white" class="btn btn-primary">Invite</a>
+                                   <a href="<%=request.getContextPath()%>/servlet/recommendation/show.show?userId=<%=request.getRemoteUser().replace("@","_")%>" style="color:white" class="btn btn-primary">Ask for recommendation</a>
+                                      </h3>
+                                        
+                                        <% var invitenodeid=3; %>
+ <script>
+ function getContactForInvite(){
+  $("#inviteme").modal('toggle'); 
+ document.getElementById("messageBody").style.display='';
+      document.getElementById("customeMessage").style.display='none';
+      document.getElementById("finishinvite").style.display='none';
+      document.getElementById("editinvite").style.display='';
+      document.getElementById("inviteall").style.display='';
+      document.getElementById("customeinviList").style.display='none';
+      document.getElementById("registerModalLabelDraftText").style.display='none';
+      document.getElementById("registerModalLabelDraft").style.display='';
+      iscustom="false";
+       document.getElementById("iniviCount").innerHTML="("+0+")";
+      document.getElementById("iniviCountNext").innerHTML="("+0+")";
+      $("#mycont").html("");
+      checkboxesCheckedcom=[];
+ }
+ var iscustom="false";//parameter for changing custom or not
+ var others="<%=request.getParameter("id")%>";//comma seperated value for other parameter
+var eventId="<%=request.getParameter("id")%>";
+
+
+ </script>
+ 
+ 
+ 
+                                   <%}else{%>
+                                     <a href="#" onclick="getPostMessage()" class="btn btn-info btn-lg" >Post Message</a>
+                                        <% }%>
+                                         <%if(request.getParameterMap().containsKey("id") 
+                                 		&& request.getParameterMap().containsKey("friendId")){%>   
+											 <%
+											 	if(currentNode.hasNode("connection") 
+											 			&& currentNode.getNode("connection").hasNode("friend")
+											 			&& currentNode.getNode("connection").getNode("friend")
+											 					.hasNode(request.getParameter("id"))
+											 			&& currentNode.getNode("connection").getNode("friend")
+											 			   .getNode(request.getParameter("id")).getProperty("request")=='accept'){
+											 			   degree='first';
+											 			%> <span class="friend-degree">
+											 					1<sup>st</sup>
+											 				 </span>
+											 			<%
+											 			}else if(request.getParameter("id").equals(request.getParameter("friendId"))){
+											 			%>
+											 			 	<span class="friend-degree">
+											 					You
+											 				 </span>
+											 			<%
+											 			} else if(mutualFriend.size()>0){						 														 			
+											 			%>
+											 				 <span class="friend-degree">
+											 					2<sup>nd</sup>
+											 				  </span>
+											 				
+											 			<%
+											 			}%>
+											 	
+										
+									<%}%>
+                                        <p><%=getCurrentNodeValue("headline")%></p>
+                                     <%
+                                                                            var inValue = "";
+																			var inId = "";
+																			if(currentNode.industry != ""){
+																			var resIn = currentNode.industry;
+																			if(currentNode.session.getRootNode().getNode("content/industry").hasNode(resIn)){
+																			var industryRes = currentNode.session.getRootNode().getNode("content/industry").getNode(resIn);
+																			
+																			inValue = industryRes.name;
+																			inId = industryRes.id;
+																			
+																			}
+																			}
+                                                                            %>
+                                       <p> <%=inValue%> &nbsp;&nbsp;|&nbsp;&nbsp; <%=getCurrentNodeValue("city")%></p>
+                                     
+                                       
+                                        <p><a href="#"><i class="fa fa-birthday-cake"></i> Born On:</a><%=getCurrentNodeValue("birthDay")%>
+                                         <a href="#"><i class="fa fa-heart"></i>  <%if(getCurrentNodeValue("status")=="Married"){%>
+								Married on:</a><%=getCurrentNodeValue("status")%>
+											<%}else{
+									out.println("</a>"+getCurrentNodeValue("status"));
+												}
+																%></p>
+                                        <p><a href="#"><i class="fa fa-envelope"></i> Email:</a> 
+                                        
+
+<%if(privacy(emailPrivacy)=='true' && currentNodeProvided && currentNode.hasNode("ContactDetails") 
+                   && currentNode.getNode("ContactDetails").hasNode("EmailID")){
+	 var emailValue=currentNode.getNode("ContactDetails/EmailID").getNodes();
+
+	 for(i in emailValue){
+	 %>
+	 	<%=emailValue[i].emailId%>
+	<% 	
+	 	if(emailValue[i].verifiedEmailFlag=='no'){
+	 	%>
+	 	<%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+    	 	 <a href="javascript:void(0);"  onclick="sentVerification('<%=request.getContextPath()%>/servlet/security/verify.sendToken',
+    	 	    		'<%=emailValue[i]%>','<%=request.getParameter("id")%>','email',
+    	 	    		'<%=emailValue[i].emailId%>','<%=currentNode.name?currentNode.name:""%>')" ><i class="fa fa-close"></i></a>
+    	 	
+    	 <%}else{%>
+    	       <a href="#"><i class="fa fa-close"></i></a>
+    	 <%}%>		
+	 	<%	 	
+	 	}else{
+	 	%>
+	 	<%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+	 	     <button class="north"  title="Email is Verified"
+	 			 style="height:16px;width:22px;border:none; background: none repeat scroll 0 0 transparent;">
+	 			 <span class="verify"></span></button>
+	 	<%}else{%>
+	 	         <button style="height:16px;width:22px;border:none; background: none repeat scroll 0 0 transparent;"
+	 	              ><span class="verify"></span></button>
+	 	<%}%>		 
+	 		<%
+	 	}
+	 }
+}
+
+%> </p>
+                                        <p><a href="#"><i class="fa fa-circle-o"></i> IM:</a> 
+                                      
+								<%if( privacy(contactPrivacy)=='true' && currentNodeProvided && currentNode.hasNode("ContactDetails") 
+                        			&& currentNode.getNode("ContactDetails").hasNode("IM")){
+                    
+		 							var im1=currentNode.getNode("ContactDetails");
+	  								var im2=im1.getNode("IM");	
+	  								var im=im2.getNodes();
+									for(var i=0;i<im.length;i++)
+	 									{ 
+										%>
+	 									<%=im[i].imValue%><em>&nbsp;(<%=im[i].imTypeValue%>)</em>
+	 									<%}
+	 									}%>
+                                        </p>
+                                        <p><i class="fa fa-mobile"></i> Contact:</a>
+                                        <%if( privacy(contactPrivacy)=='true' && currentNodeProvided && currentNode.hasNode("ContactDetails") 
+                        && currentNode.getNode("ContactDetails").hasNode("Phone")){
+                    
+		 var phoneValue1=currentNode.getNode("ContactDetails");
+	  var phoneValue2=phoneValue1.getNode("Phone");	
+	  var phoneValue=phoneValue2.getNodes();
+	
+	 for(var i=0;i<phoneValue.length;i++)
+	 { 
+	
+	 %>
+	 <%=phoneValue[i].number%><em>&nbsp;(<%=phoneValue[i].numberType%>)</em>
+	 <%
+	 	if(phoneValue[i].numberType=='Mobile'){
+	 		if(phoneValue[i].verifiedMobileFlag=='no'){
+	 		%>
+	 		<%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+    	 		  <a href="#" title="Click to verify <%=phoneValue[i].number%>"  onclick="sentVerification('<%=request.getContextPath()%>/servlet/security/verify.sendToken',
+    	 	    		'<%=phoneValue[i]%>','<%=request.getParameter("id")%>','mobile','<%=phoneValue[i].number%>','<%=currentNode.name?currentNode.name:""%>')" ><i class="fa fa-close"></i></a>  
+    	 		
+    	 		
+    	 	<%}else{ %>
+    	 	          <button style="height:16px;width:22px;border:none; background: none repeat scroll 0 0 transparent;"><span class="unverify"></span></button>
+    	 <%}	 	
+		 	}else{
+		 	%>
+		 	  <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+		 		<button class="north"  title="Mobile Number is Verified"
+	 			 style="height:16px;width:22px;border:none; background: none repeat scroll 0 0 transparent;"
+	 			  ><span class="verify"></span></button>
+	 		  <%}else{%>
+	 		         <button style="height:16px;width:22px;border:none; background: none repeat scroll 0 0 transparent;"
+                      ><span class="verify"></span></button>      
+	 		  <%}%>
+	 		<%
+	 		}
+	 	}
+	 }
+}
+%>
+                                        
+                                        
+                                        
+                                      
+                                        <p><a href="#"><i class="fa fa-home"></i> Address:</a><%=getCurrentNodeValue("address")%></p>
+                                        <%
+                        if(currentNode.hasNode("ContactDetails") && currentNode.getNode("ContactDetails").hasNode("Social") && currentNode.getNode("ContactDetails").getNode("Social").hasNodes()){
+                        %>
+                        <div class="top-social-icon">
+                                  <p>
+                                  <span class="text-blue">Social Presence</span>
+                                  <%if(currentNode.getNode("ContactDetails").getNode("Social").hasNode("Facebook")){%>                           
+  									<a target="_blank" href="<%=currentNode.getNode("ContactDetails").getNode("Social").getNode("Facebook").socialLink%>"><i class="fa fa-facebook-square"></i></a>
+  								<%}%>
+  								
+  								<%if(currentNode.getNode("ContactDetails").getNode("Social").hasNode("Twitter")){%>	
+                                    <a target="_blank" href="<%=currentNode.getNode("ContactDetails").getNode("Social").getNode("Twitter").socialLink%>"><i class="fa fa-twitter-square"></i></a>
+                                <%}%>
+                                    
+                                    <%if(currentNode.getNode("ContactDetails").getNode("Social").hasNode("Google Plus")){%>
+									<a target="_blank" href="<%=currentNode.getNode("ContactDetails").getNode("Social").getNode("Google Plus").socialLink%>"><i class="fa fa-google-plus-square"></i></a>
+								<%}%>
+									
+									<%if(currentNode.getNode("ContactDetails").getNode("Social").hasNode("Pinterest")){%>
+									<a target="_blank" href="<%=currentNode.getNode("ContactDetails").getNode("Social").getNode("Pinterest").socialLink%>"><i class="fa fa-pinterest-square"></i></a>
+ 									<%}%>
+ 										
+                                    </p>
+                                     
+                            </div>
+                            <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                                                                                 
+                            
+                            <div class="col-sm-4 col-xs-12">
+                                <div class="top-social-icon">
+                                <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+  <p><span class="text-blue">Import Profile using</span>
+                                   
+                                      <a target="_blank" href="<%=resource.getString("rave.portal")%>/portal/socialauthProfile.html?id=facebook"><i class="fa fa-facebook-square"></i></a>
+                                    <a target="_blank" href="<%=resource.getString("rave.portal")%>/portal/socialauthProfile.html?id=yahoo"><img src="<%=request.getContextPath()%>/apps/images/yahoomail_icon.jpg" height="16" alt="YahooMail" title="YahooMail" border="0"></img></a>
+	<a target="_blank" href="<%=resource.getString("rave.portal")%>/portal/socialauthProfile.html?id=hotmail"><img src="<%=request.getContextPath()%>/apps/images/hotmail.jpeg" height="16" alt="HotMail" title="HotMail" border="0"></img></a>
+	<a target="_blank" href="<%=resource.getString("rave.portal")%>/portal/socialauthProfile.html?id=linkedin"><img src="<%=request.getContextPath()%>/apps/images/linkedin.gif" height="16" alt="Linked In" title="Linked In" border="0"></img></a><br />
+ 
+                                    </p>
+                                     
+                                    <p><span class="text-blue">Import contacts using</span> 
+                                   <a target="_blank" href="<%=resource.getString("rave.portal")%>/portal/socialauthContact.html?id=googleplus"><img src="<%=request.getContextPath()%>/apps/images/gmail-icon.jpg" height="12" alt="Google" title="Google" border="0"></img></a>
+	<a target="_blank" href="<%=resource.getString("rave.portal")%>/portal/socialauthContact.html?id=yahoo"><img src="<%=request.getContextPath()%>/apps/images/yahoomail_icon.jpg" height="16" alt="YahooMail" title="YahooMail" border="0"></img></a>
+	<!--a href="<%=resource.getString("rave.portal")%>/portal/socialauthContact.html?id=hotmail"><img src="<%=request.getContextPath()%>/apps/images/hotmail.jpeg" height="16" alt="HotMail" title="HotMail" border="0"></img></a-->
+	<a rel="facebox" href="<%=request.getContextPath()%>/content/user/*.uploadContacts?userId=<%=request.getParameter("id")%>"><img src="<%=request.getContextPath()%>/apps/images/linkedin.gif" height="16" alt="Linked In" title="Linked In" border="0"></img></a>
+                          </p>
+                               <%}%>    
+                                    <%if(currentNodeProvided){%>
+   <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%> Activate Content Feedback <%}%>
+    <%if(currentNodeProvided && currentNode.hasProperty("activateFeedback") && currentNode.activateFeedback=='true'){%>
+      <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>  
+        <input type="checkbox" id="activateFeedback" checked onchange="activateFeedback('<%=request.getContextPath()%>',this.checked,'<%=currentNode%>','<%=currentNode.getIdentifier()%>')" />
+      <%}%> 
+        <div id="contentFeedbackFrame" ></div>
+    <%}else{%>
+      <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+        <input type="checkbox" id="activateFeedback" onchange="activateFeedback('<%=request.getContextPath()%>',this.checked,'<%=currentNode%>','<%=currentNode.getIdentifier()%>')" />
+      <%}%> 
+    <%}%>
+<%}%>                                                                                                            
+                                       
+                         
+ <div id="suggestFrame"></div>
+ <div id="commFrame"></div>
+                                    <div class="sharing-group">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><%
+			  var countFriend=0;
+			  var countRecommend=0; var countGroup=0;
+			  if(currentNodeProvided && currentNode.hasNode("connection")){
+				  	var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+				  	for(i in connectionNode){
+				  		if(connectionNode[i].request=='accept' ){
+				  			countFriend++;
+				  		}
+				  	}
+				 }
+			   if(currentNodeProvided && currentNode.hasNode("Recommendation")){
+			   		if(currentNode.getNode("Recommendation").hasNode("Sender")){
+					  	var recommendNode=currentNode.getNode("Recommendation").getNode("Sender").getNodes();
+					  	for(i in recommendNode){
+					  		var recommendJobNode=recommendNode[i].getNodes();
+					  		for( j in recommendJobNode){
+					  			
+						  		if(recommendJobNode[j].pending=='pending'){
+						  			countRecommend++;
+						  		}
+					  		}
+					  	}
+					 }
+				}
+			  
+			  %> <%  if(currentNodeProvided && currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded")){
+			   		if(currentNode.getNode("Groups").hasNodes()){
+					  	var recommendJobNode=currentNode.getNode("Groups").getNode("GroupsAdded").getNodes();
+				
+					  		for(var j = 0;j<recommendJobNode.length;j++){
+					  			
+						  		if(recommendJobNode[j].groupRequest =='accepted'){
+						  			countGroup++;
+						  		}
+					  		
+					  	}
+					 }
+				}
+			  
+			  %>
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-sm-5 col-xs-12">
+                                <div class="profile-page-box">
+                                   <h3>Network Details</h3>
+                                    <p>
+                                     <span>	<b><%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%> 
+    		     <a href="javascript:void(0);">Connection</a></b>
+    		     
+    		     
+    		      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    		      
+    		      <%if(currentNodeProvided  && privacy(connectionPrivacy)=='true'){%>
+        		     
+        		                  <br> <%=countFriend%>
+        		     
+        		   <%}%>
+        		<%}else{%>   
+            		<%if(currentNodeProvided  && privacy(connectionPrivacy)=='true'){%>                 
+                            <a href="javascript:void(0);">Connection</a></b>
+    		     
+    		      <br><%=countFriend%> 
+                             
+                       <%}%>
+        		<%}%>
+                                   </span>
+                                      
+                                       <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+	  	 <span><b><a href="<%=request.getContextPath()%>/servlet/recommendation/show.view?userId=<%=request.getRemoteUser().replace("@","_")%>">Recommendation</a></b><br><%=countRecommend%></span>
+	  	<%}else{%>	
+	  		<span><b><a href="#">Recommendation</a></b><br><%=countRecommend%></span>
+	  <%}%>  
+	        <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+	  	 <span><b><a href="javascript:void(0);">Group</a></b><br><%=countGroup%></span>
+	  	<%}else{%>	
+	  		<span><b><a href="#">Group</a></b><br><%=countGroup%></span>
+	  <%}%>
+	  
+	  </p>
+ 									 <h5>Following</h5>
+ 									<p><span>	<b><a href="#">Company</a></b><br> 12</span>  &nbsp;&nbsp; <span><b><a href="#">People</a></b> <br> 10</span> &nbsp;&nbsp; <span><b><a href="#">Product</a></b><br> 8</span>&nbsp;&nbsp; <span><b><a href="#">Event</a></b><br> 8</span></p>
+ 								
+                                </div>
+                            </div>
+                            <div class="col-sm-7 col-xs-12">
+                                <div class="profile-page-box">
+                                    <h3>Professional Summary</h3>
+                                    <!--<p><a href="#">Skill & Expertise:</a><i>
+				<%if(currentNodeProvided && currentNode.hasNode("ProfessionalSummary") && currentNode.getNode("ProfessionalSummary").getProperty("skill").getDefinition().isMultiple()  ){%>
+					<%	var skillValue=currentNode.getNode("ProfessionalSummary").skill;
+						var ratingValue=currentNode.getNode("ProfessionalSummary").level;
+						for(i in skillValue)
+						{
+							if(i!=0)
+							{out.println(",");
+							}
+							out.println(skillValue[i]);%><em>(Rating is <%=ratingValue[i]%>/10)</em><%
+						}
+					%>
+		   			
+					<%} else if(currentNodeProvided && currentNode.hasNode("ProfessionalSummary")){ %>
+					<%=currentNode.getNode("ProfessionalSummary").skill? currentNode.getNode("ProfessionalSummary").skill: ""%>
+						<em>(Rating is <%if(currentNodeProvided && currentNode.hasNode("ProfessionalSummary")){%>
+								<%=currentNode.getNode("ProfessionalSummary").level? currentNode.getNode("ProfessionalSummary").level: ""%><%}%>/10)</em>
+						<%}%></i></p>
+                                    
+                                    <p><a href="#">Professional Experience:</a><i><%if(currentNodeProvided && currentNode.hasNode("ProfessionalSummary")){%><%=currentNode.getNode("ProfessionalSummary").goals? currentNode.getNode("ProfessionalSummary").goals: ""%><%}%></i></p>
+                                    
+
+<p><a href="#">Specialities :</a><i><%if(currentNodeProvided && currentNode.hasNode("ProfessionalSummary")){%><%=currentNode.getNode("ProfessionalSummary").specialities? currentNode.getNode("ProfessionalSummary").specialities: ""%><%}%></i></p>-->
+
+								<p><b><%=getCurrentNodeValue("headline")%></b></p>
+								<p><%=getCurrentNodeValue("profilesummary")%></p>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-sm-5 col-xs-12">
+                                <div class="profile-page-box">
+                                    <h3>Skill Details</h3>
+                                    <div style="width:100%">
+    <%if(currentNode.hasNode("ProfessionalSummary") && currentNode.getNode("ProfessionalSummary").hasNode("Skill")){%>
+    <div style="width:33%;float:left;padding:5px">
+        <a href="#">Skill Expertise</a>
+    </div>
+    <div style="width:33%;float:left;padding:5px">
+        <a href="#">Experience</a>
+    </div>
+    <div style="width:33%;float:left;padding:5px">
+        <a href="#">Rate</a>
+    </div>
+    
+    <%
+    var skillNode = currentNode.getNode("ProfessionalSummary").getNode("Skill").getNodes();
+    for(var i=0;i<skillNode.length;i++){
+    %>
+    <div style="width:33%;float:left;padding:5px">
+        <b><%=skillNode[i].skillValue%></b>
+    </div>
+    <div style="width:33%;float:left;padding:5px">
+        <%=skillNode[i].skillexpValue%> Month
+    </div>
+    <div style="width:33%;float:left;padding:5px">
+        <%=skillNode[i].levelValue%>
+    </div>
+    <%}%>
+    
+    <%}else{%>
+    
+    <a href="#">No Skill to Display</a>
+    <%}%>
+</div>
+                                    
+                                    <!--<ul class="list-group">
+                                        <li class="list-group-item"><a href="#" data-toggle="modal" data-target="#facebook"><i class="fa fa-facebook-square"></i> Facebook <i class="fa fa-legal pull-right"></i></a></li>
+                                        <li class="list-group-item"><a href="#" data-toggle="modal" data-target="#google"><i class="fa fa-google-plus-square"></i> Google Plus <i class="fa fa-legal pull-right"></i></a></li>
+                                        <li class="list-group-item"><a href="#" data-toggle="modal" data-target="#twitter"><i class="fa fa-twitter-square"></i> Twitter <i class="fa fa-legal pull-right"></i></a></li>
+                                        <li class="list-group-item"><a href="#" data-toggle="modal" data-target="#pinterest"><i class="fa fa-pinterest-square"></i> Pinterest <i class="fa fa-legal pull-right"></i></a></li>
+                                    </ul>-->
+                                </div>
+                            </div>
+                            <div class="col-sm-7 col-xs-12">
+                                <div class="profile-page-box">
+                                    <h3>Experience</h3>
+                                    <%
+if(currentNodeProvided   && currentNode.hasNode("Experience")){
+var nodes = currentNode.getNode("Experience").getNodes();
+        for(i in nodes) { 
+%>                      
+
+
+<p class="main-header-field"><span class="field"><%=nodes[i].getNode(nodes[i].childNode).jobTitle ? nodes[i].getNode(nodes[i].childNode).jobTitle : ""%></span></p>
+
+<p class="sub-header-field"><span class="field"><%=nodes[i].companyName? nodes[i].companyName : ""%></span></p>
+
+<p class="data-header-field"><span class="field"><%=nodes[i].getNode(nodes[i].childNode).startDate ? nodes[i].getNode(nodes[i].childNode).startDate : ""%> - 
+<%if(nodes[i].getNode(nodes[i].childNode).hasProperty("currentlyWork")){
+out.print(nodes[i].getNode(nodes[i].childNode).currentlyWork ? nodes[i].getNode(nodes[i].childNode).currentlyWork: ""); 
+}else{
+out.print(nodes[i].getNode(nodes[i].childNode).endDate ? nodes[i].getNode(nodes[i].childNode).endDate: "");
+}%>
+</span> &nbsp;&nbsp; |  &nbsp;<%=nodes[i].companyLocation ? nodes[i].companyLocation : ""%></p>
+<!--<p><a href="#">Work Location:</a><%=nodes[i].companyLocation ? nodes[i].companyLocation : ""%></p>-->
+<p><%=nodes[i].getNode(nodes[i].childNode).companyDesc? nodes[i].getNode(nodes[i].childNode).companyDesc: ""%></p>
+
+<div class="separator"></div>
+<% }
+        } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-sm-5 col-xs-12">
+                                <div class="row">
+                                    <div class="colxs-12">
+                                        <div class="profile-page-box">
+                                            <h3>Education</h3>
+                                            <%
+         if(currentNodeProvided  && currentNode.hasNode("Education")){
+         var nodes = currentNode.getNode("Education").getNodes();
+                for(var i = 0;i<nodes.length;i++) { 
+    
+      							var valueAct = "";
+      							var valueId = "";
+      							if(nodes[i].hasProperty("activity")){
+      							var activityId = nodes[i].getProperty("activity").getString();
+      							var streamNode = currentNode.session.getRootNode().getNode("content").getNode("stream");
+      							if(streamNode.hasNode(activityId)){
+      							var activityNode = currentNode.session.getRootNode().getNode("content").getNode("stream").getNode(activityId);
+      							valueAct = activityNode.streamName;
+								valueId = activityNode.id;
+      							}
+      							}
+      							
+      							var valueSch = "";
+      							var valueSclId = "";
+      							if(nodes[i].hasProperty("school")){
+      							var schoolId = nodes[i].getProperty("school").getString();
+      							var schoolNode = currentNode.session.getRootNode().getNode("content").getNode("school");
+      							if(schoolNode.hasNode(schoolId)){
+      							var schNode = currentNode.session.getRootNode().getNode("content").getNode("school").getNode(schoolId);
+      							valueSch = schNode.name;
+								valueSclId = schNode.id;
+      							}
+      							}
+      							
+      								var valueDeg = "";
+      							var valueDegId = "";
+      							//out.print(eduNodes[i]);
+      							if(nodes[i].hasProperty("degree")){
+      							var degreeId = nodes[i].getProperty("degree").getString();
+      							//out.print(degreeId);
+      							var degreeNod = currentNode.session.getRootNode().getNode("content").getNode("degree");
+      							//out.print(degreeNod);
+      							if(degreeNod.hasNode(degreeId)){
+      							var degreeNode = currentNode.session.getRootNode().getNode("content").getNode("degree").getNode(degreeId);
+      							valueDeg = degreeNode.name;
+								valueDegId = degreeNode.id;
+								
+								var resDegree = valueDeg + ", "+ valueAct;
+      							}
+      							}
+      							%>            
+               
+            <p class="main-header-field"><span class="field"><%=valueSch%></span>
+              <input name="redirect" type="hidden" value="<%=currentNode.getName()%>"/> 
+                <input name="operation" type="hidden" value="<%=nodes[i]%>"/>
+            </p>
+
+<p class="sub-header-field"><span class="field"><%=resDegree%></span></p>
+
+<p class="data-header-field"><span class="field"><%=nodes[i].toDate ? nodes[i].toDate : ""%> - <%=nodes[i].endDate ? nodes[i].endDate : ""%>
+</span></p>
+            
+        <div class="separator"></div>
+      <%}}else{%>
+    	           <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+              <%if(currentNodeProvided){%>
+               <a  href="javascript:loadContent('#education','<%=currentNode%>/Education/*.education');" class="btn btn-primary">Add Education</a>
+              <%}%>
+           <%}%>
+       
+      <%}%>
+                                        </div>
+                                    </div>
+                                    <div class="colxs-12">
+                                        <div class="profile-page-box">
+                                            <h3>Additional Information</h3>
+                                           
+                                          
+
+									
+										
+										
+
+
+<p><a hef="">Websites:</a><%=getCurrentNodeValue("website")%></p>
+
+
+<p><a href="">Interests:</a><%if(currentNodeProvided  && currentNode.hasNode("AdditionalInformation")){%><%=currentNode.getNode("AdditionalInformation").interests? currentNode.getNode("AdditionalInformation").interests: ""%><%}%></p>
+<!--<p><a href="">Award :</a><%if(currentNodeProvided  && currentNode.hasNode("AdditionalInformation")){%><%=currentNode.getNode("AdditionalInformation").honorsAwards? currentNode.getNode("AdditionalInformation").honorsAwards: ""%><%}%></p>-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            <div class="col-sm-7 col-xs-12">
+                            <%
+                            if(privacy(galleryPrivacy)=='true'){
+                            load("usergallery.esp");
+                            }
+                            %>
+                            <% if(privacy(photostoryPrivacy)=='true'){%>
+                <%load('photostory.esp');%>
+        <%}%>
+                                <!--<div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Status Update</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="content-tab2 mCustomScrollbar">
+                                            <div>
+                                                <div class="people-visited">
+                                                    <div class="tumbnail-login">
+                                                        <div class="thumbnail">
+                                                            <p class="top-title">See any one know? connection</p>
+                                                            <img alt="People" src="images/people.jpg" class="mCS_img_loaded">
+                                                            <div class="caption">
+                                                                <h3><a href="#">Sai Prakash Subbaiyan</a></h3>
+                                                                <p>Senior Specialist</p>
+                                                                <p>Maersk Line</p>
+                                                                <p><a class="btn btn-outline" href="#">Connect</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tumbnail-login">
+                                                        <div class="thumbnail">
+                                                            <p class="top-title">See any one know? connection</p>
+                                                            <img alt="People" src="images/people.jpg" class="mCS_img_loaded">
+                                                            <div class="caption">
+                                                                <h3><a href="#">Sai Prakash Subbaiyan</a></h3>
+                                                                <p>Senior Specialist</p>
+                                                                <p>Maersk Line</p>
+                                                                <p><a class="btn btn-outline" href="#">Connect</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tumbnail-login">
+                                                        <div class="thumbnail">
+                                                            <p class="top-title">See any one know? connection</p>
+                                                            <img alt="People" src="images/people.jpg" class="mCS_img_loaded">
+                                                            <div class="caption">
+                                                                <h3><a href="#">Sai Prakash Subbaiyan</a></h3>
+                                                                <p>Senior Specialist</p>
+                                                                <p>Maersk Line</p>
+                                                                <p><a class="btn btn-outline" href="#">Connect</a></p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xs-12">
+                <div class="advertise">
+                    <!--/* OpenX iFrame Tag v2.8.10 */-->
+
+<iframe id='abb38018' name='abb38018' src='http://34.193.219.25/openx/www/delivery/afr.php?zoneid=27&amp;cb=8' frameborder='0' scrolling='no' width='168' height='448'><a href='http://34.193.219.25/openx/www/delivery/ck.php?n=ab5165fc&amp;cb=8' target='_blank'><img src='http://34.193.219.25/openx/www/delivery/avw.php?zoneid=27&amp;cb=8&amp;n=ab5165fc' border='0' alt='' /></a></iframe>
+
+                </div>
+                <div class="advertise">
+                   <!--/* OpenX iFrame Tag v2.8.10 */-->
+
+<iframe id='a92c5b50' name='a92c5b50' src='http://34.193.219.25/openx/www/delivery/afr.php?zoneid=28&amp;cb=6' frameborder='0' scrolling='no' width='168' height='448'><a href='http://50.1.231.12/openx/www/delivery/ck.php?n=a99cf69&amp;cb=6' target='_blank'><img src='http://50.1.231.12/openx/www/delivery/avw.php?zoneid=28&amp;cb=6&amp;n=a99cf69' border='0' alt='' /></a></iframe>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Facebook Login Modal Start  -->
+<div class="modal fade" id="facebook" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xs">
+        <div class="modal-content">
+            <form class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Facebook Login Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-9">
+                            <a class="btn btn-block btn-social btn-facebook">
+                            <i class="fa fa-facebook"></i> Sign in with Facebook
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">User Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Facebook Login Modal End  -->
+<!-- Google Login Modal Start  -->
+<div class="modal fade" id="google" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xs">
+        <div class="modal-content">
+            <form class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Google Login Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-9">
+                            <a class="btn btn-block btn-social btn-google">
+                            <i class="fa fa-facebook"></i> Sign in with Google
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">User Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Google Login Modal End  -->
+<!-- Twitter Login Modal Start  -->
+<div class="modal fade" id="twitter" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xs">
+        <div class="modal-content">
+            <form class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Twitter Login Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-9">
+                            <a class="btn btn-block btn-social btn-twitter">
+                            <i class="fa fa-facebook"></i> Sign in with Twitter
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">User Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Twitter Login Modal End  -->
+<!-- Pinterest Login Modal Start  -->
+<div class="modal fade" id="pinterest" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xs">
+        <div class="modal-content">
+            <form class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Pinterest Login Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-9">
+                            <a class="btn btn-block btn-social btn-pinterest">
+                            <i class="fa fa-facebook"></i> Sign in with Pinterest
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">User Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Pinterest Login Modal End  -->
+<!-- Dropbox Login Modal Start  -->
+<div class="modal fade" id="dropbox" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xs">
+        <div class="modal-content">
+            <form class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Pinterest Login Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-9">
+                            <a class="btn btn-block btn-social btn-dropbox">
+                            <i class="fa fa-facebook"></i> Sign in with Dropbox
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">User Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Dropbox Login Modal End  -->
+<!-- Yahoo Login Modal Start  -->
+<div class="modal fade" id="yahoo" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xs">
+        <div class="modal-content">
+            <form class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="loginModalLabel">Pinterest Login Details</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"></label>
+                        <div class="col-sm-9">
+                            <a class="btn btn-block btn-social btn-yahoo">
+                            <i class="fa fa-facebook"></i> Sign in with Yahoo
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">User Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Password</label>
+                        <div class="col-sm-9">
+                            <input type="password" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Yahoo Login Modal End  -->
+
+
+
+<!-- contactsupplier Modal Start  -->
+<%load("../common/footer.esp");%>
+<!-- register Modal End  -->
+    
+  
+ <%load("../invite/invitenetwork.esp");%>
+
+    </body>
+</html>

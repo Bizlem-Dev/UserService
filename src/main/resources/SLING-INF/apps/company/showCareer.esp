@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<head>
+<script type="text/javascript" src="<%=request.getContextPath()%>/wro/companyCareer.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/wro/companyCareer.css" type="text/css" />
+<script>
+$(document).ready(function(){
+	$("div.title").next("table").hide();
+	$("div.title").click(function(){
+	$(this).next("table").slideToggle(300);
+  });
+});
+</script>
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+      $('a[rel*=facebox]').facebox({
+        loadingImage : '<%=request.getContextPath()%>/apps/user/css/images/loading.gif',
+        closeImage   : '<%=request.getContextPath()%>/apps/user/css/images/closelabel.png'
+             })
+    })
+</script>
+<script type="text/javascript">
+    $(document).ready(function(height){
+        var winHeight = document.documentElement.clientHeight;
+        var m=winHeight-'127';
+        $(".container-fluid").css("min-height",m);
+        //alert(m);
+    });
+</script>
+
+</head>
+<body>
+
+
+<%
+	if(currentNode.hasNode("BasicInfo")){
+	var companyNode=currentNode.getNode("BasicInfo");
+	
+	}
+	
+
+%>
+<div class="container-fluid company-profile">
+    
+  <h1 class="spacing-left">
+    <div class="company-icon">
+        <% if(companyNode.hasProperty("companyLogo")){
+           %>
+           <img src="<%=companyNode.companyLogo?companyNode.companyLogo:request.getContextPath()+"/apps/user/css/images/photo.gif"%>"  />
+           <%}
+           else{  %>
+           <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+         <%}%>
+    </div>   
+    Current opening at <%=companyNode.companyName?companyNode.companyName:""%><br />
+  <span class="sub-link"><%=companyNode.website?companyNode.website:""%></span></h1>
+  <hr />
+  <div class="container-right">
+  	<div class="content" style="width: 263px;"> 
+      <h2>Why should you work here?
+             <div class="job-listing-edit">   
+                <a rel="facebox" href="<%=request.getContextPath()%>/servlet/company/show.joinReason?compN=
+								<%=currentNode.getName()%>" style="float:right; margin:10px 5px 0px 0px;">
+								<img src="<%=request.getContextPath()%>/apps/user/css/images/icon_edit.png" border="0" />
+								</a>
+	           </div>							
+		</h2>
+      <table class="job-listing-reason" border="0" cellspacing="0" cellpadding="0" style="width:98%;">
+        
+        <%
+        if(currentNode.hasNode("Career/ReasonToJoin")){
+			var reasonNode=currentNode.getNode("Career/ReasonToJoin");
+					   var count=0;
+			        	var reason=reasonNode.reasonToJoin;
+			        	for(i in reason){
+			        	count++;
+			        %>
+			        <tr>
+			          <td width="4%" valign="top"><label><%=count%>.</label></td>
+			          <td width="96%" valign="top"><%=reason[i]%></td>
+			        </tr>
+					<%
+						}	
+			}
+		%>        
+      </table>
+    </div>
+</div>    
+  <div class="container-left">
+  <div class="content spacing-left">
+    <ol class="job-listing">
+    <%
+	var careerNode,jobNode;
+	if(currentNode.hasNode("Career/Job"))
+	{
+		careerNode=currentNode.getNode("Career/Job");
+		
+	
+		jobNode=careerNode.getNodes();
+		for(i in jobNode)
+		{
+		if(jobNode[i].hasProperty("closingDate")){}
+		else{
+		%>
+		 <li>
+			<div class="title"><%=jobNode[i].companyJobTitle?jobNode[i].companyJobTitle:""%>
+					<span>(<%=jobNode[i].companyJobNumbPosition?jobNode[i].companyJobNumbPosition:""%>)</span>
+					<a rel="facebox" href="<%=request.getContextPath()%>/servlet/company/show.career?compN=<%=currentNode.getName()%>
+								&jobN=<%=jobNode[i].getName()%>" style="float:right;"><img src="<%=request.getContextPath()%>/apps/user/css/images/icon_edit.png" border="0" /></a></div>
+			<table border="0" cellspacing="0" cellpadding="0" style="width:98%;">
+		        <tr>
+		          <td width="20%" valign="top"><label>Job title</label></td>
+		          <td width="80%" valign="top" class="job-listing-font-blue"><%=jobNode[i].companyJobPosition?jobNode[i].companyJobPosition:""%></td>
+		        </tr>
+		        <tr>
+		          <td valign="top"><label>Experience</label></td>
+		          <td valign="top" class="job-listing-font-blue"><%=jobNode[i].companyJobExperience?jobNode[i].companyJobExperience:""%></td>
+		        </tr>
+		        <tr>
+		          <td width="20%" valign="top"><label>Qualification</label></td>
+		          <td width="80%" valign="top" class="job-listing-font-blue"><%=jobNode[i].companyJobQualification ?jobNode[i].companyJobQualification :""%></td>
+		        </tr>
+		        <tr>
+		          <td width="20%" valign="top"><label>Posting Date</label></td>
+		          <td width="80%" valign="top" class="job-listing-font-blue"><%=jobNode[i].postingDate?jobNode[i].postingDate:""%></td>
+		        </tr>
+		        <tr>
+		          <td width="20%" valign="top"><label>Job Description</label></td>
+		          <td width="80%" valign="top" class="job-listing-font-blue"><%=jobNode[i].companyJobDescription?jobNode[i].companyJobDescription:""%></td>
+		        </tr>
+     	 </table>
+   	 </li>
+			
+		<%
+	}	
+	}
+}
+	%>	
+   
+    
+    
+    </ol>
+    <a rel="facebox" class="custom-button custom-button-primary" style="padding:5px" href="<%=request.getContextPath()%>/servlet/company/show.career?compN=
+								<%=currentNode.getName()%>&jobN=new">Add More Position</a>
+								<a class="custom-button custom-button-primary" style="padding:5px;margin-left:78%" href="<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=request.getParameter("compN")%>" >View</a>
+								
+								</div>
+  </div> 
+  
+  
+  
+
+	
+	</body>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <%
+    
+    resource = Packages.java.util.ResourceBundle.getBundle("server");%>
+	<%var online = request.getAttribute("online");
+	
+if(request.getRemoteUser()==null){
+ response.sendRedirect(request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()); 
+}else{
+%>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+         <%load("../common_new/links_new.esp");%>
+  
+      <script> 
+    function statusSubmit(){
+    	var data="userStatus="+$("#userStatusId").val()+"&userid=<%=request.getRemoteUser().replace("@","_")%>";
+    	if($("#userStatusId").val().trim()==""){
+    	alert("Please fill some status !");
+    	}else{
+
+        $.ajax({
+            type:'POST',
+            url:'<%=request.getContextPath()%>/content/user/save.setUserStatus',
+            data:data,
+            dataType: 'html',
+             success: function(msg){
+             
+             document.getElementById("curretStatus").innerHTML=$("#userStatusId").val();
+             document.getElementById("userStatusId").value="";
+            $('#resposegallery').modal('toggle');
+              }
+        });
+        }
+    }
+   
+</script>
+
+    <style type="text/css">
+
+li a span {
+  color: #4dbdbd;
+}
+
+.container,.row,.col-md-12,.col-md-3 {
+  padding-right: 2px;
+  
+}
+</style>
+    </head>
+ 
+ 
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+<%load("../common_new/header_new.esp");%>
+
+<!--response success msg botstrpa code-->
+<div class="modal fade" id="resposegallery" role="dialog">
+<div class="modal-dialog">
+
+  <div class="alert alert-success">
+<strong>Your status updated susseccfully !!</strong> .
+</div>
+  
+</div>
+</div>
+    
+    
+
+<!-- Google CDN jQuery with fallback to local -->
+ 
+<script>
+  (function($){
+      $(window).load(function(){
+          
+          $("a[rel='load-content']").click(function(e){
+              e.preventDefault();
+              var url=$(this).attr("href");
+              $.get(url,function(data){
+                  $(".content .mCSB_container").append(data); //load new content inside .mCSB_container
+                  //scroll-to appended content 
+                  $(".content").mCustomScrollbar("scrollTo","h2:last");
+              });
+          });
+          
+          $(".content").delegate("a[href='top']","click",function(e){
+              e.preventDefault();
+              $(".content").mCustomScrollbar("scrollTo",$(this).attr("href"));
+          });
+          
+      });
+  })(jQuery);
+</script>
+
+<section class="section">
+      <div class="container">
+        <div class="row">
+        <div class="col-lg-2 col-md-2 col-sm-2">
+          <div class="col-md-12">
+            <div class="list-group sidelist">
+            <a data-toggle="tab" href="#Vendor" class="list-group-item"><i class="fa fa-list" aria-hidden="true"></i> Categories</a>
+            <a data-toggle="tab" href="#Customer" class="list-group-item"><i class="fa fa-bolt" aria-hidden="true"></i>
+                     News Feeds</a>	
+            <a data-toggle="tab" href="#Contact" class="list-group-item"><i class="fa fa-industry" aria-hidden="true"></i>
+                         Messages</a>
+            <a data-toggle="tab" href="#Messages" class="list-group-item"><i class="fa fa-envelope" aria-hidden="true"></i>
+                    <small> Mails</small></a>
+            
+            <a data-toggle="tab" href="#Group" class="list-group-item"><i class="fa fa-plane " aria-hidden="true"></i>
+                        Pages</a>
+            <a data-toggle="tab" href="#Import" class="list-group-item"><i class="fa fa-television" aria-hidden="true"></i>
+                    contact</a>
+            <a data-toggle="tab" href="#Activity" class="list-group-item"><i class="fa fa-wrench" aria-hidden="true"></i> Groups</a>
+            
+            <a href="#" class="list-group-item">show more >>></a>
+            </div>
+
+
+            <div class="col-md-12" style="padding-left:0px;">
+              <div class="panel panel-default groups">
+              <div class="panel-heading">
+                <h3 class="panel-title">Recommended Products</h3>
+              </div><!-- panel-heading end -->
+              <div class="panel-body">
+                <div class="group-item">
+                  <img src="images/mobile.jpg" alt="">
+                  <h4><a href="#">product One</a></h4>
+                  <p>product description</p>
+                </div><!-- group-item end -->
+                <div class="clearfix"></div>
+                <div class="group-item">
+                  <img src="images/mobile.jpg" alt="">
+                  <h4><a href="#">product One</a></h4>
+                  <p>product description</p>
+                </div><!-- group-item end -->
+                <div class="clearfix"></div>
+                <div class="group-item">
+                  <img src="images/search4.jpg" alt="">
+                  <h4><a href="#">product two</a></h4>
+                  <p>product description</p>
+                </div><!-- group-item end -->
+                <div class="clearfix"></div>
+                <div class="group-item">
+                  <img src="images/energy.jpg" alt="">
+                  <h4><a href="#">product One</a></h4>
+                  <p>product description</p>
+                </div><!-- group-item end -->
+                <div class="clearfix"></div>
+                <a class="btn btn-primary" href="#">All products </a>
+
+              </div><!-- panel-body end -->
+            </div><!-- panel panel-default groups end -->
+            </div>
+            
+
+          
+          </div>
+          
+      </div>
+<div class="col-md-7 clearfix">
+    <div class="row">
+      <div class="col-md-12 clearfix">
+          <div class="bs-example bs-example-tabs"  style="height:600px; display: flex; flex-direction: column;border-radius: 15px: ">
+      <ul id="myTab" class="nav nav-tabs" style="flex: 0 0 auto">
+        <li class="active"><a href="#Wall" data-toggle="tab"><i class="fa fa-home fa-1x" aria-hidden="true"></i> Home</a></li>
+        <li class=""><a href="#profile" data-toggle="tab"><i class="fa fa-book" aria-hidden="true"></i> Profile</a></li>
+        <li class=""><a href="#connection" data-toggle="tab"><i class="fa fa-compress" aria-hidden="true"></i> Connection</a></li>
+        <li class=""><a href="#request" data-toggle="tab"><i class="fa fa-id-card" aria-hidden="true"></i>
+         Request</a></li>
+        
+        <li class=""><a href="#photos" data-toggle="tab">Photos</a></li>
+
+      </ul>
+      <div id="myTabContent" class="tab-content"  style="flex: 1 1 auto; overflow: scroll">
+        <div class="tab-pane fade active in" id="Wall">
+            <div class="col-md-12">
+            <div class="panel with-nav-tabs panel-info">
+                <div class="panel-heading">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#tab1info" data-toggle="tab">Facebook</a></li>
+                            <li><a href="#tab2info" data-toggle="tab">Twitter</a></li>
+                            <li><a href="#tab3info" data-toggle="tab">Google+</a></li>
+                            <li><a href="#tab4info" data-toggle="tab">LinkedIn</a></li>
+                            <li class=""><a href="#tab1info" data-toggle="tab">Bizlem</a></li>                            
+
+                        </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="tab1info"><div class="panel panel-default">
+              <div class="panel-heading">
+                <h3 class="panel-title">Wall <b class="pull-right"><%=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_")).name%></b></h3>
+              </div><!-- panel-heading end -->
+              <div class="panel-body">
+                <form>
+                  <div class="form-group">
+                    <textarea class="form-control" placeholder="Write on the wall"></textarea>
+                  </div><!-- form-group end -->
+                  <button type="submit" class="btn btn-success ">Post</button>
+                  <div class="pull-right">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i> Text</button>
+                      <button type="button" class="btn btn-default btn-sm"><i class="fa fa-file-image-o" aria-hidden="true"></i> Image</button>
+                      <button type="button" class="btn btn-default btn-sm"><i class="fa fa-file-video-o" aria-hidden="true"></i> Video</button>
+                    </div><!-- btn-group end -->
+                  </div><!-- pull-right end -->
+                </form>
+              </div><!-- panel-body end -->
+            </div><!-- panel panel-default end --></div>
+                        <div class="tab-pane fade" id="tab2info">
+                           <div class="panel panel-default">
+                <div class="panel-body">
+                     <textarea class="form-control" placeholder="what are you doing now ?"></textarea>
+                </div>
+                <div class="panel-footer">
+                    <div class="">
+                        <a href="" class=""><i class="fa fa-map-marker"></i></a>
+                        
+                        <a href=""><i class="fa fa-users"></i></a>&nbsp;&nbsp;
+                        <a href=""><i class="fa fa-camera"></i></a>&nbsp;&nbsp;
+                        <a href=""><i class="fa fa-video-camera"></i></a>&nbsp;&nbsp;
+                        <a href=""><i class="fa fa-calendar-o"></i></a>&nbsp;&nbsp;
+                    </div>
+                    
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-info">submit</button>
+                    </div>  
+                </div>
+            </div>
+                        </div>
+                        <div class="tab-pane " id="tab3info">google plus content</div>
+                        <div class="tab-pane fade" id="tab4info">linkedIn content</div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default post ">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-sm-2">
+                    <a class="post-avatar thumbnail" href="profile.html"><img src="images/sample6.jpg" alt=""><div class="text-center">Vivek</div></a>
+                    <div class="likes text-center">7 Likes</div>
+                  </div><!-- col-sm-2 end -->
+                  <div class="col-sm-10 ">
+                    <div class="bubble">
+                      <div class="pointer ">
+                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                      </div><!-- pointer end -->
+                      <div class="pointer-border"></div>
+                    </div><!-- bubble end -->
+                    <p class="post-actions">
+                      <a href="#">Comment</a> -
+                      <a href="#">Like</a> -
+                      <a href="#">Follow</a> -
+                      <a href="#">Share</a>
+                    </p>
+                    <div class="comment-form">
+                      <form class="form-inline">
+                        <div class="form-group">
+                          <input type="text" class="form-control" placeholder="Enter Comment">
+                        </div><!-- form-group end -->
+                        <button type="submit" class="btn btn-default">Add</button>
+                      </form>
+                    </div><!-- comment-form end -->
+                    <div class="clearfix"></div>
+
+                    <div class="comments">
+                      <div class="comment">
+                        <a href="#" class="comment-avatar pull-left"><img src="images/sample3.jpg" alt=""></a>
+                        <div class="comment-text">
+                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda nobis praesentium dolorum omnis itaque eum doloribus magnam quos nisi, placeat voluptatem ex aliquam in, consequuntur at beatae velit ratione quae?</p>
+                        </div><!-- comment-text end -->
+                      </div><!-- comment end -->
+                      <div class="clearfix"></div>
+
+                      <div class="comment">
+                        <a href="#" class="comment-avatar pull-left"><img src="images/sample2.jpg" alt=""></a>
+                        <div class="comment-text">
+                          <p>Omnis itaque eum doloribus magnam quos nisi, placeat voluptatem ex aliquam in, consequuntur at beatae velit ratione quae?</p>
+                        </div><!-- comment-text end -->
+                      </div><!-- comment end -->
+                      <div class="clearfix"></div>
+                    </div><!-- comments end -->
+                  </div><!-- col-sm-10 end -->
+                </div><!-- row end -->
+              </div><!-- panel-body end -->
+            </div><!-- panel panel-default post -->
+
+            <div class="panel panel-default post">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-sm-2">
+                    <a class="post-avatar thumbnail" href="profile.html"><img src="images/sample4.jpg" alt=""><div class="text-center">Akhilesh</div></a>
+                    <div class="likes text-center">2 Likes</div>
+                  </div><!-- col-sm-2 end -->
+                  <div class="col-sm-10">
+                    <div class="bubble">
+                      <div class="pointer">
+                        <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                      </div>
+                      <div class="pointer-border"></div>
+                    </div><!-- bubble end -->
+                    <p class="post-actions">
+                      <a href="#">Comment</a> -
+                      <a href="#">Like</a> -
+                      <a href="#">Follow</a> -
+                      <a href="#">Share</a>
+                    </p>
+                    <div class="comment-form">
+                      <form class="form-inline">
+                        <div class="form-group">
+                          <input type="text" class="form-control" placeholder="Enter Comment">
+                        </div><!-- form-group end -->
+                        <button type="submit" class="btn btn-default">Add</button>
+                      </form>
+                    </div><!-- comment-form end -->
+                    <div class="clearfix"></div>
+
+                    <div class="comments">
+                      <div class="comment">
+                        <a href="#" class="comment-avatar pull-left"><img src="images/sample5.jpg" alt=""></a>
+                        <div class="comment-text">
+                          <p>Consectetur adipisicing elit. Assumenda nobis praesentium dolorum omnis itaque eum doloribus magnam quos nisi, placeat voluptatem ex aliquam in, consequuntur at beatae velit ratione quae?</p>
+                        </div><!-- comment-text end -->
+                      </div><!-- comment end -->
+                      <div class="clearfix"></div>
+
+                    </div><!-- comments end -->
+                  </div><!-- col-sm-10 end -->
+                </div><!-- row end -->
+              </div><!-- panel-body end -->
+            </div><!-- panel panel-default post -->
+
+            <div class="panel panel-default post">
+              <div class="panel-body">
+                <div class="row">
+                  <div class="col-sm-2">
+                    <a class="post-avatar thumbnail" href="profile.html"><img src="images/sample6.jpg" alt=""><div class="text-center">Vinay</div></a>
+                    <div class="likes text-center">9 Likes</div>
+                  </div><!-- col-sm-2 end -->
+                  <div class="col-sm-10">
+                    <div class="bubble">
+                      <div class="pointer">
+                        <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                      </div><!-- pointer end -->
+                      <div class="pointer-border"></div>
+                    </div><!-- bubble end -->
+                    <p class="post-actions">
+                      <a href="#">Comment</a> -
+                      <a href="#">Like</a> -
+                      <a href="#">Follow</a> -
+                      <a href="#">Share</a>
+                    </p>
+                    <div class="comment-form">
+                      <form class="form-inline">
+                        <div class="form-group">
+                          <input type="text" class="form-control" placeholder="Enter Comment">
+                        </div><!-- form-group end -->
+                        <button type="submit" class="btn btn-default">Add</button>
+                      </form>
+                    </div><!-- comment-form end -->
+                    <div class="clearfix"></div>
+
+                    <div class="comments">
+                      <div class="comment">
+                        <a href="#" class="comment-avatar pull-left"><img src="images/sample2.jpg" alt=""></a>
+                        <div class="comment-text">
+                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda nobis praesentium dolorum omnis itaque eum doloribus magnam quos nisi, placeat voluptatem ex aliquam in, consequuntur at beatae velit ratione quae?</p>
+                        </div><!-- comment-text end -->
+                      </div><!-- comment end -->
+                      <div class="clearfix"></div>
+
+                      <div class="comment">
+                        <a href="#" class="comment-avatar pull-left"><img src="images/sample3.jpg" alt=""></a>
+                        <div class="comment-text">
+                          <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda nobis praesentium dolorum omnis itaque eum doloribus magnam quos nisi, placeat voluptatem ex aliquam in, consequuntur at beatae velit ratione quae?</p>
+                        </div><!-- comment-text end -->
+                      </div><!-- comment end -->
+                      <div class="clearfix"></div>
+
+                    </div><!-- comments end -->
+                  </div><!-- col-sm-10 end -->
+                </div><!-- row end -->
+              </div><!-- panel-body end -->
+            </div><!-- panel panel-default post -->
+</div><!-- col-md-8 end -->
+        </div>
+        <div class="tab-pane fade" id="profile">
+          <div class="col-md-12">
+            <div class="profile">
+              <h1 class="page-header"></h1>
+                <div class="row">
+                  <div class="col-md-4">
+                  <%var userNode1=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));
+                    if(userNode1.hasProperty("profileImage")){
+                 %>
+                  
+                  <img class="img-thumbnail" src="<%=userNode1.profileImage%>" alt=""><%}%>
+                  </div><!-- col-md-4 end -->
+                  <div class="col-md-8">
+                    <ul>
+                      <li><strong>Name: </strong><%=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_")).name%></li>
+                      <li><strong>Email Address: </strong><%=request.getRemoteUser()%></li>
+                      <li><strong>City: </strong>thane</li>
+                      <li><strong>Country: </strong>India</li>
+                      <li><strong>Gender: </strong>Male</li>
+                      <li><strong>Profession: </strong><%=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_")).profilesummary%> </li>
+                      <li id="curretStatus"><strong>Status:</strong><%=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_")).userStatus%></li>
+                      </ul>
+                  </div><!-- col-md-8 end -->
+                </div><!-- row end -->
+                <br>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">
+                      <h3 class="panel-title">Profile Wall</h3>
+                    </div>
+                    <div class="panel-body">
+                      <form>
+                        <div class="form-group">
+                          <textarea name="userStatus" id="userStatusId" class="form-control" placeholder="What are you dooing today"></textarea>
+                        </div><!-- form-group end -->
+                        
+                        <button type="submit"  class="btn btn-default" onclick="statusSubmit()">Update Status</button>
+                        <div class="pull-right">
+                          <div class="btn-group">
+                          <a href="<%=request.getContextPath()%>/servlet/gallery/show.createalbum" ><button type="button" class="btn btn-default"><i class="fa fa-file-image-o" aria-hidden="true"></i> Create Album</button></a></small>
+                            <a href="/portal/servlet/social/mesg.blog?id=1" ><button type="button" class="btn btn-default"><i class="fa fa-pencil" aria-hidden="true"></i> Text</button></a>
+                            <a href="/portal/servlet/social/mesg.blog?id=2"> <button type="button" class="btn btn-default"><i class="fa fa-file-image-o" aria-hidden="true"></i> Image</button></a>
+                            <a href="/portal/servlet/social/mesg.blog?id=3" ><button type="button" class="btn btn-default"><i class="fa fa-file-video-o" aria-hidden="true"></i> Video</button></a>
+                          </div><!-- btn-group end -->
+                        </div><!-- pull-right end -->
+                      </form>
+                    </div><!-- panel-body end -->
+                  </div><!-- panel panel-default end -->
+                </div><!-- col-md-12 end -->
+              </div><!-- row end -->
+            </div><!-- profile end -->
+          </div>
+        </div>
+        <div class="tab-pane fade" id="connection">
+        <%load("connection.esp");%>
+        </div>
+        <div class="tab-pane fade" id="profile">
+          <p>Empty</p>
+        </div>
+        <div class="tab-pane fade " id="photos">
+          <div class="col-md-12">
+            <h1 class="page-header"></h1>
+            <ul class="photos gallery-parent">
+            <%load("usergallery.esp");%>
+            <!--<a href="images/sample6.jpg" data-gallery="mygallery" data-title="Image Six" data-footer="This is image 6" data-toggle="lightbox" data-hover="tooltip" data-placement="top" title="This is image six"><img class="img-thumbnail" src="images/sample6.jpg" alt=""></a></li>-->
+           </ul>
+          </div><!-- col-md-8 end -->
+        </div>
+      </div>
+    </div>
+      </div>
+      <div class="col-md-12 clearfix">
+        <div>
+        <%load("../products/hotproducts.esp");%>
+       </div>
+      </div>
+      <hr>
+      
+      <div class="col-md-12 clearfix">
+      <div>
+      <%load("../products/hotseller.esp");%>
+     </div>
+    </div>
+    
+      <div class="col-md-12 clearfix">
+        <!--events-->
+        <h3 class="text-center"><strong>Events</strong></h3>
+        <div id="thumbnail-slider2">
+        
+        <div class="inner">
+        <ul>
+        <% if(currentNode.session.getRootNode().getNode("content").hasNode("exhibition")&&currentNode.session.getRootNode().getNode("content")
+				.getNode("exhibition").hasNodes()){
+        	
+        	eventnodes=currentNode.session.getRootNode().getNode("content")
+    				.getNode("exhibition").getNodes();
+        	for(i=0; i<=eventnodes.length-1; i++){
+        		
+        		
+        		if(eventnodes[i].hasNode("image") && eventnodes[i].getNode("image").hasNodes()){
+                    var img= eventnodes[i].getNode("image").getNodes();%>
+                 
+           
+              
+              <li><a href="<%=request.getContextPath()%>/servlet/exhibition/flash.viewevent?recentEvent=<%=i+1%>"> <img class="thumb" src="<%=img[0].getProperty('imgPath')%>"alt="<%=eventnodes[i].eventName%>"/></a></li>
+               
+           <%}}}%>
+           </ul>
+           
+        </div>
+    </div>
+      </div>
+
+
+
+    </div>
+        
+
+
+</div><!--end-->
+          
+          
+          <div class="col-md-3 clearfix">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="panel panel-default friends">
+              <div class="panel-heading">
+                <h3 class="panel-title">My Friends</h3>
+              </div><!-- panel-heading end -->
+              <div class="panel-body">
+              		  			
+                <ul>
+              
+                <%
+   //<%var userNode1=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));
+
+                  var countFriend1=0;	  
+              	if(userNode1.hasNode("connection")&&userNode1.getNode("connection").hasNode("friend")){
+                       var connectionNode=userNode1.getNode("connection").getNode("friend").getNodes();
+                       for(var i = 0;i<connectionNode.length;i++){
+            			 if(connectionNode[i].request=='accept'){
+            				 countFriend1++;
+            				if(countFriend1<9){
+            					       	                 
+            				     var userNode=currentNode.session.getRootNode().getNode("content/user/").getNode(connectionNode[i].getName());		
+            				     if(userNode.hasProperty("profileImage")){ 
+            				    	// out.print(request.getContextPath()+"/content/user/info?id="+userNode.getName());
+              				   			%>  
+                  <li><a class="thumbnail" href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>"><img style="height: 55px;" src="<%=userNode.profileImage%>" alt="photo"></a></li>
+                  <% }else{  %>
+                  
+                  <li><a class="thumbnail" href="profile.html"><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" alt="photo"></a></li>
+                  <%}}}}}%>
+                </ul>
+            	
+                
+                
+                <div class="clearfix"></div>
+                <a class="btn btn-primary" href="#">View All Friends</a>
+              </div><!-- panel-body end -->
+            </div><!-- panel panel-default friends end -->
+              </div>
+              <div class="col-md-12" style="padding:0px;">
+                <div class="col-sm-12">
+              <div class="recommeded-conection">
+              <div class="tab-three">
+                <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Recommended Connection</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="">
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/sample6.jpg" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                    
+
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/sample3.jpg" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/sample2.jpg" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/sample1.jpg" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
+          </div>
+
+              </div>
+              <div class="col-md-12" style="padding-left:0px;">
+              <div class="panel panel-default groups">
+              <div class="panel-heading">
+                <h3 class="panel-title">Recommended Company</h3>
+              </div><!-- panel-heading end -->
+              <div class="panel-body">
+                <div class="group-item">
+                  <img src="images/banner1.jpg" alt="">
+                  <h4><a href="#">Company One</a></h4>
+                  <p>Company description</p>
+                </div><!-- group-item end -->
+                <div class="panel-body">
+                <div class="group-item">
+                  <img src="images/banner_02.jpg" alt="">
+                  <h4><a href="#">Company two</a></h4>
+                  <p>Company description</p>
+                </div><!-- group-item end -->
+                <div class="panel-body">
+                <div class="group-item">
+                  <img src="images/banner_02.jpg" alt="">
+                  <h4><a href="#">Company two</a></h4>
+                  <p>Company description</p>
+                </div><!-- group-item end -->
+                          
+                
+                <div class="clearfix"></div>
+                <a class="btn btn-primary" href="#">All products </a>
+
+              </div><!-- panel-body end -->
+            </div><!-- panel panel-default groups end -->
+            </div>
+            </div>
+            
+
+            
+
+          </div><!-- col-md-4 end -->
+        </div><!-- row end -->
+      </div><!-- container end -->
+    </section>
+
+    <%load("../common_new/footer_new.esp");%>
+
+
+<!-- Login Modal Start  -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Login Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Login Modal End  -->
+
+<!-- register Modal Start  -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Registration Form</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+
+
+<!-- contactsupplier Modal Start  -->
+<div class="modal fade contactsupplier" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Contact Supplier</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+    
+  
+      
+    </body>
+</html><%}%>

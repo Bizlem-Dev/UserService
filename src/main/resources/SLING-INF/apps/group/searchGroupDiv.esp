@@ -1,0 +1,127 @@
+</head>
+<body>
+<script>
+	
+ 	
+      function join1(url,group,userId,gaccess,id,action){
+      	var data='userId='+userId+'&groupName='+group+'&accept=no';
+      	
+      	$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				 
+				  success: function(){
+			if(gaccess=="public"){	
+									  if(action==0){
+
+				  	document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("joined"+id).style.display='block';		
+					}else{
+					document.getElementById("joined"+id).style.display='none';
+				  	document.getElementById("request"+id).style.display='block';	
+					}
+				  }else{
+				  
+				  document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("pending"+id).style.display='block';
+					}
+				  }
+				
+			});
+      }  
+</script>
+
+
+<%
+
+if(groupKey.size()>0){
+
+	for(var i=0;i<groupKey.size();i++){%>
+			<li class="ui-state-default ui-corner-top" style="height:110px;width: 800px !important;">
+				 <div class="profile-user-thumb">
+							<% if(groupKey.get(i).hasNode("picture")){%>
+								 		<img src="<%=request.getContextPath()%><%=groupKey.get(i).getNode("picture")%>"
+								 			 width="70" height="48" />
+								 <%}else{%>
+								 		<img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif"
+								 		  width="70" height="48" />
+								 <%}%>
+				 	
+				 </div>
+				 <div class="groupDesc">
+				 	<strong>
+				 	<a style="float:none;" href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=groupKey.get(i).getName()%>&userId=<%=request.getParameter("userId")%>"><%=groupKey.get(i).groupName?groupKey.get(i).groupName:""%></a>
+					 	<%if(groupKey.get(i).groupAccess=='private')
+						{
+						%>
+					 		<img src="<%=request.getContextPath()%>/apps/user/css/images/lock.png" title="Members Only"  height="11" />
+					 	<%}%>
+				 	</strong><br />
+				 	<span>Type:</span><%=groupKey.get(i).groupType?groupKey.get(i).groupType:""%><br />
+				 	<p style="width:700px;white-space: normal !important;overflow:hidden;">
+				 	
+				 	<span>Description:</span><%=groupKey.get(i).groupDescription?groupKey.get(i).groupDescription:""%>
+				 	</p>
+				 	
+				 	<%if(request.getParameterMap().containsKey("userId")){
+				 		var userIdNode=groupKey.get(i).session.getNode("/content/user/"+request.getParameter("userId"));
+						var userIdNode1=groupKey.get(i).session.getNode("/content/group");
+				 		if(userIdNode.hasNode("Groups") && userIdNode.getNode("Groups").hasNode("GroupsAdded")
+				 		 && userIdNode.getNode("Groups").getNode("GroupsAdded").hasNode(groupKey.get(i).getName())){
+				 					if(userIdNode.getNode("Groups").getNode("GroupsAdded")
+				 							.getNode(groupKey.get(i).getName()).getProperty("groupRequest")=='pending')
+											{				 			
+				 			%>
+				 					<strong><span>Request Pending</span></strong>
+				 					<%}else if(userIdNode.getNode("Groups").getNode("GroupsAdded")
+				 							.getNode(groupKey.get(i).getName())
+				 							.getProperty("groupRequest").getString()=='accepted')
+											{
+											%>
+				 							<div id="request<%=i%>" style="display:none;">
+						 	<input type="button" value="  Join Group  " class="btn btn-info"
+						 		 onclick="join1('<%=request.getContextPath()%>/servlet/group/show.addMember',
+						 		 				'<%=groupKey.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(groupKey.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,0)"/>
+						 	</div>
+							
+						 	<div id="joined<%=i%>"  style="display:block;">
+								<strong><span>Added</span></strong>
+								<input type="button" value="  UnJoin Group  " class="btn btn-info"
+						 		 onclick="join1('<%=request.getContextPath()%>/servlet/group/show.unjoin',
+						 		 				'<%=groupKey.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(groupKey.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,1)"/>
+							</div>
+								<strong><span id="pending<%=i%>" style="display:none">Request Pending</span></strong>		
+				 						<%}%>
+				 			<%
+				 			}else{%>
+						<div id="request<%=i%>" style="display:block;">
+						 	<input type="button" value="  Join Group  " class="btn btn-info" "
+						 		 onclick="join1('<%=request.getContextPath()%>/servlet/group/show.addMember',
+						 		 				'<%=groupKey.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(groupKey.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,0)"/>
+						 	</div>
+							
+						 	<div id="joined<%=i%>" style="display:none;">
+								<strong><span>Added</span></strong>
+								<input type="button" value="  UnJoin Group  " class="btn btn-info"
+						 		 onclick="join1('<%=request.getContextPath()%>/servlet/group/show.unjoin',
+						 		 				'<%=groupKey.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(groupKey.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,1)"/>
+							</div>
+								<strong><span id="pending<%=i%>" style="display:none">Request Pending</span></strong>							
+					<%}}%>
+				 </div>
+			</li>
+			<%}}%>
+	
+
+
+
+
+
+
+</body>
+</html>

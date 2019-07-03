@@ -1,0 +1,74 @@
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null); 
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+    postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+// Load header utility
+
+%>
+ <%
+var path=postPath;
+var last=path.lastIndexOf("/");
+var path2=path.substring(0,path.lastIndexOf("/"));
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+%>
+<html>
+<head>
+<link href="<%=request.getContextPath()%>/apps/user/olddev/css/style_new.css" rel="stylesheet" type="text/css" />
+<script>
+function formSubmit(){
+
+//document.getElementById("delete").submit();
+document.getElementById("save").submit();
+
+}
+</script>
+</head>
+<body>
+<div class="section-internal">
+ <div>
+		<span class="bullet">1</span>
+		<label>Download Exported Linkedin Connection :</label><br>
+		<label class="note">Click on link below and download (.csv) file from there. </label>
+		<a href="http://www.linkedin.com/addressBookExport" >Export LinkedIn Connections</a>
+</div>   
+ 
+ <div>
+		<span class="bullet">2</span>
+		<label>Upload your (.csv) file here :</label><br>            
+		<form id="save" method="POST" action="<%=request.getContextPath() %>/servlet/friend/show.up" enctype="multipart/form-data">                            
+                   <input type="file" name="myFile" />            
+                   <input type="hidden" name="userId" value="<%=request.getParameter("userId")%>" /> 
+                   <input type="hidden" name="type" value="linkedin" />
+
+                    
+                                                
+                <input type="submit" value="Post" class="button">
+            </form>
+   </div>         
+   </body>
+</html>

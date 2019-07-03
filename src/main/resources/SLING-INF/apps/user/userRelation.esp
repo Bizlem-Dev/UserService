@@ -1,0 +1,171 @@
+<style>
+.thumbnail_up{
+    width: 15%;
+    float: left;
+    padding-left: 2%;
+    display: block;
+    padding: 4px;
+    margin-bottom: 20px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border .2s ease-in-out;
+    }
+    
+    .thumbnail1 {
+    display: block;
+    padding: 4px;
+    margin-bottom: 20px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-transition: border .2s ease-in-out;
+    -o-transition: border .2s ease-in-out;
+    transition: border .2s ease-in-out;
+}
+</style>
+
+<script>
+function connect(url,id){
+	
+		var userId=document.getElementById("userId").value;
+		var friendValue=document.getElementById("friendGet"+id).value;
+		var friendPathValue=document.getElementById("friendPath"+id).value;
+		var friendMessage=document.getElementById("friendMessage"+id).value;
+		var friendType=document.getElementById("friendType"+id).value;
+		//alert(friendMessage);
+		var data='userId='+userId+'&friend='+friendValue+'&friendPath='+friendPathValue+
+		'&friendMessage='+friendMessage+'&friendType='+friendType;
+		
+       
+		$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				  success: function(){
+				  	document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("acceptRequest"+id).style.display='block';
+				  	 $(".close").click();
+				  }
+				
+			});
+	
+	}
+	
+	function connectEdit(url,id,connectionNode){
+	
+		var userId=document.getElementById("userId").value;
+		var friendValue=document.getElementById("friendType"+id).value;
+	//	alert(userId+"~~~"+friendValue+"~~~"+connectionNode);
+		var data='userId='+userId+'&friend='+connectionNode+'&friendValue='+friendValue;
+		
+		$.ajax({
+				  type: 'GET',
+				  url: url,
+				  data: data,
+				  success: function(){
+				  	$(".close").click();
+				  }
+				
+			});
+	}
+	
+	function removeConnection(url,removeNode){
+	
+	var res = confirm("Do you really want to remove the connection");
+	if(res){
+	var userId=document.getElementById("userId").value;
+	var data='userId='+userId+'&friend='+removeNode;
+		//alert(data+url);
+	$.ajax({
+				  type: 'GET',
+				  url: url,
+				  data: data,
+				  success: function(){
+				  	location.reload();
+				  }
+				
+			});
+		}
+	}
+</script>
+									            		<%
+	if(currentNode.hasNode("connection")){
+                var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+              								}		            		
+            		var count=connectionNode.length;
+			//		out.print("count------"+count);
+ var result = (count/10);
+var integerPart = Math.floor(result);
+if(count-(integerPart*10)!=0){
+integerPart=integerPart+1;
+}
+
+			//var	prodNode=request.getAttribute("productslist");
+			//	out.print("companymanagementlst-----------"+connectionNode[0]);
+		//	out.print("companymanagementlst1-----------"+connectionNode[0].name);
+%>
+<ul class="pagination1" style="list-style:none">
+<%
+for(i = 0;i<connectionNode.length;i++){%>
+
+                        <div class="search-list-mobile">
+                            <div class="thumbnail_up">
+                              <div class="thumb">
+            				<% 
+            				var userNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(connectionNode[i].getName());
+            				if (currentNodeProvided && userNode.hasProperty("profileImage")) {
+                                                            %>
+                                                            <img width="64px" height="64px" src="<%=userNode.profileImage%>" />
+                                                            <%} else {%>
+                                                            <img width="64px" height="64px" src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+                                                            <%}%> 
+                              </div>
+                            <div class="caption">
+                              <h3><a href="<%=request.getContextPath()%>/content/user/info?id=<%=connectionNode[i].getName()%>"><%=userNode.name?userNode.name:""%> <%=userNode.lastName?userNode.lastName:""%></a></h3>
+                              <p class="foo1">
+                                  <%=userNode.headline?userNode.headline:""%>
+                              </p>
+                            </div>
+                            <div class="all-btn" style="">
+                             <a data-target="#edit<%=i%>" data-toggle="modal" href="#" class="btn btn-primary">Edit</a>
+                             <a href="javascript:void()" onclick="removeConnection('<%=request.getContextPath()%>/servlet/common/search.connectionremove','<%=connectionNode[i].getName()%>')" class="btn btn-primary">Remove</a>
+                             				<div class="modal fade" id="edit<%=i%>" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            				 <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal" method="POST" action="<%=request.getContextPath()%>/servlet/common/search.connectionedit" >
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Connection Request</h4>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="userId" id="userId" value="<%=request.getRemoteUser().replace("@","_")%>" />
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Connect as a : </label>
+            <div class="col-sm-9">
+              <%var userType=currentNode.session.getRootNode().getNode("content").getNode("relationship").getNodes();%>
+            				<select class="form-control" name="friendType" id="friendType<%=i%>">
+            					<%for(index in userType){%>
+            					   <option value="<%=userType[index].relationType%>"><%=userType[index].relationType%></option>					
+            					<%}%>
+            				</select>
+            </div>
+          </div>
+      </div>                                        
+          <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="connectEdit('<%=request.getContextPath()%>/servlet/common/search.connectionedit',<%=i%>,'<%=connectionNode[i].getName()%>')">Submit</button>
+      </div>
+      </form>
+
+  </div>
+            				</div>
+                             
+                             
+                                 </div>
+                          </div>
+                        </div>
+<%}%>
+</ul>
+						            

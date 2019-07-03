@@ -1,0 +1,85 @@
+<html>
+<head>
+<script language="javascript">
+    var counts;
+    function addRow(tableID) {
+        
+        
+        var table = document.getElementById(tableID);
+        var rowCount = table.rows.length;
+        var row = table.insertRow(rowCount);
+        counts = rowCount - 1;
+        
+        
+        var cell2 = row.insertCell(0);  
+        cell2.setAttribute('colspan', 2);
+        var rate = document.createElement("input");
+        rate.type = "text";
+        rate.name = "companyJobReason";
+        rate.setAttribute("class", "");
+        rate.setAttribute("style", "width:100%");
+        rate.id = "jsp_" + counts
+        + "__rate";
+        cell2.appendChild(rate);            
+    }
+
+    function deleteRow(guestList) {
+        try {
+            var table = document.getElementById(guestList);
+            var rowCount = table.rows.length;
+            if (rowCount > 1) {
+                table.deleteRow(rowCount - 1);
+            }
+        } catch (e) {
+            alert(e);
+        }
+    }
+
+
+</script>
+
+
+</head>
+<body>
+
+<form method="POST" action="<%=request.getContextPath()%>/servlet/company/save.joinReason">
+ <table width="100%">
+ 	<tbody id="companyCareer">
+	<tr>
+		<td><strong>Why to join us?</strong> </td>
+		<td> <a id="profileEdit" onclick="addRow('companyCareer')" href="javascript:void(0)">
+		            <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD" />
+		         </a>
+		         <a id="profileEdit" onclick="deleteRow('companyCareer')" href="javascript:void(0)">
+		             <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete" />
+		         </a></td></tr>
+		
+	
+		<%
+			if(currentNode.hasNode("Career/ReasonToJoin") && currentNode.getNode("Career/ReasonToJoin").hasProperty("reasonToJoin") && 
+									currentNode.getNode("Career/ReasonToJoin").getProperty("reasonToJoin")
+														.getDefinition().isMultiple()){
+					var companyJobReason=currentNode.getNode("Career/ReasonToJoin").reasonToJoin;				
+					for(i in companyJobReason){
+					%>
+					 	<tr><td colspan='2'><input name="companyJobReason" type="text" style="width:100%;" value="<%= companyJobReason[i] %>" /></td></tr>
+					 	
+					<% 
+					}				
+									
+			}else{%>
+						<tr><td colspan='2'><input type="text" name="companyJobReason"  style="width:100%;" /></td><td></td></tr>
+				<%}%>	
+			
+		        
+		                                    
+		
+	</tr>
+</tbody>
+<tr><td><input type="submit" value="Submit"  class="custom-button custom-button-primary" /></td>
+	<td><input type="hidden" name="reasonCompanyName" value="<%=request.getParameter("compN")%>" /></td>
+</tr>
+</table>
+</form>
+</body>
+</html>

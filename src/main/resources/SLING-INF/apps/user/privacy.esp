@@ -1,0 +1,370 @@
+<html>
+<head>
+<%load("includes/header.esp");%>
+
+<link href="<%=request.getContextPath()%>/apps/user/css/privacy.css" rel="stylesheet" type="text/css" />
+
+
+<SCRIPT>
+    function setupLabel() {
+        if ($('.label_check input').length) {
+            $('.label_check').each(function(){ 
+                $(this).removeClass('c_on');
+            });
+            $('.label_check input:checked').each(function(){ 
+                $(this).parent('label').addClass('c_on');
+            });                
+        };
+        if ($('.label_radio input').length) {
+            $('.label_radio').each(function(){ 
+                $(this).removeClass('r_on');
+            });
+            $('.label_radio input:checked').each(function(){ 
+                $(this).parent('label').addClass('r_on');
+            });
+        };
+    };
+    $(document).ready(function(){
+        $('.label_check, .label_radio').click(function(){
+            setupLabel();
+        });
+        setupLabel(); 
+    });
+</SCRIPT>
+</head>
+
+    <body> 
+    
+   
+        <%if(currentNode.hasNode("Privacy")){
+        var privacyNode=currentNode.getNode("Privacy");
+        var personalNode=privacyNode.getNode("Personal");
+        var visitorNode=privacyNode.getNode("Identity");
+        var mailNode=privacyNode.getNode("MailFrequency");
+        }%>
+        <%
+        var infoArray=['everyOne','connection','onlyMe'];
+        var mailArray=['daily','weekly','monthly'];
+        var visitorArray=['annonymous','profile'];
+%>
+   <form action="<%=request.getContextPath()%>/servlet/security/verify.save" method="POST">
+    <div class="permissions">
+    <table width="95%" border="0" cellpadding="0" cellspacing="0">
+            <tbody><tr>
+                <th>&nbsp;</th>
+                <th>EveryOne</th>
+                <th>Your Connection</th>
+                <th>Only Me</th>
+            </tr>
+            
+            <tr>
+                <td>Contact Detail</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("contactPrivacy") &&
+                        personalNode.contactPrivacy==infoArray[i]){      
+                %>
+                 <td><label class="label_radio r_on" for="Cont<%=infoArray[i]%>">
+                 <input type="radio" name="contactPrivacy" id="Cont<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                 </label></td>
+                
+                <%
+                }else{
+                %> 
+                <td><label class="label_radio r_on" for="Cont<%=infoArray[i]%>">
+                <input type="radio" name="contactPrivacy" id="Cont<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+            </tr>
+            
+            
+            <tr>
+                <td>Email ID</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("emailPrivacy") &&
+                        personalNode.emailPrivacy==infoArray[i]){
+                 
+                %>
+                <td><label class="label_radio r_on" for="Email<%=infoArray[i]%>">
+                <input type="radio" name="emailPrivacy" id="Email<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                </label></td>
+                
+                <%
+                }else{%>
+                <td><label class="label_radio r_on" for="Email<%=infoArray[i]%>">
+                <input type="radio" name="emailPrivacy" id="Email<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+            </tr>
+            
+            <tr>
+                <td>Gallery</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("galleryPrivacy") &&
+                        personalNode.galleryPrivacy==infoArray[i]){      
+                %>
+                 <td><label class="label_radio r_on" for="Gall<%=infoArray[i]%>">
+                 <input type="radio" name="galleryPrivacy" id="Gall<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                 </label></td>
+                
+                <%
+                }else{
+                %> 
+                <td><label class="label_radio r_on" for="Gall<%=infoArray[i]%>">
+                <input type="radio" name="galleryPrivacy" id="Gall<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+            </tr>
+            
+            <tr>
+                <td>Photo Story</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("photostoryPrivacy") &&
+                        personalNode.photostoryPrivacy==infoArray[i]){      
+                %>
+                 <td><label class="label_radio r_on" for="Psto<%=infoArray[i]%>">
+                 <input type="radio" name="photostoryPrivacy" id="Psto<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                 </label></td>
+                
+                <%
+                }else{
+                %> 
+                <td><label class="label_radio r_on" for="Psto<%=infoArray[i]%>">
+                <input type="radio" name="photostoryPrivacy" id="Psto<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+            </tr>
+            
+            <tr>
+                <td>Connection</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("connectionPrivacy") &&
+                        personalNode.connectionPrivacy==infoArray[i]){
+                %>
+                 <td><label class="label_radio r_on" for="Con<%=infoArray[i]%>">
+                <input type="radio" name="connectionPrivacy" id="Con<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                </label></td>
+                <%
+                }else{%>
+                <td><label class="label_radio r_on" for="Con<%=infoArray[i]%>">
+                <input type="radio" name="connectionPrivacy" id="Con<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+
+            </tr>
+            
+            
+            <tr>
+                <td>Activity</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("activityPrivacy") &&
+                        personalNode.activityPrivacy==infoArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="Act<%=infoArray[i]%>">
+                <input type="radio" name="activityPrivacy" id="Act<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                </label></td>
+                
+                <%
+                }else{%>
+                <td><label class="label_radio r_on" for="Act<%=infoArray[i]%>">
+                <input type="radio" name="activityPrivacy" id="Act<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+                
+            </tr>
+            <tr>
+                <td>Groups</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("groupsPrivacy") &&
+                        personalNode.groupsPrivacy==infoArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="Grp<%=infoArray[i]%>">
+                <input type="radio" name="groupsPrivacy" id="Grp<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                </label></td>
+                
+                <%
+                }else{%>
+                <td><label class="label_radio r_on" for="Grp<%=infoArray[i]%>">
+                <input type="radio" name="groupsPrivacy" id="Grp<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+               
+            </tr>
+            <tr>
+                <td>Tagged Products</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("productPrivacy") &&
+                        personalNode.productPrivacy==infoArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="prod<%=infoArray[i]%>">
+                <input type="radio" name="productPrivacy" id="pro<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                </label></td>
+                
+                <%
+                }else{%>
+                <td><label class="label_radio r_on" for="pro<%=infoArray[i]%>">
+                <input type="radio" name="productPrivacy" id="pro<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+               
+            </tr>
+            <tr>
+                <td>Tagged Company</td>
+                 <%for(i in infoArray){
+                 if(currentNode.hasNode("Privacy") && personalNode.hasProperty("companyPrivacy") &&
+                        personalNode.companyPrivacy==infoArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="comp<%=infoArray[i]%>">
+                <input type="radio" name="companyPrivacy" id="comp<%=infoArray[i]%>" value="<%=infoArray[i]%>" checked />
+                </label></td>
+                
+                <%
+                }else{%>
+                <td><label class="label_radio r_on" for="comp<%=infoArray[i]%>">
+                <input type="radio" name="companyPrivacy" id="comp<%=infoArray[i]%>" value="<%=infoArray[i]%>">
+                </label></td>
+                
+                <%}
+                }%>
+               
+            </tr>
+        </tbody>
+        
+        <tbody>
+            <tr><td colspan="4" class="seprator"><img src="<%=request.getContextPath()%>/apps/user/css/images/spacer.gif" border="0" /></td></tr>
+            <tr>
+                <th></th>
+                <th>Annonymous</th>
+                <th>User Profile</th>
+                <th>&nbsp;</th>
+            </tr>
+                       
+            <tr>
+                <td width="50%">View Others Profile as: </td>
+                <%for(i in visitorArray){
+                if(currentNode.hasNode("Privacy") && visitorNode.hasProperty("visitorPrivacy") &&
+                        visitorNode.visitorPrivacy==visitorArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="<%=visitorArray[i]%>">
+                <input type="radio" name="visitorPrivacy" id="<%=visitorArray[i]%>" value="<%=visitorArray[i]%>" checked />
+                </label></td>
+                <%
+                }else{%>
+                <td><label class="label_radio r_on" for="<%=visitorArray[i]%>">
+                <input type="radio" name="visitorPrivacy" id="<%=visitorArray[i]%>" value="<%=visitorArray[i]%>"  />
+                </label></td>
+                <%}}%>
+
+            </tr>
+            
+        </tbody>
+            
+            <tbody>
+              <tr>
+                <td colspan="4" class="seprator"><img src="<%=request.getContextPath()%>/apps/user/css/images/spacer.gif" border="0" /></td>
+              </tr>
+              
+            <tr>
+                <td>Campaign Frequency</td>
+                <th>Daily</th>
+                <th>Weekly</th>
+                <th>Monthly</th>
+            </tr>
+            
+            <tr>
+                <td>News Letter</td>
+                <%for(i in mailArray){
+                if(currentNode.hasNode("Privacy") && mailNode.hasProperty("newsLetter") &&
+                        mailNode.newsLetter==mailArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="News<%=mailArray[i]%>">
+                <input type="radio" name="newsLetter" id="News<%=mailArray[i]%>" value="<%=mailArray[i]%>" checked />
+                </label></td>
+                <%
+                }else{%>
+                 <td><label class="label_radio r_on" for="News<%=mailArray[i]%>">
+                 <input type="radio" name="newsLetter" id="News<%=mailArray[i]%>" value="<%=mailArray[i]%>" />
+                 </label></td>
+                 <%}}%>
+                
+            </tr>
+            
+           <tr>
+                <td>Group Updates</td>
+                     <%for(i in mailArray){
+                if(currentNode.hasNode("Privacy") && mailNode.hasProperty("groupsUpdates") &&
+                        mailNode.groupsUpdates==mailArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="Group<%=mailArray[i]%>">
+                <input type="radio" name="groupsUpdates" id="Group<%=mailArray[i]%>" value="<%=mailArray[i]%>" checked />
+                </label></td>
+                <%
+                }else{%>
+                 <td><label class="label_radio r_on" for="Group<%=mailArray[i]%>">
+                 <input type="radio" name="groupsUpdates" id="Group<%=mailArray[i]%>" value="<%=mailArray[i]%>" />
+                 </label></td>
+                <%}}%>
+            </tr>
+            
+            <tr>    
+                <td>Promotional Mail</td>
+                     <%for(i in mailArray){
+                if(currentNode.hasNode("Privacy") && mailNode.hasProperty("promotionalMail") &&
+                        mailNode.promotionalMail==mailArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="Prom<%=mailArray[i]%>">
+                <input type="radio" name="promotionalMail" id="Prom<%=mailArray[i]%>" value="<%=mailArray[i]%>" checked />
+                </label></td>
+                <%
+                }else{%>
+                 <td><label class="label_radio r_on" for="Prom<%=mailArray[i]%>">
+                 <input type="radio" name="promotionalMail" id="Prom<%=mailArray[i]%>" value="<%=mailArray[i]%>" />
+                 </label></td>
+                   <%}}%>
+            </tr>   
+             
+            <tr>    
+                <td>Activity Updates</td>
+                <%for(i in mailArray){
+                if(currentNode.hasNode("Privacy") && mailNode.hasProperty("activityUpdates") &&
+                        mailNode.activityUpdates==mailArray[i]){
+                %>
+                <td><label class="label_radio r_on" for="Activ<%=mailArray[i]%>">
+                <input type="radio" name="activityUpdates" id="Activ<%=mailArray[i]%>" value="<%=mailArray[i]%>" checked />
+                </label></td>
+                
+                <%
+                }else{%>
+                 <td><label class="label_radio r_on" for="Activ<%=mailArray[i]%>">
+                 <input type="radio" name="activityUpdates" id="Activ<%=mailArray[i]%>" value="<%=mailArray[i]%>" />
+                 </label></td>
+                 <%}}%>    
+            </tr>
+            </tbody></table>
+              
+        
+        <input type="hidden" name="userId" value="<%=request.getParameter("userId")%>" />
+      
+        <input type="submit" value="Submit" />
+        
+       </div>       
+     </form>
+     
+    </body>
+
+</html>

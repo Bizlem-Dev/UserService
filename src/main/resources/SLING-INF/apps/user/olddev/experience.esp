@@ -1,0 +1,160 @@
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null); 
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+    }
+    return result;
+}
+
+// Compute path to used for the POST request, different
+// depending on existence of a current node or not
+var postPath = null;
+var pageTitle = null;
+if(currentNodeProvided) {
+   postPath=request.getContextPath();
+    postPath += currentNode.getPath();
+    pageTitle = currentNode.title;
+} else {
+    postPath = request.getContextPath() + "";
+    if(postPath.length > 0) {
+        postPath += "/";
+    }
+    postPath += request.getPathInfo();
+    pageTitle = "New post";
+}
+
+%>
+<html>
+<head>
+
+<script>
+    function work(value){
+        
+        //alert(document.getElementById("endDate").checked);
+        if(value.checked==true)
+            {
+                    document.getElementById("endDate").value="";
+                    document.getElementById("endDate").disabled="true";
+            }
+        else
+            {
+                
+                document.getElementById("endDate").disabled="";
+            }
+        
+        
+    }
+    
+   function setTitleValue(v){
+   		 var title=v.replace(/ /g,"");
+        document.getElementById("titleId").value=title;
+        
+        }
+    
+
+</script>
+</head>
+<body>
+<%if(currentNodeProvided){%>
+<form  method="POST"  action="<%=request.getContextPath()%>/content/user/save.ex">
+ <input type="hidden" value="<%= getCurrentNodeValue("title") %>"  id="titleId" name="title" />
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="form">
+<tr>
+<td><label>Company Name</label><input name="companyName" type="text" value="<%= getCurrentNodeValue("companyName") %>"  onblur="setTitleValue(this.value)" /></td>
+<td ><label>Company Location</label><input name="companyLocation" value="<%= getCurrentNodeValue("companyLocation") %>"/></td>
+<td><label>Company Website</label><input name="companyWebsite" value="<%= getCurrentNodeValue("companyWebsite") %>" /></td>
+</tr>
+<tr><td colspan="3"><label>Company Description</label><textarea name="companyDesc"  cols="30" rows="2" ><%= getCurrentNodeValue("companyDesc") %></textarea></td></tr>
+<tr>
+
+<td><label>Start Date</label><input name="startDate" value="<%=currentNode.getNode(getCurrentNodeValue("childNode")).startDate ? currentNode.getNode(getCurrentNodeValue("childNode")).startDate : ""%>"  /></td>
+                             
+<td><label>End Date<%if(currentNode.getNode(getCurrentNodeValue("childNode")).currentlyWork=="Present"){%>
+						<input type="checkbox" name="currentlyWork" checked="checked"  value="Present" onchange="work(this)"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+						<em style="font-weight:normal; font-size:10px; color:#666;">Currently Working</em></label>
+	                     <input name="endDate" disabled="true" id="endDate" /></td>
+                          <%}else{%>
+                          <input type="checkbox" name="currentlyWork"  value="Present" onchange="work(this)"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+								<em style="font-weight:normal; font-size:10px; color:#666;">Currently Working</em></label>
+                             <input name="endDate"  value="<%=currentNode.getNode(getCurrentNodeValue("childNode")).endDate ? currentNode.getNode(getCurrentNodeValue("childNode")).endDate : ""%>"   id="endDate" /></td>
+                             
+                             <%}%>
+                             
+<td>&nbsp;</td>
+</tr>
+
+<tr>
+<td><label>Job Title</label><input name="jobTitle" value="<%=currentNode.getNode(getCurrentNodeValue("childNode")).jobTitle ? currentNode.getNode(getCurrentNodeValue("childNode")).jobTitle : ""%>" /></td>
+<td><label>Job Description</label><input name="jobDesc" value="<%=currentNode.getNode(getCurrentNodeValue("childNode")).jobDesc ? currentNode.getNode(getCurrentNodeValue("childNode")).jobDesc : ""%>"  /></td><td colspan="1">&nbsp;</td></tr>
+<%
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+
+%>
+<input name="redirect" type="hidden" value="<%=param%>"/>
+<tr><td colspan="3"><input type="submit" value="Add Experience"class="btn btn-primary" />
+<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>"  class="btn btn-warning" id="cancelEdit">Cancel</a>
+                </td></tr>
+            
+</table>
+</form>
+<%}
+else{%>
+<form  method="POST" modelAttribute="addExperience" action="<%=request.getContextPath()%>/content/user/save.ex">
+ <input type="hidden" value="<%= getCurrentNodeValue("title") %>"  id="titleId" name="title" />
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="form">
+<tr>
+<td><label>Company Name</label><input name="companyName" type="text" value="<%= getCurrentNodeValue("companyName") %>"  onblur="setTitleValue(this.value)" /></td>
+<td ><label>Company Location</label><input name="companyLocation" value="<%= getCurrentNodeValue("companyLocation") %>"/></td>
+<td><label>Company Website</label><input name="companyWebsite" value="<%= getCurrentNodeValue("companyWebsite") %>" /></td>
+</tr>
+<tr><td colspan="3"><label>Company Description</label><textarea name="companyDesc"  cols="30" rows="2" ><%= getCurrentNodeValue("companyDesc") %></textarea></td></tr>
+<tr>
+
+<td><label>Start Date</label><input name="startDate" value="<%= getCurrentNodeValue("startDate") %>"  /></td>
+<td><label>End Date<%if(getCurrentNodeValue("currentlyWork")=="Present"){%>
+						<input type="checkbox" name="currentlyWork" checked="checked"  value="Present" onchange="work(this)"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+						<em style="font-weight:normal; font-size:10px; color:#666;">Currently Working</em></label>
+	                     <input name="endDate" disabled="true" id="endDate" /></td>
+                          <%}else{%>
+                          <input type="checkbox" name="currentlyWork"  value="Present" onchange="work(this)"
+							 style="width:auto !important; display:inline !important; margin:0px 5px 0px 10px;"/>
+								<em style="font-weight:normal; font-size:10px; color:#666;">Currently Working</em></label>
+                             <input name="endDate"  value="<%=getCurrentNodeValue("endDate")%>"  id="endDate" /></td>
+                             
+                             <%}%>
+                             
+<td>&nbsp;</td>
+</tr>
+
+<tr>
+<td><label>Job Title</label><input name="jobTitle" value="<%=getCurrentNodeValue("childNode")%>" /></td>
+<td><label>Job Description</label><input name="jobDesc" value="<%=getCurrentNodeValue("childNode")%>"  /></td><td colspan="1">&nbsp;</td></tr>
+<%
+var path=postPath;
+var path2=path.substring(0,path.lastIndexOf("/"));
+var last=path2.lastIndexOf("/");
+var redirect=path2.substring(0,path2.lastIndexOf("/"));
+var param=redirect.substring(redirect.lastIndexOf("/")+1,last);
+
+%>
+<input name="redirect" type="hidden" value="<%=param%>"/>
+<tr><td colspan="3"><input type="submit" value="Add Experience"class="btn btn-primary" />
+<a href="<%=request.getContextPath()%>/content/user/info?id=<%=param%>"  class="btn btn-primary" id="cancelEdit">Cancel</a>
+                </td></tr>
+            
+</table>
+</form>
+
+<%}%>
+</body>
+</html>

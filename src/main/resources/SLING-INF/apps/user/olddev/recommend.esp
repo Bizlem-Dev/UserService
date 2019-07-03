@@ -1,0 +1,133 @@
+
+<%load("includes/header.esp");%>
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/user/css/jquery.multiselect.css" />
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/user/css/jquery.multiselect.filter.css" />
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/user/css/assets/style.css" />
+	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/user/css/assets/prettify.css" />
+	<script type="text/javascript" src="<%=request.getContextPath()%>/apps/user/js/src/jquery.multiselect.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath()%>/apps/user/js/src/jquery.multiselect.filter.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath()%>/apps/user/js/assets/prettify.js"></script>
+	<link href="<%=request.getContextPath()%>/apps/user/css/style_new.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript">
+	$(function(){
+		$("#simple").multiselect().multiselectfilter()
+		});
+	</script>
+	<script>
+		function setRequestType(v){
+		document.getElementById("requestTypeId").value=v;
+		
+		}
+	
+	
+	</script>
+
+</head>
+<body>
+
+
+<form method="POST" action="<%=request.getContextPath()%>/servlet/recommendation/show.send" >
+<div class="section-internal">
+<div>
+<span class="bullet">1</span><label>Choose what you want to be recommended for</label>
+<select name="recommendType" onchange="setRequestType(this[this.selectedIndex].text)" style="width:370px;">
+<option	value="">Choose...</option>
+<%
+var educationNode;
+var experienceNode;
+var connectionNode;
+var recommendType;
+var skillNode;
+
+if(currentNode.hasNode("ProfessionalSummary") && currentNode.getNode("ProfessionalSummary").hasNode("Skill")
+	&& currentNode.getNode("ProfessionalSummary").getNode("Skill").hasNodes())
+{
+	skillNode=currentNode.getNode("ProfessionalSummary").getNode("Skill").getNodes();
+	
+	for(i in skillNode)
+	{
+		recommendType='Skill: '+skillNode[i].skillValue;
+%>
+	<option	value="<%=skillNode[i]%>"><%=recommendType%></option>
+<%	}
+	
+
+}
+if(currentNode.hasNode("Education"))
+{
+	educationNode=currentNode.getNode("Education").getNodes();
+	
+	for(i in educationNode)
+	{
+		recommendType='Student at '+educationNode[i].school;
+%>
+	<option	value="<%=educationNode[i]%>"><%=recommendType%></option>
+<%	}
+	
+
+}
+if(currentNode.hasNode("Experience")){
+
+	experienceNode=currentNode.getNode("Experience").getNodes();
+	for(i in experienceNode)
+	{
+		var childNode=experienceNode[i].getNodes();
+		recommendType=experienceNode[i].companyName;
+		for(j in childNode)
+		{
+			recommendType=childNode[j].jobTitle+' at '+recommendType;
+		
+		}
+%>
+	<option	value="<%=childNode[j]%>"><%=recommendType%></option>
+<%		}
+}%>
+</select>
+</div>
+<br />
+<div>
+<span class="bullet">2</span><label>Decide who you’ll ask </label>
+<select multiple="multiple" name="recommendPeople" id="simple" style="width:370px">
+<%        if(currentNode.hasNode("connection"))
+			{	
+				connectionNode=currentNode.getNode("connection/friend").getNodes();
+				for(k in connectionNode)
+				{
+					if(connectionNode[k].request=='accept'){
+					%><option value="<%=connectionNode[k].getName()%>">
+							<% var userNode=currentNode.session.getRootNode()
+									.getNode("content/user/"+connectionNode[k].getName());
+						
+						%>
+						
+						Name: <%=userNode.name?userNode.name:""%><%=" "+userNode.lastName?userNode.lastName:""%><br />						
+						Email:<%=userNode.email?userNode.email:""%><br>
+						HeadLine: <%=userNode.headline?userNode.headline:""%>
+					</option>	
+						
+				<%}
+				}	
+					
+			}		
+					
+
+
+%>
+
+	</select>
+	</div>
+	<br />
+	<div>
+<span class="bullet">3</span><label>Create your message	</label>	
+		<textarea name="message" style="height: 153px; width: 383px;">I'm sending this to ask you for a brief recommendation of my work that I can include in my profile. If you have any questions, let me know.
+
+Thanks in advance for helping me out.
+
+-<%=currentNode.name%> <%=currentNode.lastName?currentNode.lastName:""%></textarea>
+		</div>
+<input type="hidden" name="userId" value="<%=currentNode.getName()%>" />
+<input type="hidden" id="requestTypeId" name="requestType" value="" />
+<input type="submit" value="Send" class="btn btn-primary" /><input type="button" value="Cancel" class="btn btn-warning" /> 
+</form>
+</body>
+</html>

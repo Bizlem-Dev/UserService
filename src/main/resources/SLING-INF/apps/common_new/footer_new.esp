@@ -1,0 +1,147 @@
+
+<script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/readmore/readmore.min.js"></script>
+<script>
+    $('.readmorelink').readmore({
+      speed: 500,
+      moreLink: '<a href="#" class="readbtn">More >>></a>',
+      lessLink: '<a href="#" class="readbtn">Close</a>',
+      collapsedHeight: 210
+      //blockCSS: 'display: inline-block; width: 50%; text-align:right;'
+    });
+    
+    $(document).ready(function(){
+          //3600000
+          var quoteurl = window.location.href
+     $("#urlQuote").val(quoteurl);
+            var interval = setInterval(function () { myFunction(); }, 1200000);
+	
+        });
+        
+        function myFunction () {
+    		console.log('Executed!');
+    		
+    		    $.ajax
+					({
+						type:'GET',
+        				url:'<%=request.getContextPath()%>/service/servlet/publish.readrss',
+        				data:{
+        	
+        				},
+        				success: function(data) {
+        					console.log(data);
+        					var res = JSON.parse(data);
+        					var arr = res.data;
+        					console.log(arr.length);
+        					for(i = 0;i<arr.length;i++){
+        					console.log(arr[i].id+"--"+arr[i].newsurl);
+        					var sling = arr[i].newsurl;
+        					var filename = arr[i].id+"news";
+        					var dest = "/home/vil/rave%20Server/apache-rave-0.14-bin/webapps/ROOT/index/en/home/iframe/"+arr[i].id;
+        					var subDir = arr[i].id+"_files";
+        					var urlGet="http://prod.bizlem.io:3003/saveurl?URL="+sling+"&fileN="+filename+"&dir="+dest+"&subdir="+subDir+"&callback=?";
+						    console.log(urlGet);
+							$.get(urlGet, function (data) {
+						    console.log(data);
+							}, 'json');
+        					
+        					}
+        				 $.ajax
+							({
+								type:'GET',
+        						url:'<%=request.getContextPath()%>/service/servlet/publish.writeIndexHtml',
+        						data:{
+        	
+        						},
+        						success: function(data) {
+        						console.log(data);
+        						}
+    						});
+        					
+        					
+       					}
+    				});
+    		
+			}
+
+        
+    
+  
+  </script>
+
+
+
+<div id="chatBy"></div>
+<footer style="margin-top: 20px" class="flex-rw">
+	<%if(request.getRemoteUser()!=null && !request.getRemoteUser().equals("anonymous")){%>  
+	<div id="testDiv" class="navbar-spacer" align="right" class="navbar-spacer" style="display: block; height: 35px; position: fixed; right:0px;bottom: 0px; margin: 0px 0; padding: 0 0; z-index: 9999; border-radius: 4px 4px 0px 0px;width:200px"><div class="miximize" id="sendBtn"></div>
+	<iframe name="bar1" 
+	src="<%=request.getSession(false).getAttribute('chatUrl')%>/OpenFireClient/Login.jsp?username=<%=request.getSession(false).getAttribute('chatId')%>&password=<%=request.getSession(false).getAttribute('chatEncpass')%>" id="chatFrame" frameborder="0" height="35px">
+	</iframe>
+	</div>
+	
+	
+	<!-- <div id="phoneDiv" class="navbar-spacer" align="right"  class="navbar-spacer" style="right:270px !important; display: block; height: 30px; position: fixed; right:0px;bottom: 0px; margin: 0px 0; padding: 0 0; z-index: 9999; border-radius: 4px 4px 0px 0px;">
+	<iframe height="123px" id="bar2" width="180px" name="bar2" scrolling="no" frameborder="0" src="<%=request.getSession(false).getAttribute('sipmlUrl')%>/expert.htm?pid=<%=request.getSession(false).getAttribute('sipmlExtn')%>&passwd=05GDO05VVO0"></iframe>
+	</div>-->
+	
+	<div id="phoneDiv" class="navbar-spacer" align="right"  class="navbar-spacer" style="right:351px !important; display: block; height: 178px; position: fixed; right:0px;bottom: 0px; margin: 0px 0; padding: 0 0; z-index: 9999; border-radius: 4px 4px 0px 0px;">
+	<iframe height="178px" id="bar2" width="250px" name="bar2" scrolling="no" frameborder="0" src="<%=request.getSession(false).getAttribute('sipmlUrl')%>/expert1.htm?pid=<%=request.getSession(false).getAttribute('sipmlExtn')%>&passwd=05GDO05VVO0"></iframe>
+	</div>
+	
+	      <%}%>
+  <ul class="footer-list-top">
+    <li>
+      <h4 class="footer-list-header">About Bizlem</h4></li>
+    <li><a href='<%=request.getContextPath()%>/servlet/service/page.aboutus' class="generic-anchor footer-list-anchor" itemprop="significantLink">GET TO KNOW US</a></li>
+    <li><a href='<%=request.getContextPath()%>/portal/servlet/service/page.buyers' class="generic-anchor footer-list-anchor" itemprop="significantLink">For Buyers &amp; Sellers</a></li>
+    <li><a href='<%=request.getContextPath()%>/servlet/service/page.advertise' class="generic-anchor footer-list-anchor" itemprop="significantLink">Advertise with us</a></li>
+
+    
+
+    <li><a href='' class="generic-anchor footer-list-anchor" itemprop="significantLink">EVENTS</a></li>
+  </ul>
+  <ul class="footer-list-top">
+    <li>
+      <h4 class="footer-list-header">Main Features</h4></li>
+
+
+    <li><a href='<%=request.getContextPath()%>/servlet/service/page.keydifferentiators' class="generic-anchor footer-list-anchor">Key Differentiators</a></li>
+    <li><a href='' class="generic-anchor footer-list-anchor">Hot Products</a></li>
+    <li><a href='' class="generic-anchor footer-list-anchor">Hot Sellers</a></li>
+    <li><a href='<%=request.getContextPath()%>/servlet/service/page.contactus' class="generic-anchor footer-list-anchor">Contact Us</a></li>
+    
+  </ul>
+  <ul class="footer-list-top">
+    <li id='help'>
+      <h4 class="footer-list-header">GeT In Touch</h4></li>
+    <li><a href='' class="generic-anchor footer-list-anchor" itemprop="significantLink">Bizlem Social</a></li>
+    <li><a href='' class="generic-anchor footer-list-anchor" itemprop="significantLink">Search On Bizlem</a></li>
+    <li><a href='' class="generic-anchor footer-list-anchor" itemprop="significantLink">Reccomended For you</a></li>
+    
+  </ul>
+  <section class="footer-social-section flex-rw">
+      <span class="footer-social-overlap footer-social-connect">
+      CONNECT <span class="footer-social-small">with</span> US
+      </span>
+      <span class="footer-social-overlap footer-social-icons-wrapper">
+      <a href="" class="generic-anchor pintrest" target="_blank" title="Pinterest" itemprop="significantLink"><i class="fa fa-pinterest"></i></a>
+      <a href="" class="generic-anchor facebook" target="_blank" title="Facebook" itemprop="significantLink"><i class="fa fa-facebook"></i></a>
+      <a href="" class="generic-anchor twitter" target="_blank" title="Twitter" itemprop="significantLink"><i class="fa fa-twitter"></i></a>
+      <a href="" class="generic-anchor instagram" target="_blank" title="Instagram" itemprop="significantLink"><i class="fa fa-instagram"></i></a>
+      <a href="" class="generic-anchor youtube" target="_blank" title="Youtube" itemprop="significantLink"><i class="fa fa-youtube"></i></a>
+      <a href="" class="generic-anchor gplus" target="_blank" title="Google Plus" itemprop="significantLink"><i class="fa fa-google-plus"></i></a>
+      </span>
+  </section>
+  <section class="footer-bottom-section flex-rw">
+<div class="footer-bottom-wrapper">   
+<i class="fa fa-copyright" role="copyright">
+ 
+</i> 2017 Bizlem in <address class="footer-address" role="company address">Mumbai</address><span class="footer-bottom-rights"> - All Rights Reserved - </span>
+    </div>
+    <div class="footer-bottom-wrapper">
+    <a href="" class="generic-anchor" rel="nofollow">Terms</a> | <a href="" class="generic-anchor" rel="nofollow">Privacy</a>
+      </div>
+  </section>
+</footer>
+
+

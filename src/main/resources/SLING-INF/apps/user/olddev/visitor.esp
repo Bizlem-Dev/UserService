@@ -1,0 +1,45 @@
+
+<%
+var visitorNode;
+var userNode;
+var dateNode;
+var timeNode;
+var visitNodes;
+var visitorType='false';
+if(currentNode.hasNode("Visitor") && currentNode.getNode("Visitor").hasProperty("visitorName")){
+visitNodes =  currentNode.getNode("Visitor").getProperty("visitorName").getValues();
+for( var i= 0;i<visitNodes.length;i++){
+    //out.print(visitNodes[i].getString());
+    userNode=currentNode.session.getRootNode().getNode("content/user/"+visitNodes[i].getString());
+    if(userNode.hasNode("Privacy") && userNode.getNode("Privacy").hasNode("Identity")
+      && userNode.getNode("Privacy").getNode("Identity").hasProperty("visitorPrivacy")
+      && userNode.getNode("Privacy").getNode("Identity")
+         .getProperty("visitorPrivacy").getString() =='annonymous'){
+              visitorType='true';
+              
+    }
+    visitorNode=currentNode.getNode("Visitor").getNode(visitNodes[i].getString());
+    dateNode = visitorNode.getNodes();
+    timeNode=dateNode[dateNode.length-1].getNodes();
+    %>
+ <div class="tumbnail-login">
+                        <div class="thumbnail">
+                         
+                         
+         <%if(visitorType=='true'){%>
+                    <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" style="width:121px;height:130px" />
+        <h3>Annonymous</h3> 
+        <% }else{%>
+             <img src="<%=userNode.profileImage?userNode.profileImage:request.getContextPath()+
+                                "/apps/user/css/images/photo.gif"%>" class="visitor-picture" style="width:121px;height:130px"/> 
+            <h3><a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" > <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%></a></h3>
+             
+         <%}%> 
+        <h4><%=timeNode[timeNode.length-1].date%><br /><%=timeNode[timeNode.length-1].time%></h4>
+     </div>
+   <%
+   }
+}else{
+out.println("Nobody has visit your profile yet.");
+}
+%>

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <%
+    
+    resource = Packages.java.util.ResourceBundle.getBundle("server");%>
+	<%var online = request.getAttribute("online");
+	
+if(request.getRemoteUser()==null){
+ response.sendRedirect(request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()); 
+}else{
+%>
+        <title>My Page</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+         <%load("../common_new/links_new.esp");%>
+         <script src="<%=request.getContextPath()%>/apps/js_new/FlexSlider/jquery.flexslider.js"></script>
+
+      <script> 
+    function statusSubmitWelcome(){
+    	//alert("vsdsvs");
+    	var data="userStatus="+$("#userStatusId").val()+"&userid=<%=request.getRemoteUser().replace("@","_")%>";
+    	if($("#userStatusId").val().trim()==""){
+    	alert("Please fill some status !");
+    	}else{
+
+        $.ajax({
+            type:'POST',
+            url:'<%=request.getContextPath()%>/content/user/save.setUserStatus',
+            data:data,
+            dataType: 'html',
+             success: function(msg){
+            // alert(msg);
+             document.getElementById("displayStatus").innerHTML=$("#userStatusId").val();
+             document.getElementById("userStatusId").value="";
+            // $("#demo").hide();
+            $('#resposegallery').modal('toggle');
+              }
+        });
+        }
+    }
+    
+    function getMailNumb(providerId){
+       
+       $.ajax({
+                type:'POST',
+                url:'<%=request.getContextPath()%>/servlet/security/verify.getMailNumb',
+                data:'providerId='+providerId,
+                dataType: 'html',
+                success:function(data){
+                	if(data != "Not Configured"){
+                	var count = "<span class='badge'>"+data+"</span>";
+                   $("#"+providerId+"BtnId").hide();
+                   $("#"+providerId+"CntId").show();
+                   $("#"+providerId+"CntId").html(count);
+                   
+                   }else{
+                   $("#"+providerId+"BtnId").show();
+                   $("#"+providerId+"CntId").hide();
+                   }
+                }
+            });
+    }
+</script>
+  </head>
+ <body>
+ 
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+<%load("../common_new/header_new.esp");%>
+
+<!--response success msg botstrpa code-->
+<div class="modal fade" id="resposegallery" role="dialog" style="margin-top:4%">
+<div class="modal-dialog">
+
+  <div class="alert alert-success">
+<strong>Your status updated susseccfully !!</strong> .
+</div>
+  
+</div>
+</div>
+<!-- Google CDN jQuery with fallback to local -->
+<script>
+  (function($){
+      $(window).load(function(){
+          
+          $("a[rel='load-content']").click(function(e){
+              e.preventDefault();
+              var url=$(this).attr("href");
+              $.get(url,function(data){
+                  $(".content .mCSB_container").append(data); //load new content inside .mCSB_container
+                  //scroll-to appended content 
+                  $(".content").mCustomScrollbar("scrollTo","h2:last");
+              });
+          });
+          
+          $(".content").delegate("a[href='top']","click",function(e){
+              e.preventDefault();
+              $(".content").mCustomScrollbar("scrollTo",$(this).attr("href"));
+          });
+          
+      });
+  })(jQuery);
+</script>
+<section>
+<div class="container">
+    <div class="row">
+        
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <!-- for sensex tabs/navs -->
+            <div class="row">
+                <div class="col-md-12">
+                                <!-- profile tag -->                
+                    <div class="content_profile">
+                      <div class="">
+                      <%var profileNode = currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_")); %>
+                        <div class="firstinfo">
+                        <%if(profileNode.hasProperty("profileImage")){%>
+                        <img src="<%=profileNode.profileImage%>"/>
+                        <%}else{%>
+                        <img src="http://prod.bizlem.io:8082/portal/apps/images/nmg.jpg"/>
+                        <%}%>
+                          <div class="profileinfo">
+                            <p></p>
+                            <h1><%=profileNode.name?profileNode.name:""%> <%=profileNode.lastName?profileNode.lastName:""%> <button type="button" class="btn btn-info" data-toggle="collapse" onclick="showStatus()" data-target="#demo"><span title="Update Status" class="glyphicon glyphicon-pencil"></span></button></h1>
+                            <%if(profileNode.hasProperty("headline")){%>
+                            <h3><%=profileNode.headline?profileNode.headline:""%></h3>
+                            <%}else{%>
+                            <h3><%=request.getRemoteUser()%></h3>
+                            <%}%>
+                            <p id="displayStatus" class="bio"><%=profileNode.userStatus?profileNode.userStatus:""%></p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                             <div style="margin-top: 5px;" id="demo" class=" collapse  ">
+                                <div class="status-card" >
+                                  <div>
+                                  <div>
+                                    <div class="status-card__footer">
+                                      <div id="copyright">
+                                        <label> <%=profileNode.name?profileNode.name:""%> <%=profileNode.lastName?profileNode.lastName:""%></label>
+                                      </div>
+                                      <div id="counter"></div>
+                                  </div>
+                                    <textarea id="userStatusId" class="status-card__input" placeholder="What's on your mind?"></textarea>
+                                  </div>
+                                  <div class="status-card__footer">
+                                    
+                                    
+                                    
+                                    <a href="javascript:void(0)" onclick="statusSubmitWelcome()" class="button button--ou">Post</a>
+                                  </div>
+                                  </div>
+                                </div>
+                                <!-- <p class="link">
+                                  <a style="margin-left: 2px;" href="#"><i class="fa fa-pencil-square"></i> Update Status</a>
+                                  <a style="margin-left: 2px;" href="#"><i class="fa fa-video-camera"></i> Add Video</a>
+                                  <a style="margin-left: 2px;" href="#"><i class="fa fa-photo"></i> Create Album</a>
+                                </p>
+                                <textarea style="height: 55px;width: 90%" placeholder="What's your status?"></textarea>
+                                <a href="#" class="pull-right btn btn-primary btn-xs">Post</a>     -->
+                               
+                                
+                              </div>
+                              <hr>
+                          <%load("visitor_new.esp");%>    
+                    </div>
+                </div>
+                <div class="col-md-12">
+        
+                <table class="responstable">
+                    <tbody>
+                       
+                       <tr>   
+                            <td style="color: #4dbdbd;" title="Gmail"><i style="font-size: 170%" class="fa fa-google-plus fa-lg" aria-hidden="true"></i>
+                                 </td>
+                           
+                             <td id="GmailCntId" style="display:none;text-align: center;"></td>
+					 <td id="GmailBtnId" style="display:none"><a class="btn btn-info btn-sm" href="http://prod.bizlem.io:8082/portal/servlet/security/verify.mailNumb?userId=<%=request.getRemoteUser().replace("@","_")%>">Config</a></td>
+                        </tr>
+                        <tr>
+                        
+                            <td style="color: #4dbdbd;" title="Yahoo"><i style="font-size: 170%" class="fa fa-yahoo" aria-hidden="true"></i>
+                                 </td>
+                                  
+                            <td id="YahooCntId" style="display:none;text-align: center;"></td>
+                            <td id="YahooBtnId" style="display:none"><a class="btn btn-info btn-sm" href="http://prod.bizlem.io:8082/portal/servlet/security/verify.mailNumb?userId=<%=request.getRemoteUser().replace("@","_")%>">Config</a></td>
+                            
+                        </tr>
+                        <tr>
+                            <td style="color: #4dbdbd;" title="HotMail"><i class="fa fa-telegram" style="font-size:190%;"></i></td>
+                            <td id="HotmailCntId" style="display:none;text-align: center;"></td>
+                             <td id="HotmailBtnId" style="display:none"><a class="btn btn-info btn-sm" href="http://prod.bizlem.io:8082/portal/servlet/security/verify.mailNumb?userId=<%=request.getRemoteUser().replace("@","_")%>">Config</a></td>
+                            
+                       
+                        </tr>
+                    </tbody>
+                </table>
+            
+    </div><!--end of colmd12-->
+
+    <div  class="col-md-12 well ">
+        <h3 style="color: #4dbdbd;font-weight:700;" class="text-center"> Socials</h3>
+        <div class="social-icons1">
+          <a class="item1 fa fa-twitter" href="http://prod.bizlem.io:8082/portal/content/user/.social"><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;">My Twitter</label></a>
+          <a class="item1 glyphicon glyphicon-bold" href="http://prod.bizlem.io:8082/portal/servlet/social/mesg.blog?id=<%=request.getRemoteUser().replace("@","_")%>"><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;">My Blog</label></a>
+          <a class="item1 fa fa-envelope" href="http://prod.bizlem.io:8082/portal/servlet/social/messages.view?userId=<%=request.getRemoteUser().replace("@","_")%>"><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;">Social</label></a>
+        </div>
+
+    </div>
+    <div style="padding: 0 0;" class="col-md-12 well">
+        <select class="form-control" id="compMyPage" onclick="setRfQ()"></select>
+                <table class="responstable">
+                    <tbody>
+                       <tr>
+                           <td style="font-size:120%;font-weight: 700"><label>RFQ</label></td>
+                           <td><a href="#" class="badge" id="newCount">0</a></td>
+                       </tr>
+                       <tr>
+                           <td style="font-size:140%;font-weight: 700"><label>WIP</label></td>
+                           <td><a href="#" class="badge" id="wipCount">0</a></td>
+                       </tr>
+                       <tr>
+                           <td style="font-size:140%;font-weight: 700"><label>Responded</label></td>
+                           <td><a href="#" class="badge" id="resCount">0</a></td>
+                       </tr>
+                    </tbody>
+                </table>
+                 <div class="social-icons1">
+          <a style="width: 65%" class="item1 glyphicon glyphicon-pencil" href="http://prod.bizlem.io:8082/portal/servlet/common/search.getquote"><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;">Post your requirement</label></a>
+          <a style="width: 30%" class="item1 glyphicon glyphicon-comment" href="#"><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;">Posted</label></a>
+          
+        </div>
+            
+    </div><!--end of colmd12-->
+    <div  class="col-md-12 well ">
+        <p><h3 style="color: #4dbdbd;font-weight:700;" class="text-center"><label style="font-family: 'Roboto', sans-serif !important;">Connect</label></h3></p>
+         <div class="social-icons1">
+          <a style="width: 48%" class="item1 glyphicon glyphicon-envelope" href="http://prod.bizlem.io:8082/portal/content/user/.messages"><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;">My Messages</label><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;" id="msgcnt"></label></a>
+          <a style="width: 48%" class="item1 glyphicon glyphicon-user" target="_blank" id="myCont" href="#"><label style="font-family: 'Roboto', sans-serif !important;font-size: 110%;">My Contacts</label></a>
+          
+        </div>
+    </div>
+            </div><div class="clearfix"></div>
+     
+        </div><!--end of 1st div-->
+
+        <div class=" col-md-6">
+	<%load("connection_new.esp");%>
+
+        <div class="row">
+      <%load("../products/hotproducts.esp");%>
+     
+
+
+   </div>
+    <div class="clearfix"></div>
+    <br>
+    <div class="row">   
+       <%load("recommendedProduct_new.esp");%>
+        <%load("event_new.esp");%>
+    </div>
+        </div><!--end of middle div-->
+        <div class="col-md-3">
+            
+            <div class="row">
+             <%load("recommendedCompanies.esp");%>
+            </div>
+            <div class="row" id="recommendedconnection">
+                 <%load("recommendedConnection_new.esp");%>
+                
+            </div>
+            <div class="row">
+                <%load("recommendedGroups.esp");%>
+            </div>
+             <div class="row">
+             <div class="col-sm-12">
+                 <iframe id="mypagenews" src="" frameborder="0" scrolling="no" width="285" height="400"></iframe>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function setRfQ(){
+    var res = document.getElementById("compMyPage").value;
+    if(res.indexOf(",") != -1){
+    var resarr = res.split(",");
+     $("#compMyPage").show();
+    $("#newCount").html(resarr[0]);
+    $("#wipCount").html(resarr[1]);
+    $("#resCount").html(resarr[2]);
+    var url = "#";
+    if(resarr[3] != 0){
+      url = "http://prod.bizlem.io:8082/portal/servlet/service/globalsearch.rfq?serviceId="+resarr[3]+"&companyid="+resarr[4];
+     }else{
+     url = "#";
+     }
+    $("#newCount").attr("href",url);
+    $("#wipCount").attr("href",url);
+    $("#resCount").attr("href",url);
+    }
+    
+    }
+  $(document).ready(function(){
+         $.ajax
+	        ({
+              url:'<%=request.getContextPath()%>/servlet/common/search.rfqmypage',
+              data:{
+        	
+              },
+              success: function(data) {
+                        console.log(data);
+                        if(data != "false"){
+                        $("#compMyPage").html('');
+                        var objJson = JSON.parse(data);
+                        var objArray = objJson.rfqdetail;
+                        var serviceId = objJson.serviceId;
+                        var option = "";
+                        for(var i=0;i<objArray.length;i++){
+                        var compId = objArray[i].compId;
+                        var compTitle = objArray[i].compTitle;
+                        var newcount = objArray[i].newcount;
+                        var wipcount = objArray[i].wipcount;
+                        var respcount = objArray[i].respcount;
+                        var allcnt = newcount+","+wipcount+","+ respcount+","+serviceId+","+compId;
+                        var url = "http://prod.bizlem.io:8082/portal/servlet/service/globalsearch.rfq?serviceId="+serviceId+"&companyid="+compId;
+                        
+                        if(serviceId != "0"){
+                          if(objArray.length == 1){
+                           $("#compMyPage").hide();
+                          $("#newCount").html(newcount);
+                          $("#wipCount").html(wipcount);
+                          $("#resCount").html(respcount);
+                           $("#newCount").attr("href",url);
+                          $("#wipCount").attr("href",url);
+                          $("#resCount").attr("href",url);
+                         
+                          }else{
+                          $("#compMyPage").show();
+                          if(i == 0){
+                          $("#newCount").html(newcount);
+                          $("#wipCount").html(wipcount);
+                          $("#resCount").html(respcount);
+                           $("#newCount").attr("href",url);
+                          $("#wipCount").attr("href",url);
+                          $("#resCount").attr("href",url);
+                          option = option + "<option value='"+allcnt+"' selected>"+compTitle+"</option>";
+                          }else{
+                          option = option + "<option value='"+allcnt+"'>"+compTitle+"</option>";
+                          }
+                          
+                          }
+                          
+                        }else{
+                        
+                          if(objArray.length == 1){
+                            $("#compMyPage").hide();
+                         $("#newCount").html(newcount);
+                          $("#wipCount").html(wipcount);
+                          $("#resCount").html(respcount);
+                           $("#newCount").attr("href",'#');
+                          $("#wipCount").attr("href",'#');
+                          $("#resCount").attr("href",'#');
+                         
+                          }else{
+                          $("#compMyPage").show();
+                          if(i == 0){
+                          $("#newCount").html(newcount);
+                          $("#wipCount").html(wipcount);
+                          $("#resCount").html(respcount);
+                           $("#newCount").attr("href",'#');
+                          $("#wipCount").attr("href",'#');
+                          $("#resCount").attr("href",'#');
+                           option = option + "<option value='"+allcnt+"' selected>"+compTitle+"</option>";
+                          }else{
+                          option = option + "<option value='"+allcnt+"'>"+compTitle+"</option>";
+                          }
+                          
+                          }
+                        
+                        }
+                        
+                        }
+                        $("#compMyPage").html(option);
+                        }
+              }
+           });
+           $.ajax
+	        ({
+              url:'<%=request.getContextPath()%>/servlet/common/search.getMessageCount',
+              data:{
+        	
+              },
+              success: function(data) {
+              console.log(data);
+              var resdata = data.split("~");
+            	var data1 = "("+resdata[0]+")";
+            	$("#msgcnt").html(data1);
+            	  if(document.getElementById("myCont") != null){
+                     var mycnt = "http://35.186.173.106/cs/view/login.php?username=<%=request.getRemoteUser()%>&password="+resdata[1];
+                     $("#myCont").attr("href",mycnt);
+                  }
+              }
+           });
+           document.getElementById("mypagenews").src = "http://prod.bizlem.io:8082/portal/content/newsfeed/widget/69/69";
+       getMailNumb('Gmail');
+    getMailNumb('Yahoo');
+    getMailNumb('Hotmail');     
+        }); 
+</script>
+
+</section>
+
+
+    <%load("../common_new/footer_new.esp");%>
+
+
+<!-- Login Modal Start  -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Login Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Login Modal End  -->
+
+<!-- register Modal Start  -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Registration Form</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+
+
+<!-- contactsupplier Modal Start  -->
+<div class="modal fade contactsupplier" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Contact Supplier</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+    
+  
+      
+    </body>
+</html><%}%>

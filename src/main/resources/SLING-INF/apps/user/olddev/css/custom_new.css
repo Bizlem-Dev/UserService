@@ -1,0 +1,40 @@
+.section-internal
+{
+	margin:0px auto;
+    background:url(../images/internal_bg.gif) repeat-x 0px 0px #e7e7e7;
+    border: 5px solid #1871b5;
+    border-radius: 10px;
+    box-shadow: 0 0 1px #303030;
+	padding:15px;
+	width:530px;
+	height:auto;
+}
+
+.section-internal div{position:relative; margin-bottom:20px; padding-left:20px; display:table;}
+.section-internal div div{position:inherit; margin-bottom:auto; padding-left:inherit;}
+
+.section-internal div .bullet
+{
+    background:url(../images/internal_bullet.gif) repeat-x 0px 0px #e7e7e7;
+    border: 2px solid #1871b5;
+    border-radius: 25px;
+    box-shadow: 0 0 1px #303030;
+	padding:3px;
+	width:30px;
+	height:30px;
+	line-height:30px;
+	display:block;
+	color:#1871b5;
+	font-size:20px;
+	text-align:center;
+	font-family:'MV Boli',Arial, Helvetica, sans-serif;
+	position:absolute;
+	left:-38px;
+}
+.section-internal div input, .section-internal div select, .section-internal div textarea{margin-top:5px;}
+.section-internal label{font-size:18px; display:table; padding:7px 0px 0px 0px; font-family:'Pontano Sans', Arial, Helvetica, sans-serif; font-weight:bold;}
+
+.section-internal label.note{font-size:11px; padding:0px 0px 0px 0px; color:#666;}
+
+.icon-social-media{margin:5px 0px; padding:0px; list-style:none}
+.icon-social-media li{float:left; padding:0px; margin:3px 20px 10px 0px; height:20px; width:20px; display:table;}

@@ -1,0 +1,28 @@
+
+
+<html>
+    <head>
+     </head>
+    <body>
+   
+    <%
+        var linkedin=request.getAttribute("linked");
+
+      %>
+      <div class="demo content4">
+
+
+                        <div class="search-list-mobile">
+                            <div class="thumbnail">
+                            <div class="caption">
+                              <h3><a href="#"><%=linkedin[0]%>  <%=linkedin[1]%></a></h3>
+                              <p class="foo1">
+                                 <%=linkedin[2]%>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        </div>   
+    </body>
+</html>
+

@@ -1,0 +1,65 @@
+<script>
+
+ $(document).ready(function() {
+
+$('.flexslider .slides img').css('height', '130px');
+
+});
+
+</script>
+
+<div class="three-row well well-sm">
+											<h3 class="text-blue">Photo Story </h3>
+											<div class="row">
+												<div class="col-xs-12">
+													<div id="image-slider" class="flexslider ">
+								                      <ul class="slides">
+						<%
+    currentNode = currentNode.session.getRootNode().getNode("content").getNode("photo");
+    if (currentNode.hasNodes()) {
+        var resultList = currentNode.getNodes();
+        if (resultList.length < 1) {
+			out.print("No photo story is available");
+        } else {
+            for (var k = 0; k < resultList.length; k++) {
+               // var storynode = resultList.get(k);
+%>
+
+								                        <li>
+							                            	<a>
+															 <%
+                var imgNode = "";
+                if (resultList[k].hasNodes()) {
+                    imgNode = resultList[k].getNodes();
+            %>
+
+							                                    <img width="160px" height="160px" class="" src="<%=imgNode[0].imgPath%>">
+																
+																  <%}%>
+<a href="<%=request.getContextPath()%>/servlet/photo/photoshow.viewstory?recentAdd=<%=resultList[k].getName()%>" style="color:#6D6D7B"><%=resultList[k].title%></a>
+							                                </a>
+							                            </li>
+						<%
+							}
+							}
+							}
+
+%>
+								                      </ul>
+								                    </div>
+								                     
+												</div>
+											</div>
+
+											<script type="text/javascript">
+							                      $('#image-slider').flexslider({
+							                        animation: "slide",
+									                controlNav: false,
+									                //direction: "vertical",
+									                animationLoop: false,
+									                slideshow: false,
+									                itemWidth: 160,
+									                itemMargin: 15,
+							                      });
+							                  </script>
+										</div>

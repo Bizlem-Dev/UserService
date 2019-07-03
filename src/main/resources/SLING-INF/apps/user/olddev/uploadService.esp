@@ -1,0 +1,32 @@
+<%load("includes/header.esp");%>  
+<script>
+    $(function(){
+        $("#upload").live("click", function() {
+        var data, xhr;
+    
+        data = new FormData();
+        data.append( 'file', $( '#avatar' )[0].files[0] );
+        data.append( 'userId', 'pran3bull_gmail.com' );
+    
+        xhr = new XMLHttpRequest();
+    
+        xhr.open( 'POST', '<%=request.getContextPath()%>/servlet/service/check.upload', true );
+        xhr.onreadystatechange = function ( response ) {
+        
+            if (xhr.readyState == 4 && xhr.status == 200) {                
+                        alert(xhr.responseText);
+                    }
+        };
+        xhr.send( data );
+        
+        });
+    });
+</script>
+</head>
+<body>
+  <form action="" method="POST" id="testId">
+    <input id="avatar" type="file" name="avatar" />
+    <input type="text" name="userId" />
+  </form> 
+    <input type="button" id="upload" value="Upload" />
+</body>

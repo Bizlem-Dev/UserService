@@ -1,0 +1,34 @@
+<%load("includes/header.esp");%>
+</head>
+<body>
+<div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big" style="height:430px;overflow:scroll;">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				
+<%
+
+ var contentNode=currentNode.session.getRootNode().getNode("content").getNode("user");
+ var userNode;
+ for(var i=0;i<mutualFriend.size();i++){
+ 	userNode=contentNode.getNode(mutualFriend.get(i));
+ 	%>
+ 	<li class="ui-state-default ui-corner-top" style="height:80px">
+     		  <div class="profile-user-thumb">
+	 				<% if(userNode.hasProperty("profileImage")){
+	               	%>
+						<img src="<%=userNode.profileImage%>"  height="60"  />
+		            <%}else{  %>
+		                     <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="41" height="60"  /> 
+		            <%}%>
+              </div>
+			  <div  class="content_5"> 
+  				<strong><%=userNode.name+' '+userNode.lastName%> </strong> <br />
+				<%=userNode.headline?userNode.headline:""%></br>
+				<%=userNode.city?userNode.city:""%>
+				</div>
+ 	<%
+ 	
+ }
+%>
+
+</body>
+</html>

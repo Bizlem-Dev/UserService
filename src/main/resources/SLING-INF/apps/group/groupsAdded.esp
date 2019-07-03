@@ -1,0 +1,44 @@
+<%load("../user/includes/header.esp");%>
+
+</head>
+<body>
+<div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big" style="height:430px;overflow:scroll;">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+				
+<%
+
+ var contentNode=currentNode.session.getRootNode().getNode("content").getNode("user");
+ var userNode;
+ var groupNode;
+ var group;
+ if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded") 
+ 		&& currentNode.getNode("Groups").getNode("GroupsAdded").hasNodes()){
+ 		groupNode=currentNode.getNode("Groups").getNode("GroupsAdded").getNodes();
+ 			for(i in groupNode){
+ 				group=currentNode.session.getRootNode().getNode("group").getNode(groupNode[i].getName());
+ 			 if(groupNode[i].getProperty("groupRequest").getString()=='accpeted'){
+ 				%>
+ 					<li class="ui-state-default ui-corner-top" style="height:80px">
+     		  		   <div class="profile-user-thumb">
+			 				<% if(group.hasNode("picture")){
+			               	%>
+								<img src="<%=request.getContextPath()%><%=group.getNode("picture")%>" width="41" height="60"  />
+				            <%}else{  %>
+				                     <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="41" height="60"  /> 
+				            <%}%>
+		              </div>
+					  <div  class="content_5"> 
+			  				<strong><%=group.groupName?group.groupName:""%></strong> <br />
+			  				<span>Type:</span><%=group.groupDescription?group.groupDescription:""%>
+							<span>Website:</span><%=group.groupWebsite?group.groupWebsite:""%></br>
+							
+					  </div>
+					  </li>
+	 	<%
+	 	}
+ 	}
+ }
+%>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<%-- // change for WRO4J load("includes/header.esp");--%>
+<html>
+<head>
+<link href="<%=request.getContextPath()%>/wro/common.css" rel="stylesheet" type="text/css" />
+<script src="<%=request.getContextPath()%>/wro/common.js"></script>
+
+<script>
+    function deleteGroup(group,v){
+        var url='<%=request.getContextPath()%>/servlet/group/show.unjoin';
+        var data='groupName='+group+'&userId=<%=currentNode.getName()%>';    
+        if(confirm('Confirm Unjoin'))
+            {
+                $.ajax({
+                  type: 'POST',
+                  url: url,
+                  data: data,
+                  success: function(){
+                    $(v).parent('div').parent('li').remove();
+                  }
+                });
+            }else{}              
+    }
+</script>
+<script>
+//    $(function(){
+//        $("#conferenceID").load("<%=request.getContextPath()%>/servlet/service/check.conference?userId=<%=currentNode.getName()%>");
+ //   });
+</script>
+</head>
+<body>
+<!--<div id="conferenceID"></div>-->
+<div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" style="margin-left: 2px !important;">
+				
+<%
+
+ var contentNode=currentNode.session.getRootNode().getNode("content").getNode("user");
+ var userNode;
+ var groupNode;
+ var group;
+ if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded") 
+ 		&& currentNode.getNode("Groups").getNode("GroupsAdded").hasNodes()){
+ 		groupNode=currentNode.getNode("Groups").getNode("GroupsAdded").getNodes();
+ 		
+ 			for(i in groupNode){
+ 				if(currentNode.session.getRootNode().getNode("content").getNode("group").hasNode(groupNode[i].getName())){
+ 				  group=currentNode.session.getRootNode().getNode("content").getNode("group").getNode(groupNode[i].getName());
+		 			 if(groupNode[i].getProperty("groupRequest").getString()=='accepted'){
+		 				%>
+		 					<li class="ui-state-default ui-corner-top" 
+		 					    style="height:60px;width:99% !important;margin: 0 2px 8px 0 !important;">
+		     		  		   <div class="profile-user-thumb">
+					 				<% if(group.hasNode("picture")){
+					               	%>
+										<img src="<%=request.getContextPath()%><%=group.getNode("picture")%>" width="41" height="30"  />
+						            <%}else{  %>
+						                     <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="41" height="30"  /> 
+						            <%}%>
+				              </div>
+							  <div  class="content_5"> 
+					  				<strong><%=group.groupName?group.groupName:""%></strong> 
+					  				<%if(request.getParameterMap().containsKey("delete")){
+                                     %> 
+                                       <%if(request.getRemoteUser().replace("@","_").equals(currentNode.getName())){%> 
+					  			      	<img id="remove" height="20" align="middle" 
+					  			      	  alt="Delete" title="Unjoin Group" 
+                                          src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" 
+                                          onclick="deleteGroup('<%=group.getName()%>',this)" />
+                                        <%}%>  
+                                    <%}%>    
+                                <br />
+					  				<span>Type:</span><%=group.groupType?group.groupType:""%></br>
+									<span>Website:</span><%=group.groupWebsite?group.groupWebsite:""%>
+									
+							  </div>
+							  </li>
+			 			<%
+						}
+	 			}
+ 			}
+ }
+%>
+
+</body>
+</html>

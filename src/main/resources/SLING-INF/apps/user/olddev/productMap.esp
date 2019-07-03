@@ -1,0 +1,73 @@
+<%
+// Check if we have a currentNode
+var currentNodeProvided = ((typeof currentNode != "undefined") && currentNode.title != null);
+%>
+<%load("includes/header.esp");%>
+ <script>
+    function openPopUpProduct(theURL, title, heightInPX, widthInPX,mapType)
+    {
+       var selectedValues= window.showModalDialog(theURL, title, 'dialogHeight=' + heightInPX + 'px;dialogWidth='+ widthInPX + 'px');
+       document.getElementById("productTypeID").value=selectedValues;
+       document.getElementById("nodeNameID").value=mapType;
+       document.getElementById("formProduct").submit(); 
+      }
+      
+    function deleteProduct(node,v){
+        var url="<%=request.getContextPath()%>/content/user/save.delete"
+        var data="nodeName="+node;
+        if(confirm('Confirm Delete'))
+                {
+                    $.ajax({
+                          type: 'POST',
+                          url: url,
+                          data: data,
+                          success: function(){
+                            $(v).parent('li').remove();
+                          }
+                      }); 
+                 }else{} 
+    }  
+  </script>    
+</head>
+<body>
+<h2 style="font-size:30px !important;">Products</h2><br/>
+<%var productType=currentNode.session.getNode("/content/master/user/product").productType;
+    for(i in productType){
+    %>
+       <div class="section">
+       <div class="header"><%=productType[i]%>
+           <%if(request.getRemoteUser().replace("@","_").equals(currentNode.getName())){%>
+             <a class="btn btn-primary" onclick="openPopUpProduct('<%=request.getContextPath()%>/content/category.searchfn', 'Product Mapping', 800, 1000,'<%=productType[i].replace(/ /g,"")%>')" href="javascript:void(0)">Add Product</a><br/>
+           <%}%>
+        </div>
+        <%if(currentNodeProvided && currentNode.hasNode("Product")
+                && currentNode.getNode("Product").hasNode(productType[i])
+                && currentNode.getNode("Product").getNode(productType[i]).hasNodes()){
+                var productNode=currentNode.getNode("Product").getNode(productType[i]).getNodes();
+                %>
+                    <ul>
+                        <%
+                         for(product in productNode){
+                         %>
+                            <li><%=productNode[product].productName%> i.e. <%=productNode[product].getName().replace("_","")%>
+                            <%if(request.getRemoteUser().replace("@","_").equals(currentNode.getName())){%>
+                             <img id="remove" height="20" style="float:right;" align="middle" alt="Delete" title="Delete Row" 
+                                 src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" 
+                                 onclick="deleteProduct('<%=productNode[product]%>',this)"/></li>
+                            <%}%>      
+                         <%}  
+                         %>
+                    </ul>
+                <%
+                } %> 
+                </div>
+                <%}%>
+  <div>
+    <form method="POST" id="formProduct" action="<%=request.getContextPath()%>/content/user/save.addType">
+    <input type="hidden" id="productTypeID" name="productValues" />
+    <input type="hidden" id="nodeNameID" name="nodeName"  />
+    <input type="hidden" name="productUserName"  value="<%=currentNode.getName()%>" />      
+    </form>
+   </div> 
+</body>
+</html>

@@ -1,0 +1,537 @@
+<!-- register Modal End  -->
+ <div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     <form  method="POST" action="<%=request.getContextPath() %>/content/user/save.pro" class="form-horizontal">
+      <div class="modal-header">
+       
+        <h4 class="modal-title" id="loginModalLabel">Update Information</h4>
+      </div>
+      <div class="modal-body">
+          <div id="personProfileContent">
+                    <fieldset class="row-fluid" id="userProfilePrimaryData">
+                        <div class="profile-user-thumb">
+                             <% if(currentNodeProvided && currentNode.hasProperty("profileImage")){
+	                           %>
+	                           <img src="<%=getCurrentNodeValue("profileImage")%>" height="165px" width="125px" />
+	                           <%}
+	                           else{  %>
+	                         <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" /> 
+	                         <%}%>
+                                
+                            <div align="center"><a rel="facebox" href="<%=postPath%>/attachments/*.upload?userId=<%=request.getParameter("id")%>" class="btn btn-primary">Change Picture</a></div>
+                            <!-- <div align="center"><a href="#" class="btn btn-warning">Remove Picture</a></div> -->
+                        </div>
+
+                        
+
+                        <!-- Display user info-->
+                        
+                            <div class="profile-info-visible" style="width:77%;">
+                               
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="form">
+                                        <tr>
+                                            <%if(!currentNodeProvided){
+                                                %>
+                                                    <input type="hidden" name="profileImage"
+                                                         value="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" />         
+                                            <%}else{%>
+                                        	<input type="hidden" name="profileImage" value="<%=getCurrentNodeValue("profileImage")%>" />
+                                            <%}%>
+                                            <td width="33%"><label>First Name</label>
+                                            <%if(currentNodeProvided){%>
+                                            <input type="hidden" name="title" value="<%=getCurrentNodeValue("title")%>" />
+                                            <%}else {%>
+                                            <input type="hidden" name="title" value="<%=request.getParameter("id")%>" />
+                                            <%}%>
+                                            <input type="text" name="name"  value="<%= getCurrentNodeValue("name") %>" title="First Name" /></td>
+                                            <td width="33%"><label>Middle Name</label><input type="text" name="maidenName" value="<%= getCurrentNodeValue("maidenName") %>" title="Middle Name" /></td>
+                                            <td width="33%"><label>Last Name</label><input type="text" name="lastName" value="<%= getCurrentNodeValue("lastName") %>" title="Last Name" /></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td colspan="3"><label>Profile HeadLine</label><textarea  name="headline" rows="1"><%= getCurrentNodeValue("headline") %></textarea></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Maritual Status</label>
+                                            <select name="status"  onchange="statusR(this.value)" >
+                                            <%
+                                                var statusVal=["Single","In a Relationship","Engaged","Married","Divorced","In an Open Relationship"]
+                                               for(i in statusVal) {
+                                               if(getCurrentNodeValue("status")==statusVal[i]){
+                                               %>
+                                                   <option value="<%=statusVal[i]%>" selected="selected" ><%=statusVal[i]%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=statusVal[i]%>"><%=statusVal[i]%></option>   
+  
+                                                    <%  }} %>
+                                                    </select>
+                                           </td>
+
+                                        
+                                            <td><label>Birthday</label><input type="text" name="birthDay"
+                                                    value="<%= getCurrentNodeValue("birthDay") %>" /></td>
+                                            <td><label>Marriage Anniversary</label>
+                                          <%  if(getCurrentNodeValue("anniversary")=="Married"){
+                                          %>
+                                            <input name="anniversary" type="text" value="<%= getCurrentNodeValue("anniversary") %>"  id="anni"  />
+                                          <%
+                                              }else{
+                                              %>
+                                              <input name="anniversary" type="text" value="<%= getCurrentNodeValue("anniversary") %>" disabled="true" id="anni"  />
+                                                          
+                                           <%}  
+                                          %>      
+                                                   
+                                                   
+                                                    </td>
+                                        
+                                    <tr><td colspan="3">
+                                    <div class="separator"></div>
+                                    
+                                    <table id="emailT" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            
+                                            
+                                            <tr>
+                                                <td width="33%"><label>Email</label></td>
+                                                <td width="33%">&nbsp;</td>
+                                                <td width="33%">&nbsp;</td>
+                                            </tr>
+                                            
+                                             
+                                            <%
+                                                
+                                                if( currentNodeProvided && currentNode.hasNode("ContactDetails")
+                                                	 && currentNode.getNode("ContactDetails").hasNode("EmailID")
+                                                	  && currentNode.getNode("ContactDetails").getNode("EmailID").hasNodes() ){
+	                                                
+		                                                var emailValue=currentNode.getNode("ContactDetails/EmailID").getNodes();
+		                                                
+		                                               var countEmail=0;
+		                                                for(i in emailValue)
+		                                                {countEmail++;
+		                                                %>
+		                                                  <tr id="<%=emailValue[i].getName()%>">
+		                                                      <td >                                                    
+		                                                        <input name="email" type="text" value="<%= emailValue[i].emailId %>" /> 
+		                                                        <input name="emailValue" type="hidden" value="<%= emailValue[i].getName() %>" /> 
+		                                                        </td>
+		                                                        <td class="addClass">
+		                                                       <% if(countEmail==1)
+		                                                        {
+		                                                        %>
+		                                                       <a id="profileEdit" onclick="addRow4('emailT')" href="javascript:void(0)">
+		                                                            <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD">
+		                                                        </a>
+		                                                        <%} %>
+		                                                        <a id="profileEdit"
+		                                                        	 onclick="deleteMobile('<%=request.getContextPath()%>/content/user/save.deleteEmail','<%= emailValue[i].getName() %>','<%=request.getParameter("id")%>',this, 'email')" href="javascript:void(0)">
+		                                                            <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete">
+		                                                        </a>
+		                                                        </td>
+		
+		                                                    
+		                                                        
+		                                                        
+		                                                      </tr>
+		                                                <%}}
+		                                                else{ %>
+		
+		                                                <tr>
+		
+		                                                    <td><input name="email" type="text" value="" /></td>
+		                                                    <input name="emailValue" type="hidden" value="" />
+		
+		                                                    <td><a id="profileEdit" onclick="addRow4('emailT')" href="javascript:void(0)">
+		                                                            <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD">
+		                                                        </a>
+		                                                        <a id="profileEdit" onclick="deleteRow('emailT')" href="javascript:void(0)">
+		                                                            <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete">
+		                                                        </a>
+		                                                        </td>
+		
+		                                                    <td></td>
+		     
+		                                                </tr>
+		                                                <%}%>
+                                      
+                                            
+                                        </table>
+                                    </td></tr>
+                                     <tr><td colspan="3">
+                                    <div class="separator"></div>
+                                    
+                                    <table id="phone" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td width="33%"><label>Phone Number</label></td>
+                                                <td width="33%"><label>Number Type</label></td>
+                                                <td width="33%">&nbsp;</td>
+                                            </tr>
+                                            <%
+                                                if(currentNodeProvided && currentNode.hasNode("ContactDetails")
+                                                 && currentNode.getNode("ContactDetails").hasNode("Phone")
+                                                 && currentNode.getNode("ContactDetails").getNode("Phone").hasNodes()){
+                                                var numberValue=currentNode.getNode("ContactDetails/Phone").getNodes();
+                                              	 var countPhone=0;
+                                                
+                                                for(j in numberValue)
+                                                {countPhone++;
+                                             %>
+                                                 <tr id="<%=numberValue[j].number%>">
+
+                                                    <td><input name="number" type="text" value="<%=numberValue[j].number %>" /></td>
+                                                    
+                                                     <td>      
+                                                          <select name="numberType">
+                                            <%
+                                                var phoneVal=["Mobile","Home","Office"];
+                                               for(i in phoneVal) {
+                                               if(phoneVal[i]==numberValue[j].numberType){
+                                               out.println(numberValue[j].numberType);
+                                               %>
+                                                   <option value="<%=phoneVal[i]%>" selected="selected" ><%=phoneVal[i]%></option>
+                                               <%}
+                                                   else{
+                                               %>
+                                                <option value="<%=phoneVal[i]%>"><%=phoneVal[i]%></option>   
+  
+                                                    <%  }} %>
+                                                         </select>
+                                                     
+                                                     </td>
+                                                     <td class="addClass">
+                                                  <%
+                                                      if(countPhone==1){
+                                                  %>
+                                                                                                        
+                                                            <a id="profileEdit" onclick="addRow5('phone')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD">
+                                                            </a>
+                                                    <%}%>
+                                                     <a id="profileEdit" onclick="deleteMobile('<%=request.getContextPath()%>/content/user/save.deleteMobile','<%=numberValue[j].number%>','<%=request.getParameter("id")%>',this,'phone')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete">
+                                                            </a> </td>
+
+
+                                                </tr>
+                                             <%}} else {%>
+                                            
+                                            
+                                            
+                                            
+                                                <tr>
+
+                                                    <td><input name="number" type="text" value="" /></td>
+                                                    
+                                                     <td>      
+                                                          <select name="numberType">
+                                            <%
+                                                var phoneVal=["Mobile","Home","Office"];
+                                               for(i in phoneVal) {
+                                               
+                                               %>
+                                                <option value="<%=phoneVal[i]%>"><%=phoneVal[i]%></option>   
+  
+                                                    <%  } %>
+                                                         </select>
+                                                     
+                                                     </td>
+                                                  
+                                                      <td>                                                  
+                                                            <a id="profileEdit" onclick="addRow5('phone')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD">
+                                                            </a>
+                                                            <a id="profileEdit" onclick="deleteRow('phone')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete">
+                                                            </a>
+                                                            
+                                                            
+                                                      </td>
+
+
+
+                                                </tr>
+                                                <%}%>
+                                              </table>  </td></tr>
+
+                                          <tr><td colspan="3">
+                                             
+                                        <div class="separator"></div>
+                                        <table id="im" width="100%" border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td width="33%"><label>IM Id</label></td>
+                                                <td width="33%"><label>IM Type</label></td>
+                                                <td width="33%">&nbsp;</td>
+                                            </tr>
+                                            <%
+                                                 if(currentNodeProvided && currentNode.hasNode("ContactDetails")
+                                                 && currentNode.getNode("ContactDetails").hasNode("IM")
+                                                 && currentNode.getNode("ContactDetails").getNode("IM").hasNodes()){
+                                                 
+                                                var imValue=currentNode.getNode("ContactDetails").getNode("IM").getNodes();
+                                                 var countim=0;
+                                                for(j in imValue){
+                                                                                               
+                                                countim++;
+                                             %>
+                                                 <tr id="<%=imValue[j].imValue%>">
+
+                                                    <td><input name="im" type="text" value="<%=imValue[j].imValue%>" /></td>
+                                                     <td>      
+                                                         <select name="imType">
+                                                           <%
+                                                            var imVal=["Yahoo","GTalk","Skype","Window Live Messenger"];
+                                                            for(i in imVal) {
+                                                             if( imValue[j].imTypeValue==imVal[i]){%>
+                                                                 <option value="<%=imVal[i]%>" selected="selected" ><%=imVal[i]%></option>
+                                                             <%}else{%>
+                                                                <option value="<%=imVal[i]%>"><%=imVal[i]%></option>   
+                                                             <%  }} %>
+                                                         </select>
+                                                     </td>
+                                                     <td>
+                                                        <%if(countim==1){%>
+                                                            <a id="profileEdit" onclick="addRow1('im')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD">
+                                                            </a>
+                                                        <%}%>
+                                                            <a id="profileEdit" onclick="deleteMobile('<%=request.getContextPath()%>/content/user/save.deleteIM','<%=imValue[j].getName()%>','<%=request.getParameter("id")%>',this,'im')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete">
+                                                            </a>
+                                                     </td>
+                                                 </tr>
+                                             <%}} else {%>
+                                                 <tr>
+                                                    <td><input name="im" type="text" value="" /></td>
+                                                    <td>      
+                                                     <select name="imType"   >
+                                                      <%var imVal=["Yahoo","GTalk","Skype","Window Live Messenger"]
+                                                       for(i in imVal) {%>
+                                                           <option value="<%=imVal[i]%>"  ><%=imVal[i]%></option>
+                                                       <%}%>
+                                                     </select>
+                                                    </td>
+                                                     <td>                                                  
+                                                            <a id="profileEdit" onclick="addRow1('im')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_add_2.png" title="Add Row" alt="ADD">
+                                                            </a>
+                                                            <a id="profileEdit" onclick="deleteRow('im')" href="javascript:void(0)">
+                                                                <img height="20" align="middle" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove_2.png" title="Delete Row" alt="Delete">
+                                                            </a>
+                                                      </td>
+                                                </tr>
+                                                <%}%>
+                                           </table></td></tr> 
+                                            
+                                            <tr><td colspan="3">
+                                        <div class="separator"></div>
+                                        
+                                        
+                                        <tr>
+                                            <td><label>Current Industry</label><input name="industry" type="text" 
+                                                    value="<%= getCurrentNodeValue("industry") %>" /></td>
+                                        
+                                            <td><label>Current Address</label><input name="address" type="text" 
+                                                    value="<%= getCurrentNodeValue("address") %>" /></td>
+                                        
+                                            <td><label>Current City</label><input type="text" name="city" value="<%= getCurrentNodeValue("city") %>" /></td>
+                                        </tr>
+                                        
+                                        
+                                        <tr>
+                                            <td><label>State</label><input name="state" type="text" 
+                                                    value="<%= getCurrentNodeValue("state") %>" /></td>
+                                            <td><label>Country</label><input name="country" type="text" 
+                                                    value="<%= getCurrentNodeValue("country") %>" /></td>
+                                            <td><label>Pin Code</label><input name="pinCode" type="text" 
+                                                    value="<%= getCurrentNodeValue("pinCode") %>" /></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td></td>
+                                            <td colspan="2"></td>
+                                        </tr>
+                                        <tr>
+                                        
+                                            <td>
+                                            <%if(currentNodeProvided){%>
+                                            
+                                            <input name="redirect" type="hidden" value="<%=postPath%>.profile"/> 
+                                            <%}else{%>
+                                                     <input name="redirect" type="hidden" value="<%=request.getContextPath()%>/content/profile/posts/<%=request.getParameter("id")%>.profile"/> 
+                                            
+                                            <%}%>
+                                                <input type="submit" class="btn btn-primary"
+                                                value="Save" />
+                                                <a class="btn btn-warning" href="<%=request.getContextPath()%>/content/user/info?id=<%=request.getParameter("id")%>" id="cancelEdit">Cancel</a></td>
+                                        </tr>
+                                        </td></tr>
+                                    </table>
+                               
+                            </div>
+                    
+                    
+                    </fieldset>
+                </div>
+      </div>
+     
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="ProfessionalSummaryModal" tabindex="-1" role="dialog" aria-labelledby="ProfessionalSummaryModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     
+      <div class="modal-header">
+       
+        <h4 class="modal-title" id="loginModalLabel">Update Information</h4>
+      </div>
+      <div class="modal-body">
+if(currentNode.hasNode("ProfessionalSummary")){
+        %>
+        <a href="javascript:loadContent('#summary','<%=currentNode+'/ProfessionalSummary.summary'%>');"><img alt="Edit" title="Edit" src="<%=request.getContextPath()%>/apps/user/css/images/icon_edit.png" height="14" align="middle"></a></h3>    
+				<%load(<%=currentNode%>'+/ProfessionalSummary.summary');%>        
+ <%}else{%>
+        <a href="javascript:loadContent('#summary','<%=currentNode+'/*.summary'%>');"><img alt="Edit" title="Edit" src="<%=request.getContextPath()%>/apps/user/css/images/icon_edit.png" height="14" align="middle"></a></h3>    
+<%load('#summary','<%=currentNode+'/*.summary'%>');%>    
+<%}}%>
+          
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+     
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="profileExperianceModal" tabindex="-1" role="dialog" aria-labelledby="profileSkillSetModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     <form  method="POST" action="<%=request.getContextPath() %>/content/user/save.pro" class="form-horizontal">
+      <div class="modal-header">
+       
+        <h4 class="modal-title" id="loginModalLabel">Update Experiance</h4>
+      </div>
+      <div class="modal-body" id="exprianceload">
+         
+      </div>
+      
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="profileEduModal" tabindex="-1" role="dialog" aria-labelledby="profileEduModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     
+      <div class="modal-header">
+       
+        <h4 class="modal-title" id="loginModalLabel">Update Experiance</h4>
+      </div>
+      <div class="modal-body" id="educationLoad">
+      <div id="education" class="profile-info-visible ui-tabs-panel ui-widget-content ui-corner-bottom">
+       <%
+         if(currentNodeProvided  && currentNode.hasNode("Education")){
+         var nodes = currentNode.getNode("Education").getNodes();
+                for(i in nodes) { 
+       %>
+       <form method="POST" id="<%=nodes[i]%>" action="<%=request.getContextPath()%>/content/user/save.deleteEdu">
+            <h3>
+                <%=nodes[i].degree? nodes[i].degree: ""%>
+                <em>from <%=nodes[i].school ? nodes[i].school : ""%></em>
+                <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+                    <a  href="javascript:loadContent('#education','<%=nodes[i]%>.education');"><img alt="Edit" title="Edit" src="<%=request.getContextPath()%>/apps/user/css/images/icon_edit.png" height="14" align="middle"></a>
+                    <a href="#"  onclick="submitForm('<%=nodes[i]%>')"><img alt="Remove" title="Remove" src="<%=request.getContextPath()%>/apps/user/css/images/icon_remove.png" height="14" align="middle"></a>
+                <%}%>
+                <input name="redirect" type="hidden" value="<%=currentNode.getName()%>"/> 
+                <input name="operation" type="hidden" value="<%=nodes[i]%>"/> 
+            </h3>
+            <ul>
+                <li>
+                    <span>From:</span><%=nodes[i].toDate ? nodes[i].toDate : ""%> &nbsp;|&nbsp; <span>To:</span>
+                    <%=nodes[i].endDate ? nodes[i].endDate : ""%>
+                </li>
+                <li>
+                    <span>Grade/Percentage:</span><%=nodes[i].grade ? nodes[i].grade: ""%>
+                </li>
+            </ul>
+        </form>
+        <div class="separator"></div>
+      <%}}%>
+      <div class="profile-info-visible">
+           <%if(request.getRemoteUser().replace("@","_").equals(request.getParameter("id"))){%>
+              <%if(currentNodeProvided){%>
+               <a  href="javascript:loadContent('#education','<%=currentNode%>/Education/*.education');" class="btn btn-primary">Add Education</a>
+              <%}%>
+           <%}%>
+      </div>
+  </div>
+      
+      </form>
+    </div>
+  </div>
+</div>
+  
+<div class="modal fade" id="profileHasAddtionalModal" tabindex="-1" role="dialog" aria-labelledby="profileHasAddtionalModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     <form  method="POST" action="<%=request.getContextPath() %>/content/user/save.pro" class="form-horizontal">
+      <div class="modal-header">
+       
+        <h4 class="modal-title" id="loginModalLabel">Update Experiance</h4>
+      </div>
+      <div class="modal-body">
+    <% load('<%=currentNode%>/AdditionalInformation.info');%>
+     </div>
+      
+      </form>
+    </div>
+  </div>
+</div> <div class="modal fade" id="profileNoHasAddtionalModal" tabindex="-1" role="dialog" aria-labelledby="profileNoHasAddtionalModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     <form  method="POST" action="<%=request.getContextPath() %>/content/user/save.pro" class="form-horizontal">
+      <div class="modal-header">
+       
+        <h4 class="modal-title" id="loginModalLabel">Update Experiance</h4>
+      </div>
+      <div class="modal-body">
+    <% load('<%=currentNode%>/*.info');%>
+     </div>
+      
+      </form>
+    </div>
+  </div>
+</div>     
+ <div class="modal fade" id="addExperianace" tabindex="-1" role="dialog" aria-labelledby="addExperianace" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+     <form  method="POST" action="<%=request.getContextPath() %>/content/user/save.pro" class="form-horizontal">
+      <div class="modal-header">
+       
+        <h4 class="modal-title" id="loginModalLabel">Update Experiance</h4>
+      </div>
+      <div class="modal-body">
+    <% %>
+    <% load('<%=currentNode%>/experience/*.experience');%>
+     </div>
+      
+      </form>
+    </div>
+  </div>
+</div> <script>
+function loadContent(){
+  function loadContent1(elementSelector, sourceUrl,callAtt) {
+             $(""+elementSelector+"").load("<%=request.getContextPath()%>/"+sourceUrl+"");
+				$(""+callAtt+"").toggle();
+        }
+        
+}</script>

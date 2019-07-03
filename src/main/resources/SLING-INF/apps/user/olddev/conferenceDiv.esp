@@ -1,0 +1,55 @@
+<html>
+<head>
+<script src="<%=request.getContextPath()%>/apps/user/js/jquery.js" type="text/javascript"></script>
+<script type="text/javascript">
+
+ var keysToDelete ;
+ function ccclick()
+ {
+     
+      keysToDelete = new Array();
+      keysToDelete.push("<%=currentNode.extension%>");
+        $('#chk input:checked').each(function() { 
+          keysToDelete.push( $(this).attr("id"));
+        });
+     alert(keysToDelete);
+     sendConf(keysToDelete);
+    }
+
+ function sendConf(val){
+            $.ajax({
+                  type: 'GET',
+                  url: 'http://10.36.76.136/san/conf.php?conf='+val,
+                  crossDomain:true,
+                  success: function(){
+                  }
+                
+            });
+    }
+ </script>
+
+</head>
+<body>
+    <form name="form1" onSubmit="alert(return validate());">
+        <div id="chk">
+            <%
+          
+            if(currentNode.hasNode("connection")){     
+             var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+             for(i in connectionNode){
+                if(connectionNode[i].request=='accept'){     
+                   var userNode=currentNode.session.getRootNode()
+                                  .getNode("content/user/")
+                                   .getNode(connectionNode[i].getName());
+            %>
+            
+            <input type="checkbox" name="colors" value="<%=userNode.extension%>" id="<%=userNode.extension%>">
+                <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%> <br><br />
+            <%}}}%>
+            <input type="button" value="Get Values" onclick="ccclick()" />
+
+        </div>
+
+    </form>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<script>
+	function acceptGroupRequest(url,group,userId,id){
+      	var data='userId='+userId+'&groupName='+group+'&accept=yes';
+      	
+      	$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				 
+				  success: function(){
+				location.reload();
+				  }
+				
+			});
+      }  
+
+</script>
+	<% currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));
+	var a=false;
+	if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupRequests") 
+		  			&& currentNode.getNode("Groups").getNode("GroupRequests").hasNodes()){
+	
+	var group=currentNode.getNode("Groups").getNode("GroupRequests").getNodes();
+	var userRequests;
+	var userName;%>
+	<div id="people" class="tab-pane fade active in">
+    <div class="content-tab mCustomScrollbar">
+      <div class="tab-three-12">            
+        <div class="people-visited">
+        
+	<%
+	
+	//for(i in group){
+	for(var i=0;i<group.length;i++){
+		
+		var groupName=group[i].getName();
+		var groupNode=currentNode.session.getRootNode().getNode("content").getNode("group").getNode(groupName);
+		if(group[i].hasNodes())
+		{
+			userRequests=group[i].getNodes();
+			for(j in userRequests){
+				userName=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(userRequests[j].getName());
+				%>
+					 <div class="tumbnail-login">
+                        <div class="thumbnail">
+                         
+					     <% a=true;
+					     	if(userName.hasProperty("profileImage")){
+					                           %>
+					                           		<img src="<%=userName.profileImage%>" style="width:100px;height:100px" />
+					           <%}else{  %>
+					                 		<img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="width:100px;height:100px" />  
+					                 <%}%>
+					    
+					  <div class="caption">
+                            <h3 style="text-align: center;"><a href="#"><%=userName.name+" "%></a></h3>
+                            <p>requested to join </p>
+                            <p><%=groupNode.groupName?groupNode.groupName:""%></p>
+                            <p><a href="javascript:void(0);"  class="btn btn-outline"
+						 		 onclick="acceptGroupRequest('<%=request.getContextPath()%>/servlet/group/show.addMember',
+						 		 				'<%=groupName%>',
+						 		 				'<%=userName.getName()%>','<%=j%>')">Accept Request</a>
+				    </p>
+                            
+					
+					
+                          </div>
+                        </div>
+                      </div>
+				
+			
+		
+		<%}}}%>   </div>
+                      
+                    </div>
+
+
+                  </div>
+                </div><%}else{
+                a=true;
+		  out.println("No Group Request");
+		} %>
+		<%if(a!=true){
+		  out.println("No Group Request");
+		}%>
+		

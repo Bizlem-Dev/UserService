@@ -1,0 +1,47 @@
+<% 
+var memberNode=request.getAttribute("groupmemberlist");
+										
+										for(i=0;i<memberNode.size();i++){
+											var path=memberNode.get(i);
+											if(path.groupRequest=='accepted'){
+								
+												var userNode=currentNode.session.getNode("/content/user/"+path.getName()); 
+													%>
+							            <div class="col-md-6 col-xs-12 custom-width">
+							            	<div class="search-list-person">
+					                            <div class="thumbnail">
+					                              <div class="thumb">
+					                                  
+					                                   <% if(userNode.hasProperty("profileImage")){
+												               	%>
+																	<img src="<%=userNode.profileImage%>" alt="thumbnail"/>
+													            <%}else{  %>
+													                     <img src="<%=request.getContextPath()%>/apps/css/images/photo.gif" alt="thumbnail"/> 
+													            <%}%>
+					                              </div>
+					                            <div class="caption">
+					                              <h3><a href="#"><%=userNode.name?userNode.name:""%> <%=userNode.lastName?userNode.lastName:""%></a></h3>
+					                              <div class="desc">
+					                                <%=userNode.headline?userNode.headline:""%>
+					                              </div>
+					                              <div class="location">
+					                                <%=userNode.city?userNode.city:""%>
+					                              </div>
+					                              <div class="follow">
+					                                <a href="#"><i class="fa fa-facebook-square"></i></a>
+					                                <a href="#"><i class="fa fa-twitter-square"></i></a>
+					                                <a href="#"><i class="fa fa-circle"></i></a>
+					                                <a href="#"><i class="fa fa-envelope"></i></a>
+					                                <a href="#"><i class="fa fa-weixin"></i></a>
+					                                <a href="#"><i class="fa fa-phone"></i></a>
+					                              </div>
+					                            </div>
+					                          </div>
+					                        </div>
+							            </div>
+							           
+							            <%
+							            
+							          }
+							      }%>
+					

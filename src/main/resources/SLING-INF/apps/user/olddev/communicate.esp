@@ -1,0 +1,343 @@
+<html>
+<head>
+<%userNode=currentNode.session.getNode("/content/user/"+request.getParameter("userId"));%>
+    <%resource = Packages.java.util.ResourceBundle.getBundle("server");%>
+    <link href="<%=request.getContextPath()%>/wro/contentFeedback.css" rel="stylesheet" type="text/css" />
+    <link href="<%=request.getContextPath()%>/wro/common.css" rel="stylesheet" type="text/css" />
+    <!--<script type="text/javascript" src="<%=request.getContextPath()%>/apps/user/js/yahoo-dom-event.js"></script>-->
+    <!--<script type="text/javascript" src="<%=request.getContextPath()%>/apps/user/js/cross-frame.js"></script>-->
+<%if(request.getParameter("param")=='true'){%>    
+    <script type='text/javascript' src='<%=request.getContextPath()%>/dwr/engine.js'> </script>
+    <script type='text/javascript' src='<%=request.getContextPath()%>/dwr/util.js'> </script>
+    <script type='text/javascript' src='<%=request.getContextPath()%>/dwr/interface/LoginService.js'> </script>
+    <script>
+        function dwrLoad(){
+            dwr.engine.setActiveReverseAjax(true);
+            dwr.engine.setErrorHandler(errorHandler);  
+        }
+        $(window).load(function(){
+            dwrLoad();
+        });
+        function errorHandler(message, ex){}
+    </script> 
+<%}%>    
+    <script>
+      (function($) {
+        $.fn.charCount = function(options){
+                var defaults = {    
+                    allowed: 140,       
+                    warning: 25,
+                    css: 'counter',
+                    counterElement: 'span',
+                    cssWarning: 'warning',
+                    cssExceeded: 'exceeded',
+                    counterText: ''
+        }; 
+            
+        var options = $.extend(defaults, options); 
+        function calculate(obj){
+            var count = $(obj).val().length;
+            var available = options.allowed - count;
+            if(available <= options.warning && available >= 0){
+                $(obj).next().addClass(options.cssWarning);
+            } else {
+                $(obj).next().removeClass(options.cssWarning);
+            }
+            if(available < 0){
+                $(obj).next().addClass(options.cssExceeded);
+            } else {
+                $(obj).next().removeClass(options.cssExceeded);
+            }
+            $(obj).next().html(options.counterText + available);
+        };
+                
+        this.each(function() {              
+            $(this).after('<'+ options.counterElement +' class="' + options.css + '">'+ options.counterText +'</'+ options.counterElement +'>');
+            calculate(this);
+            $(this).keyup(function(){calculate(this)});
+            $(this).change(function(){calculate(this)});
+        });
+      
+    };
+
+})(jQuery);
+    
+    </script>
+    <script>
+        function callChat(v,displayName){
+            YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+                                       "top.frames['bar1']", "pop:"+v+":"+displayName);
+        }
+        function callVideo(v,displayName){
+            YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+                                       "top.frames['bar1']", "pop:"+v+":"+displayName+":video");
+        }
+        function callPhone(v){
+            YAHOO.util.CrossFrame.send("<%=resource.getString("phone.server")%>/Jphone/proxy.html", 
+                                       "top.frames['bar2']", "phone:"+v);
+        }
+        function callExtension(v){
+                YAHOO.util.CrossFrame.send("http://172.17.1.26/Jphone/proxy.html", 
+                                       "top.frames['bar2']", "phone:call:"+v);
+        }
+        function callMobilePhone(){
+                var data="conf=1120,"+document.getElementById("phoneNumberId").value;
+                $.ajax({
+                  type: 'GET',
+                  url: '<%=resource.getString("phone.server")%>/san/conf.php',
+                  data: data,
+                  complete: function(){
+                    alert("Call Done");
+                    $("#phoneId").hide();
+                    document.getElementById("phoneNumberId").value="";
+                  }
+                });                        
+        }
+    function checkStatus(id,userId,flag,v,displayName){
+            $.ajax({
+                          type: 'POST',
+                          url: '<%=request.getContextPath()%>/servlet/common/search.checkStatus',
+                          data: 'userId='+userId,
+                          dataType: 'html',
+                          success: function(data){      
+                               if(data=='online'){
+                                 
+                                 if(flag=='phone'){
+                                  YAHOO.util.CrossFrame.send("<%=resource.getString("phone.server")%>/Jphone/proxy.html", 
+                                       "top.frames['bar2']", "phone:"+v);
+                                 }else if(flag=='chat'){
+                                  YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+                                       "top.frames['bar1']", "pop:"+v+":"+displayName);
+                                 }else if(flag=='video'){
+                                  YAHOO.util.CrossFrame.send("<%=resource.getString("chat.server")%>/OpenFireClient/proxy.html", 
+                                       "top.frames['bar1']", "pop:"+v+":"+displayName+":video");
+                                 }
+                               }else{
+                                   $(id).parent("div").children('a').addClass("off");
+                                    $(id).parent("div").children('a[onclick]').removeAttr('onclick'); 
+                                  alert("User has just Logged Out");
+                               }
+                          }
+                      });      
+        }
+        $(function(){
+                $("#closeSms").click(function(){
+                    $(this).parent("div").hide();
+                });
+                $("#closeEmail").click(function(){
+                    $(this).parent("div").hide();
+                });
+                $("#closeMobile").click(function(){
+                    $(this).parent("div").hide();
+                });
+                $("#smsMessageId").charCount();
+                $("#smsId").click(function(){
+                    $("#email").hide();
+                    $("#sms").toggle();
+                });
+                $("#emailId").click(function(){
+                    $("#sms").hide();
+                    $("#email").toggle();
+                    
+                });
+                $("#phone").click(function(){
+                    $("#sms").hide();
+                    $("#email").hide();
+                    $("#phoneId").toggle();
+                    
+                });
+            });
+        function email(emailto){
+              data="emailFrom=<%=userNode.primaryEmail?userNode.primaryEmail:bundle.getString("sendMail.address")%>&emailTo="+emailto+"&subject="+
+                    document.getElementById("emailSubjectId").value+"&message="+
+                    document.getElementById("emailMessageId").value;
+              $.ajax({
+                      type: 'POST',
+                      url: '<%=request.getContextPath()%>/servlet/security/verify.sendMail',
+                      data: data,
+                      dataType: 'html',
+                      success: function(data){
+                       alert(data);
+                       $("#email").hide();
+                       $("#emailSubjectId").val("");
+                       $("#emailMessageId").val("");
+                      }
+                }); 
+        }
+        
+        function sms(){
+           var data="userId=<%=userNode.getName()%>&message="+document.getElementById("smsMessageId").value; 
+           $.ajax({
+                  type: 'POST',
+                  url: '<%=request.getContextPath()%>/servlet/security/verify.sendSMS',
+                  data: data,
+                  dataType: 'html',
+                  success: function(data){
+                   alert(data);
+                   $("#sms").hide();
+                   $("#smsMessageId").val("");
+                  }
+                }); 
+        }
+        function ajaxCall(data,url){
+            $.ajax({
+                          type: 'POST',
+                          url: url,
+                          data: data,
+                          dataType: 'html',
+                          success: function(data){
+                           alert("Mail Sent Successfully");
+                           $("#email").hide();
+                          }
+                }); 
+        }
+        function ajaxCall2(data,url){
+            $.ajax({
+                          type: 'GET',
+                          url: url,
+                          data: data,
+                          success: function(){
+                               alert("Message Sent Successfully");
+                               $("#sms").hide();
+                          }
+                }); 
+        }
+        
+</script>
+ <script>
+    function clear2(param2){
+            if(param2=='sms'){
+                $("#smsMessageId").val('');
+            }
+            if(param2=='email'){
+                $("#emailSubjectId").val('');
+                $("#emailMessageId").val('');
+            }
+        }
+ </script>   
+ <style type="text/css">          
+    .show{display:block;}
+    .hide{display:none;}
+</style>  
+</head>
+<body>
+<div class="call-page">
+<%var check=userNode.serviceCheck?userNode.serviceCheck:"false";%>
+
+<%if(request.getParameter("param")=='true' && request.getAttribute("userCheck")=='online'){%>
+    <div class="iconC show" id="<%=userNode.getName()%>on" style="float:left;">
+        <a href="javascript:void(0);" class="online"><span></span></a>
+        <%if(check!='false' && check.charAt(4)=='Y'){%>
+            <a href="javascript:void(0);" id="all" onclick="checkStatus(this,'<%=userNode.getName()%>','phone','<%=userNode.extension%>','')" class="phone"><span></span></a>
+        <%}%>    
+        <%if(check!='false' && check.charAt(2)=='Y'){%>
+            <a href="javascript:void(0);" id="all"  onclick="checkStatus(this,'<%=userNode.getName()%>','chat','<%=userNode.secondaryId%>','<%=userNode.name%>')" class="chat"><span></span></a>
+        <%}%>
+        <%if(check!='false' && check.charAt(3)=='Y'){%>    
+            <a href="javascript:void(0);" id="all" onclick="checkStatus(this,'<%=userNode.getName()%>','video','<%=userNode.secondaryId%>','<%=userNode.name%>')" class="video"><span></span></a>
+        <%}%>
+    </div>
+    <div class="iconC hide" id="<%=userNode.getName()%>off" style="float:left;">
+        <a href="javascript:void(0);" class="online off"><span></span></a>
+        <%if(check!='false' && check.charAt(4)=='Y'){%>
+            <a href="javascript:void(0);" class="phone off"><span></span></a>
+        <%}%>    
+        <%if(check!='false' && check.charAt(2)=='Y'){%>    
+            <a href="javascript:void(0);" class="chat off"><span></span></a>
+        <%}%>    
+        <%if(check!='false' && check.charAt(3)=='Y'){%>    
+            <a href="javascript:void(0);" class="video off"><span></span></a>
+        <%}%>
+    </div>
+ <%}else if(request.getParameter("param")=='true' && request.getAttribute("userCheck")=='offline'){%>
+    <div class="iconC hide" id="<%=userNode.getName()%>on" style="float:left;">
+        <a href="javascript:void(0);" class="online"><span></span></a>
+        <%if(check!='false' && check.charAt(4)=='Y'){%>
+            <a href="javascript:void(0);" id="all" onclick="checkStatus(this,'<%=userNode.getName()%>','phone','<%=userNode.extension%>','')" class="phone"><span></span></a>
+        <%}%>    
+        <%if(check!='false' && check.charAt(2)=='Y'){%>
+            <a href="javascript:void(0);" id="all"  onclick="checkStatus(this,'<%=userNode.getName()%>','chat','<%=userNode.secondaryId%>','<%=userNode.name%>')" class="chat"><span></span></a>
+        <%}%>
+        <%if(check!='false' && check.charAt(3)=='Y'){%>    
+            <a href="javascript:void(0);" id="all" onclick="checkStatus(this,'<%=userNode.getName()%>','video','<%=userNode.secondaryId%>','<%=userNode.name%>')" class="video"><span></span></a>
+        <%}%>
+    </div>   
+    <div class="iconC show" id="<%=userNode.getName()%>off" style="float:left;">
+        <a href="javascript:void(0);" class="online off"><span></span></a>
+        <%if(check!='false' && check.charAt(4)=='Y'){%>
+            <a href="javascript:void(0);" class="phone off"><span></span></a>
+        <%}%>    
+        <%if(check!='false' && check.charAt(2)=='Y'){%>    
+            <a href="javascript:void(0);" class="chat off"><span></span></a>
+        <%}%>    
+        <%if(check!='false' && check.charAt(3)=='Y'){%>    
+            <a href="javascript:void(0);" class="video off"><span></span></a>
+        <%}%>
+    </div>
+ <%}else if(request.getParameter("param")=='dummy'){%>    
+    <div class="iconC" style="float:left;">
+        <%if(check!='false' && check.charAt(0)=='Y'){%>
+            <a href="javascript:void(0);" id="smsId" class="sms_icon" ><span></span></a>
+        <%}%>
+        <%if(check!='false' && check.charAt(1)=='Y'){%>
+            <a href="javascript:void(0);" id="emailId" class="email_icon" ><span></span></a>
+        <%}%>    
+        <%if(check!='false' && check.charAt(15)=='Y'){%>
+            <a href="javascript:void(0);" id="phone" class="phone" ><span></span></a>
+         <%}%>   
+    </div>
+ <%}%>  
+
+   <%if(check!='false' && check.charAt(0)=='Y'){%>
+        <div class="comment-window sms" id="sms" style="display:none;">
+            Message:  <a href="javascript:void(0);" style="float:right !important;" id="closeSms" ><img 
+                    src="<%=request.getContextPath()%>/apps/contentFeedback/img/closelabel.png" /></a>
+            <br /><br /> <textarea  maxlength="140" style="height: 71px;" id="smsMessageId" placeholder="Write your message..." ></textarea>
+            <span>Remaining: </span>
+            <input type="button" class="btn btn-info" value="Send" onclick="sms()" />
+            <input type="button" class="btn btn-info" value="Clear" onclick="clear2('sms')" /> 
+        </div>
+    <%}%>     
+   <%if(check!='false' && check.charAt(1)=='Y'){%>    
+        <div class="comment-window email" id="email" style="display:none;">
+            <a href="javascript:void(0);" style="float:right !important;" id="closeEmail" ><img 
+                    src="<%=request.getContextPath()%>/apps/contentFeedback/img/closelabel.png" /></a>
+            <input type="hidden" value="" />
+            <input type="hidden" value="" />
+            <table>
+                <tr>
+                    <td>
+                        Subject:
+                    </td>
+                    <td>
+                         <input type="text" id="emailSubjectId" style="width:96%;"  />
+                         
+                    </td>
+                </tr>
+                <tr>
+                    <td>         
+                        Message:
+                    </td>
+                    <td>
+                         <textarea id="emailMessageId" placeholder="Write your message..." ></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                            <input type="button" class="btn btn-info" value="Send" onclick="email('<%=userNode.primaryEmail%>')" />
+                            <input type="button" class="btn btn-info" value="Reset" onclick="clear2('email')" /> 
+                    </td>
+                </tr>  
+            </table>                        
+        </div>
+     <%}%>
+     <div class="comment-window mobile" id="phoneId" style="display:none;">
+            Enter 10 didgit Mobile Number:  <a href="javascript:void(0);" style="float:right !important;" id="closeMobile" ><img 
+                    src="<%=request.getContextPath()%>/apps/contentFeedback/img/closelabel.png" /></a>
+            <br /><br /> <input type="text" id="phoneNumberId"  /><br/>
+            <input type="button" class="btn btn-info" value="Send" onclick="callMobilePhone();" />
+            <input type="button" class="btn btn-info" value="Clear" onclick="clear2('sms')" /> 
+        </div>
+</div>
+</body>
+</html>

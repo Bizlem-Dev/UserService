@@ -1,0 +1,112 @@
+<%
+//out.print(currentNode);
+var userFriendNode = "";
+	var userIdNode=currentNode.session.getRootNode().getNode("content/user").getNode(request.getRemoteUser().replace("@","_"));
+	//out.print(userIdNode);
+	if(userIdNode.hasNode("connection/friend")){
+		userFriendNode=userIdNode.getNode("connection/friend");
+		}else{
+		userFriendNode=userIdNode;
+		}
+		//out.print("userFriendNode---"+userFriendNode);
+%>
+
+
+<%var	perNode=request.getAttribute("person");
+	if(perNode.size()==0){
+	out.print("Sorry no person found for this search text !");
+	
+}else{
+
+for(i=0;i<perNode.size();i++){
+											var psNode=perNode.get(i);
+		%>
+							            <div class="col-md-6 col-xs-12 custom-width">
+							            	<div class="well well-sm company-list">
+							            		<div class="row">
+							            		<div class="col-sm-4 col-xs-4 image">
+							            		<% if(psNode.hasProperty("profileImage")){%>
+								 		<img alt="Add Friend"  width="88px" height="116px"  src="<%=psNode.profileImage%>">
+								 		
+								 <%}else{%>
+								 		<img alt="Add Friend"  width="88px" height="116px"  src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif">
+								 <%}%>
+							            		</div>
+							            		<div class="col-sm-8 col-xs-8 text">
+							            			<h3><a href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/content/user/info?id=<%=psNode.getName()%>"><%=psNode.name%></a></h3>
+							            			<p><a href="#"><%=psNode.headline?psNode.headline:""%></a></p>
+							            			<p><a href="#"><%=psNode.city?psNode.city:""%></a></p>
+							            			<p><a href="#"><%=psNode.country?psNode.country:""%></a></p>
+							            								            			<%  
+            if(request.getRemoteUser().replace("@","_")!='newUserId'){
+            
+            	if(userFriendNode.hasNode(psNode.getName()))
+            	{
+            		if(userFriendNode.getNode(psNode.getName()).request=='accept'){
+            		%>
+            	<br /><strong>Request Accepted</strong>
+            		<%
+            		
+            		}else if(userFriendNode.getNode(psNode.getName()).request=='pending'){
+            		%>
+            		<br /><strong>Request Pending</strong>
+            		<%
+            		}
+            		}else{%>
+            				    				<div id="request<%=i%>" style="display:block;">
+            				<a data-target="#popUp<%=i%>" data-toggle="modal" href="#" class="btn btn-info">  Connect  </a>
+            				
+            				</div>
+            				<div class="modal fade" id="popUp<%=i%>" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+            				 <div class="modal-dialog modal-xs">
+    <div class="modal-content">
+    <form class="form-horizontal" method="POST" action="<%=request.getContextPath()%>/servlet/friend/show.connect" >
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Connection Request</h4>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="userId" id="userId" value="<%=request.getRemoteUser().replace("@","_")%>" />
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Connect as a : </label>
+            <div class="col-sm-9">
+              <%var userType=psNode.session.getNode("/content/master/user/user").userType;%>
+            				<select class="form-control" name="" id="friendType<%=i%>" onchange="selectedValue(this.value,<%=i%>)">
+            					<%for(index in userType){%>
+            					   <option value="<%=userType[index]%>"><%=userType[index]%></option>					
+            					<%}%>
+            				</select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Message: </label>
+            <div class="col-sm-9">
+              <textarea class="form-control" name="friendMessage" id="friendMessage<%=i%>">I'd like to add you to my professional network .</textarea>
+            </div>
+          </div>
+		  <input type="hidden" name="friendType" id="friendType<%=i%>" value="" />
+            				<input type="hidden" name="friend" id="friendGet<%=i%>" value="<%=psNode.getName()%>" />
+            				<input type="hidden" name="friendPath" id="friendPath<%=i%>" value="<%=psNode%>" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="connect('<%=request.getContextPath()%>/servlet/friend/show.connect',<%=i%>)">Connect</button>
+      </div>
+      </form>
+    </div>
+  </div>
+            				</div>
+            				<div id="acceptRequest<%=i%>" style="display:none;">
+            				<b>Request Send</b>
+            				</div>
+            				            				
+            		
+            		
+            <%	}
+            
+            }%>
+       
+							            		</div>
+							            		</div>
+							            	</div>
+							            </div>
+<%}}%>

@@ -1,0 +1,63 @@
+<html>
+<head>
+
+<script>
+   function updateTextArea() {
+         
+         var allVals = [];
+         $('#c_b :checked').each(function() {
+           allVals.push($(this).val());
+         });
+         $('#t').val(allVals)
+      }
+     $(function() {
+       $('#c_b input').click(updateTextArea);
+       updateTextArea();
+     });
+     
+ </script>
+</head>
+
+<body>
+
+
+<%
+
+if(companyKey.size()>0){
+var userFriendNode;
+
+
+for(var i=request.getParameter("fromPage");i<request.getParameter("toPage") && i<companyKey.size() ;i++){
+
+%>
+	<li class="ui-state-default ui-corner-top" style="height:120px">
+                        <div class="profile-user-thumb">
+                       <% if(companyKey.get(i).hasProperty("companyLogo"))
+                            {
+                       %>
+                            <img src="<%=companyKey.get(i).companyLogo%>" width="84" height="108"  /> 
+                           <% }else{  %>
+                         <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" width="84" height="108"  /> 
+                         <%}%>
+                        </div>
+
+
+       <div id="c_b">
+            <h2><a href="<%=request.getContextPath()%>/servlet/company/show.view?compN=<%=companyKey.get(i).getParent().getName()%>"><%=companyKey.get(i).companyName? companyKey.get(i).companyName: ""%></a>
+                         <input value='<%=companyKey.get(i).getParent().getName()%>'
+                                type="checkbox" id="<%=i%>" class="regular-checkbox big-checkbox" />
+                              <label for="<%=i%>"></label>
+            </h2>
+		    <h3><%=companyKey.get(i).website? companyKey.get(i).website: "&nbsp;"%> </h3>
+            <span>Industries :</span><%=companyKey.get(i).industries? companyKey.get(i).industries: ""%><br />
+            <span>Type :</span><%=companyKey.get(i).type? companyKey.get(i).type: ""%><br />
+            <span>Founded :</span><%=companyKey.get(i).founded? companyKey.get(i).founded: ""%><br />
+            <span>Turn Over :</span><%=companyKey.get(i).turnOver? companyKey.get(i).turnOver: ""%><br />
+<%
+}}%>
+<div id="popUp" style="display:none;" >
+<input type="text" id='t'  />
+</div>
+<input type="hidden" value="<%=companyKey.size()%>" id="keySize" />
+</body>
+</html>

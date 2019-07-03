@@ -1,0 +1,124 @@
+<%load("../poll/include/header.esp");%>
+<link href="<%=request.getContextPath()%>/apps/poll/css/user-select.css" rel="stylesheet" type="text/css" />
+ <style>
+ .hide{background: linear-gradient(to bottom, #6A6A65 0%, #696A65 100%) repeat scroll 0 0 transparent !important;
+         display: none !important;}
+ </style>
+<%if(request.getParameterMap().containsKey("conference")){%>
+    <script type='text/javascript' src='<%=request.getContextPath()%>/dwr/engine.js'> </script>
+    <script type='text/javascript' src='<%=request.getContextPath()%>/dwr/util.js'> </script>
+    <script type='text/javascript' src='<%=request.getContextPath()%>/dwr/interface/LoginService.js'> </script>
+    <script>
+        function dwrLoad(){
+            dwr.engine.setActiveReverseAjax(true);
+            dwr.engine.setErrorHandler(errorHandler);
+        }
+        $(window).load(function(){
+            dwrLoad();
+        });
+       function errorHandler(message, ex){}
+    </script>    
+<%}%>  
+<script> 
+    $(function(){
+
+        $("li").click(function(){
+          if (!($(this).hasClass('hide'))) {
+            if($(this).parent().parent().attr('id')=='view'){
+                    $(this).appendTo("#selected ul");
+                }else{
+                    $(this).appendTo("#view ul");
+                }
+             }   
+            var allVal = [];
+             $('#selected input#users').each(function() {
+               allVal.push($(this).val());
+             });
+             $('#selectUser').val(allVal);
+        });
+    });
+    function updateTextArea() {
+         
+         var allVals = [];
+         $('#selected input#check_data').each(function() {
+           allVals.push($(this).val());
+         });
+         $('#selectUser').val(allVals)
+      }
+     $(function() {
+       $('#c_b input').click(updateTextArea);
+            updateTextArea();
+     });
+     function invite(){
+       window.returnValue = document.getElementById("selectUser").value;
+            window.close();
+            return false;
+    }
+   
+</script>    
+</head>
+<body>
+<input type="button" onclick="invite()" value="Invite" /> 
+<table border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+    <td width="50%" valign="top">
+    <div id="view">
+        <h1>Available Users
+            <span class="note">Click to select respective user</span>
+        </h1>
+        <ul class="user-list"><li></li>                
+      <%if(currentNode.hasNode("connection") && currentNode.getNode("connection").hasNode("friend") 
+                && currentNode.getNode("connection").getNode("friend").hasNodes()){
+        var friendNode=currentNode.getNode("connection").getNode("friend").getNodes();     
+        for(i in friendNode){
+          if(friendNode[i].request=='accept'){
+            var userNode=currentNode.session.getRootNode()
+                                .getNode("content/user/"+friendNode[i].getName());
+            %>
+            <%if(request.getParameterMap().containsKey("conference")){
+                   if(conference.contains(userNode.getName())){%>
+                       <li id="<%=userNode.getName()%>on" class="show">       
+                   <%}else{%>
+                       <li id="<%=userNode.getName()%>on" class="hide">
+                   <%}%>
+            <%}else{%>
+                   <li>
+            <%}%>       
+                <%                    
+                    if(userNode.hasProperty("profileImage")){
+                       %>
+                           <img src="<%=userNode.profileImage%>" width="46" height="54"  />
+                       <%}
+                         else{  %>
+                         <img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" 
+                              width="46" height="54" /> 
+                       <%}%> 
+                    <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%>
+                    <%if(request.getParameterMap().containsKey("conference")){%>
+                            <input type="hidden" id="users" value="<%=userNode.secondaryId%>" />
+                    <%}else{%>
+                            <input type="hidden" id="users" value="<%=userNode.getName()%>" />
+                    <%}%>
+                    
+             </li>
+       <% }}    
+    }%>
+    </ul>
+</div>
+</td>
+<td width="50%" valign="top"> 
+<div id="selected">
+    <h1>Selected Users
+        <span class="note">Click on respective user to remove it</span>
+    </h1>
+    <ul class="user-list"><li></li>
+    </ul>
+</div>
+<div style="display:none;" >
+    <input type="text" id='selectUser'  />
+</div>
+</td>
+</tr>
+</table>
+</body>
+</html>    

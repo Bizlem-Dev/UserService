@@ -1,0 +1,68 @@
+ <script type="text/javascript">
+          $(document).ready(function(){
+          $.ajax
+	({
+        url:'<%=request.getContextPath()%>/servlet/common/search.recommendeduser',
+        data:{
+        	
+        },
+        async:true,
+        success: function(data) {
+       // alert(data);
+        var objJson = JSON.parse(data);
+       var objArray = objJson.recommendeduser;
+       var vdiv = "";
+       
+       document.getElementById("recommenduserlist").innerHTML = "" ;
+       for(var i =0;i<objArray.length;i++){
+       
+        
+        var srcImg = '';
+        if(objArray[i].image == ''){
+         srcImg = "http://prod.bizlem.io:8082/portal/apps/images/nmg.jpg";
+        }else{
+         srcImg =  objArray[i].image;
+        }
+        var dest = "";
+        if(objArray[i].country != '' && objArray[i].city == ''){
+        	dest = objArray[i].country;
+        }else if(objArray[i].country == '' && objArray[i].city != ''){
+        	dest = objArray[i].city;
+        }else if(objArray[i].country != '' && objArray[i].city != ''){
+        	dest = objArray[i].city + "," + objArray[i].country;
+        }
+         vdiv = vdiv + "<div class='recommended-body'><div class='recommended-img'><a target='_blank' href='http://prod.bizlem.io:8082/portal/content/user/info?id="+objArray[i].emailid+"' /><img src='"+srcImg+"' style='height:70px'/></a></div><div class='recommended-text' style='width:66%'><h5><a target='_blank' href='http://prod.bizlem.io:8082/portal/content/user/info?id="+objArray[i].emailid+"' />"+objArray[i].firstname+" "+objArray[i].lastname+"</a></h5><p>"+dest+"</p><p><a href='<%=request.getContextPath()%>/servlet/service/globalsearch.searchlist?core1=person&userId=<%=request.getRemoteUser().replace("@","_")%>&searchByName="+objArray[i].firstname+" "+objArray[i].lastname+"' class='btn btn-default btn-xs'><i class='fa fa-user'></i> Connect</a></p></div></div>";
+       }
+       document.getElementById("recommenduserlist").innerHTML = vdiv; 
+       }
+    });
+    });
+    </script>
+<div class="col-sm-12">
+                  <div class="recommeded-conection">
+                      <div class="tab-three">
+                        <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h3 class="panel-title">Recommended Connection</h3>
+                        </div>
+                        <div class="panel-body">
+                          <div class="" id="recommenduserlist">
+                            
+                            <!--<div class="recommended-body">
+                              <div class="recommended-img" style="width:30%">
+                                <a target="_blank" href="" /><img src="images/facebook2.png" style="height:70px;width: 100%"/></a>
+                              </div>
+                              <div class="recommended-text" style="width:66%">
+                                <h5><a target="_blank" href="" />Testing Nameashish</a></h5>
+                                <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Connect</a></p>
+                              </div>
+                            </div>-->
+
+                            
+
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                  </div>
+              </div><!--end of reccomended conn column -->

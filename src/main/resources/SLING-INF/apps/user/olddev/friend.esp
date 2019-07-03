@@ -1,0 +1,163 @@
+<%load("includes/header.esp");
+var currentNodeProvided = ((typeof currentNode != "undefined"));
+
+%>
+<link href="<%=request.getContextPath()%>/apps/user/css/jquery.mCustomScrollbar.css" rel="stylesheet" type="text/css" />
+<script src="<%=request.getContextPath()%>/apps/user/js/jquery.mousewheel.min.js"></script>
+<script src="<%=request.getContextPath()%>/apps/user/js/jquery.mCustomScrollbar.js"></script>
+
+<style type="text/css">
+		
+	.content_5{overflow:auto;width:300px;margin:0 auto;}
+	
+		
+		
+</style>
+
+
+<script>
+
+	$(window).load(function(){
+		
+		$('#next').click(function() {
+		    $('.current').removeClass('current').hide()
+		        .next().show().addClass('current');
+		    if ($('.current').hasClass('last')) {
+		        $('#next').attr('disabled', true);
+		    }
+		    $('#prev').attr('disabled', null);
+		});
+		
+		$('#prev').click(function() {
+		    $('.current').removeClass('current').hide()
+		        .prev().show().addClass('current');
+		    if ($('.current').hasClass('first')) {
+		        $('#prev').attr('disabled', true);
+		    }
+		    $('#next').attr('disabled', null);
+		});
+	});
+
+</script>
+
+<script>
+	function accept2(url,id){
+	
+		var userId=document.getElementById("userId").value;
+		var friendValue=document.getElementById("friendGet"+id).value;
+		var friendMessage=document.getElementById("friendMessage"+id).value;
+		var friendType=document.getElementById("friendType"+id).value;
+		
+		var data='userId='+userId+'&friend='+friendValue+'&friendMessage='+friendMessage+'&friendType='+friendType;
+		
+		$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				  success: function(){
+				  alert(data);
+				  	document.getElementById("accept"+id).style.display='none';
+				  	document.getElementById("acceptRequest"+id).style.display='block';
+				  }
+				
+			});
+	
+	}
+	
+
+</script>
+<head>
+<body>
+<div>
+	<button id="prev" class="btn btn-primary" disabled="disabled">Prev</button>
+	<button id="next" class="btn btn-primary">Next</button>
+	
+	 <%var countFriend=0;	  
+	  	if(currentNodeProvided){
+		  	var connectionNode=currentNode.getNodes();
+		  	for(i in connectionNode){
+		  		if(connectionNode[i].request=='pending' && connectionNode[i].requestType=='reciever' ){
+		  			countFriend++;
+		  		}
+		  	}
+		 }%>
+	<strong>You have <%=countFriend%> Friend Request</strong>		 
+</div>
+<div class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+<%
+if(currentNodeProvided){
+var count=0;
+var friend=currentNode.getNodes();
+var size=countFriend;
+for(i in friend){
+
+
+if(friend[i].request=='pending' && friend[i].requestType=='reciever' ){
+var name=friend[i].getName();
+var node=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(name);
+
+ 							if(count=='0'  && size>'2'){
+                           %>
+                           	<div id="div<%=count%>" class="first current">
+                           <%	
+                           }else if(count>=(size-2) && count>=2 && (count*count)%2==0){ 
+                           %>
+                           </div> 
+                            <div id="div<%=count%>" class="last" style="display:none;">
+                           <%
+                           }else if((count*count)%2==0 && count!=1 && count<(size-2) ){
+                           
+                            %>
+                            </div>
+                            <div id="div<%=count%>"  style="display:none;">
+                            <%}%>
+                            
+<li class="ui-state-default ui-corner-top" style="height:100px">
+     <div class="profile-user-thumb">
+     <%
+     	if(node.hasProperty("profileImage")){
+                           %>
+                           		<img src="<%=node.profileImage%>" width="70" height="88"  />
+           <%}else{  %>
+                 		<img src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif" height="88"  /> 
+                 <%}%>
+      </div>
+   <div  class="content_5">                      
+	<strong>
+		<%
+		out.println(node.name);
+		out.println(node.lastName);
+		%>
+	</strong>
+		<%
+		out.println(" wanted to connect you as a "+friend[i].friendType);
+		out.println("<br />Message :"+friend[i].friendMessage);
+		%>  
+<div id="accept<%=i%>" style="display:block;">
+<form  action="" >
+<input type="hidden" name="userId" id="userId" value="<%=request.getParameter("userId")%>" />
+<input type="hidden" name="friend" id="friendGet<%=i%>" value="<%=friend[i].getName()%>" />
+<input type="hidden" name="friendMessage" id="friendMessage<%=i%>" value="<%=friend[i].friendMessage%>" />
+<input type="hidden" name="friendType" id="friendType<%=i%>" value="<%=friend[i].friendType%>" />
+<input type="button" value="Accept" class="btn btn-info" onclick="accept2('<%=request.getContextPath()%>/servlet/friend/show.accept','<%=i%>')"/>
+<input type="button" value="Cancel" class="btn btn-info" />
+</form>
+</div>
+<div id="acceptRequest<%=i%>" style="display:none;">
+	Accepted
+</div>
+
+
+</div>
+</li>
+
+<% count++;}}} %>
+
+</ul>
+</div>
+
+
+
+</body>
+</html>

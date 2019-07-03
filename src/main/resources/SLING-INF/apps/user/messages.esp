@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<% var currentNodeProvided = ((typeof currentNode != "undefined"));  %>
+
+<html>
+    <head>     
+          </script>
+        <title>Message </title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+         <%load("../common/links.esp");%>
+                 <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/ckeditor/ckeditor.js" type="text/javascript"></script>
+  <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>
+  <script> $(function() {
+        // Replace the <textarea id="editor1"> with a CKEditor
+        // instance, using default configuration.
+        CKEDITOR.replace('editor1');
+        //bootstrap WYSIHTML5 - text editor
+        $(".textarea").wysihtml5();
+     
+    });
+   <!--
+function mailmessageheader(a){
+  var c=document.getElementById("messageSubjectFriend").value; 
+  var b=document.getElementById("messagebodyFriend").value;
+  
+  		if(a.length>0 && b.length>0){
+  	var  param=["to","message","subject","from"];
+          var paramValue=[a,b,c,"<%=request.getRemoteUser()%>"];		  
+ 		  UserDWRService.callPostService("http://prod.bizlem.io:8082/portal/servlet/social/service.sendMailToFriend",param,paramValue,function(data) {
+       console.log(data);
+          alert("Your message has been sent !");
+          $("#connectionMessage").modal('toggle'); 
+             
+          });
+  		}
+    }
+    -->
+    
+    var globalid=""; 
+    var mailfrom="";
+    var mailto="";
+    var subject=""; 
+    var hp="<%=request.getRemoteUser()%>";
+    function mailmessage(c){
+       alert(c+globalid+hp+mailfrom+subject);
+  		if(c.length>0){
+  	
+ 		  $.ajax({
+                            url: 'http://prod.bizlem.io:8082/portal/servlet/social/service.replystate',
+                             type: 'POST',
+                            data: {
+                            message:c,
+                            messageid:globalid,
+                            from:hp,
+                            to:mailfrom,
+                            subject:subject
+                            },
+                            async:false,
+                            success: function(data) {
+          console.log(data);
+          alert("Your message has been sent !");
+           
+             }
+          });
+  		}
+    }
+    
+    function changeTomail(){
+    
+document.getElementById("tofriendmail").value= document.getElementById("usercotainer").value;
+    }
+  </script>
+
+
+ <%load("../common/header.esp");%>
+<section class="Profile_page">
+
+<%
+if(currentNode.hasNode("messages")){
+
+ var messageNode=currentNode.getNode("messages");
+ 
+ }else{
+ 
+ 
+ }
+ %>
+ 
+ 
+  <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12 ">
+                        <div class="row">
+                        
+                        <div class="col-sm-8 col-xs-12 profile-content">
+                            
+                                <div class="row">
+                                    <div class="col-sm-3 col-xs-4 custom-width">
+                                  
+                                    <%
+ 
+ currentNode=currentNode.getNode(request.getRemoteUser().replace("@","_"));
+ 
+ %>
+
+
+
+         <%load("chatbox.esp");%>
+       
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!--
+<div class="modal fade connectionMessage" tabindex="-1" id="connectionMessage" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Message Friend</h4>
+      </div>
+      <div class="modal-body">
+      <input type="hidden" id="tofriendmail">
+         <strong>Subject : </strong> <br><input type="text" id="messageSubjectFriend"  style="width:80%;"><br><br>
+		<strong>Message : </strong><br>	<textarea rows="6" cols="65" style="width:80%;" id="messagebodyFriend"></textarea>          
+         
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="mailmessage()">Message</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>  -->
+ <%load("../common/footer.esp");%>
+ 					
+</body>
+</html>						
+				    

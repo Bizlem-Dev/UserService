@@ -1,0 +1,96 @@
+<%
+var poi=request.getSession(true);
+poi.setAttribute("pran",request.getParameter("_usI"));
+
+%>
+<html>
+<head>
+<script src="<%=request.getContextPath()%>/apps/user/js/jquery.js" type="text/javascript"></script>
+<script type="text/javascript" >
+
+            $( function() {
+                
+              
+                
+                
+                $('button#do_login').click( function(e) {
+                    var userId = $("input#j_username").val();
+                    $.ajax({
+                        url: '/j_security_check',
+                        type: 'POST',
+                        data: $("#login-form").serialize(),
+                        success: function( data, textStatus, xmlHttpRequest ) {
+                            // show_error(data);
+                            var sessionInfo = Sling.getSessionInfo();
+                            if ( userId == sessionInfo.userID )
+                            {                            
+                                $("#login-dialog").slideToggle("slow", adjust_height );
+                                update_credentials();
+                                load_props( currentPath );
+                            }
+                            else
+                            {
+                                show_error( data );
+                            }
+                        },
+                        error: function( xmlHttpRequest, textStatus, errorThrown ) {
+                            show_error( xmlHttpRequest.responseText );
+                        }
+                    });
+                    return false;
+                });
+                
+                $('a#do_logout').click( function(e) {
+                    // ajax logout
+                    $.get( '/system/sling/logout.html', function(data) { 
+                        update_credentials();
+                        load_props( currentPath );
+                    } );
+                });
+                
+                update_credentials();
+                init_load( '<%= resource.path %>' );
+                adjust_height();
+            });
+            
+            
+  
+                    
+</script>
+</head>
+<body>
+ <div id="login-dialog" style="display:block;">       
+        <form accept-charset="UTF-8" enctype="multipart/form-data" action="#" method="post" id="login-form">            
+            <fieldset>
+                <input type="hidden" value="UTF-8" name="_charset_" />
+                <input type="hidden" value="<%= request.getContextPath() %>" name="resource" />
+                <input type="hidden" value="form" name="selectedAuthType" />
+            </fieldset>
+                        
+            <fieldset>          
+                <p>
+                    <label for="j_username">Username:</label>&nbsp;<input type="text" class="" accesskey="u" name="j_username" id="j_username" />&nbsp;
+                    <label for="j_password">Password:</label>&nbsp;<input type="password" accesskey="p" name="j_password" id="j_password" />&nbsp;
+                    <button class="form-button" accesskey="l" id="do_login">Login</button>
+                </p>     
+            </fieldset> 
+            
+        </form>
+    </div>
+    <div class="menu">
+       <div id="menu_login" style="display:block">
+          <a href="#" onclick="" id="show_login_dialog">Login</a>
+        </div>
+        <div id="menu_logout" style="display:block">
+          <strong id="menu_username"> ??? </strong> | <a href="#" id="do_logout">Logout</a>
+        </div>
+    </div>  
+
+
+
+
+
+
+
+</body>
+</html>

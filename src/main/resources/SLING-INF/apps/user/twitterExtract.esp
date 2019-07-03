@@ -1,0 +1,66 @@
+<html>
+    <head>
+        <script>
+            function selectId(){
+                      var tweetVals = [];
+                      var tweetIdVals = [];
+                      var count=1;
+                      var checkLength=$(".message :checked").length; 
+                    if(checkLength!=0)
+                    {            
+                         $('.message :checked').each(function() {
+                            var id=$(this).val();
+                            if(count==checkLength){
+                                tweetVals.push($("#tweet"+id).val());     
+                            }else{
+                                tweetVals.push($("#tweet"+id).val()+"!@#%&");
+                            }      
+                           tweetIdVals.push($("#tweetId"+id).val());
+                           count=count+1;
+                         });
+                         $('#twitter_tweet').val(tweetVals);
+                         $('#twitter_tweetId').val(tweetIdVals);
+                         $("#tweetFormId").submit();
+                     }else{
+                        alert("Not Selected any Tweet");
+                     }
+                         
+            }
+        </script>
+    </head>
+    <body>
+    <ul class="message" >
+   
+    <%
+        var tweets=request.getAttribute("tweets");
+        for(i=0;i<tweets.size();i++)
+        {
+    %>
+        <li>
+            
+            <div class="profile-picture">
+                  <img src="<%=tweets.get(i).get("twitter_profileImage")%>" />
+            </div>
+            <div class="profile-message">
+                <h2><%=tweets.get(i).get("twitter_name")%> @<%=tweets.get(i).get("twitter_screenName")%></h2>
+                <h3><%=tweets.get(i).get("tweet")%></h3>
+                <div class="link" style="padding: 2px 0;">
+                  <img src="<%=request.getContextPath()%>/apps/socialMessages/images/twitter_icon_disabled.png" width="16px" style="vertical-align:middle;" />   
+                    <a style="color: #666666;">Import Tweets : </a>
+                    <input style="vertical-align: middle;" type="checkbox" class="tweet_check" value="<%=i%>" />        
+                </div>
+               <input type="hidden" value="<%=tweets.get(i).get("tweet")%>"  id="tweet<%=i%>" />
+               <input type="hidden" value="<%=tweets.get(i).get("tweet_id")%>" id="tweetId<%=i%>"  />
+            </div>   
+       </li>
+    
+    <%}%>
+    </ul>
+    <form method="POST" id="tweetFormId" action="<%=request.getContextPath()%>/servlet/social/messages.setTweets" >
+        <input type="hidden" id="twitter_tweet"  name="tweet" />
+        <input type="hidden" id="twitter_tweetId" name="tweetId" />
+        <input type="hidden"  name="tweetUser" value="<%=request.getParameter("userId")%>" />
+        
+    </form>    
+    </body>
+</html>

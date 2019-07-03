@@ -1,0 +1,61 @@
+<html>
+<head>
+<script>
+	function saveForm(contextName){
+		document.getElementById("formName").action=contextName+"/servlet/company/save.career";
+		document.getElementById("formName").submit();
+	}
+	
+	function deleteForm(contextName){
+		document.getElementById("formName").action=contextName+"/servlet/company/save.deleteCareer";
+		document.getElementById("formName").submit();
+	
+	
+	}
+	
+
+
+</script>
+
+
+</head>
+<body>
+<form method="POST" id="formName" action="" >
+<table>
+                                 
+<tr><td>
+Job title </td><td colspan="2"><input type="text" name="companyJobTitle" 
+								value="<%=currentNode.companyJobTitle? currentNode.companyJobTitle: ""%>" style="width:100%"/></td> </tr>
+<tr><td>
+Position </td><td colspan="2"><input type="text" name="companyJobPosition" 
+										value="<%=currentNode.companyJobPosition? currentNode.companyJobPosition: ""%>" style="width:100%"/></td> </tr>
+<tr><td>
+Experience </td><td colspan="2"><input type="text" name="companyJobExperience" 
+										value="<%=currentNode.companyJobExperience? currentNode.companyJobExperience: ""%>" style="width:100%"/></td> </tr>
+<tr><td>
+No. Of Positions </td><td colspan="2"><input type="text" name="companyJobNumbPosition" 
+												value="<%=currentNode.companyJobNumbPosition? currentNode.companyJobNumbPosition: ""%>" style="width:100%"/></td> </tr>
+<tr><td>
+Qualification </td><td colspan="2"><input type="text" name="companyJobQualification" 
+											value="<%=currentNode.companyJobQualification? currentNode.companyJobQualification: ""%>" style="width:100%"/></td> </tr>
+<tr><td>
+Job Description </td><td colspan="2"><textarea name="companyJobDescription" style="width:100%"><%=currentNode.companyJobDescription? currentNode.companyJobDescription: ""%></textarea></td> </tr>
+<tr><td>
+Response To </td><td colspan="2"><input type="text" name="companyJobResponseTo" 
+									value="<%=currentNode.companyJobResponseTo? currentNode.companyJobResponseTo: ""%>" style="width:100%"/></td> </tr>
+<tr><td>
+Response EmailID </td><td colspan="2"><input type="text" name="companyJobResponseEmail" 
+							value="<%=currentNode.companyJobResponseEmail? currentNode.companyJobResponseEmail: ""%>" style="width:100%"/></td> </tr>
+
+<input type="hidden" name="companyJobName" value="<%=request.getParameter("compN")%>" />
+	
+<tr><td colspan="2"><input type="button" onclick="saveForm('<%=request.getContextPath()%>')" class="custom-button custom-button-primary" value="Add Position" /></td>
+	<td>
+	<% if(currentNode.hasProperty("companyJobTitle")){ %>
+	<input type="button" onclick="deleteForm('<%=request.getContextPath()%>')" class="custom-button custom-button-danger" value="Close Position" />
+	
+	<%}%>				
+	</td> </tr>
+</form>
+
+<body>

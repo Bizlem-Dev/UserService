@@ -1,0 +1,24 @@
+
+/* Main Nav */
+#main-nav1 { width: 100%;
+background: #fff;
+z-index:1;
+height: auto;
+left: 0;
+/*border-bottom: 1px solid #4dbdbd;box-shadow: 1px 1px 5px #4dbdbd;*/
+
+     } /* Height of header */
+#main-nav1.fixed   { position: fixed; top:0;}
+
+#main-nav1 li {  text-align:center; width: 100%;list-style: none;}
+#main-nav1 .current a { background: #4dbdbd; color: #fff;}
+#main-nav1 a  { padding: 10px; display: block; color: #000; text-decoration: none; text-transform: uppercase;}
+#main-nav1 a:hover { background: #4dbdbd;}
+
+/* Main Content */
+#main-wrapper { width: 85%; margin: 0 auto;}
+
+.wrapper      { height: 375px; text-align: center; font-weight: bold; padding: 150px 0 0 0;} /* Height of nav bar added to total height: 300 */
+
+/* Section Background Colors */
+

@@ -1,0 +1,92 @@
+
+ <!--<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/bootstrap.css"> 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/font-awesome.min.css"> 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/bootstrap-social.css"> 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js_new/FlexSlider/flexslider.css" type="text/css" media="screen" /> 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/color.css">
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/loader.css">
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/custom.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300i,400,400i,700" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js_new/scrollbar/jquery.mCustomScrollbar.css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js_new/tabdrop/css/tabdrop.css">
+<link href="<%=request.getContextPath()%>/apps/css_new/thumbnail-slider.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/thumbs2.css" type="text/css">
+<link href="<%=request.getContextPath()%>/apps/css_new/thumbnail-slider2.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/thumbs3.css" type="text/css">
+<link href="<%=request.getContextPath()%>/apps/js_new/chosen/chosen.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css_new/mypage.css">
+
+
+
+<script src="<%=request.getContextPath()%>/apps/js_new/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="<%=request.getContextPath()%>/apps/js_new/scrollbar/js/minified/jquery-1.11.0.min.js"></script>
+<script src="<%=request.getContextPath()%>/apps/js_new/chosen/chosen.jquery.js"></script>
+<script src="<%=request.getContextPath()%>/apps/js_new/jquery.min.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/bootstrap.min.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/FlexSlider/jquery.flexslider.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-hover-dropdown/2.2.1/bootstrap-hover-dropdown.min.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/tabdrop/js/bootstrap-tabdrop.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/jquery.bootpag.min.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/ninja-slider.js" type="text/javascript"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/thumbnail-slider.js" type="text/javascript"></script>-->
+    
+    
+ <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/bootstrap.css"> 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/font-awesome.min.css"> 
+        <!--<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/bootstrap-social.css">--> 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js_new/FlexSlider/flexslider.css" type="text/css" media="screen" /> 
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/color.css">
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/loader.css">
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/custom.css">
+        <link href="https://fonts.googleapis.com/css?family=Roboto:300i,400,400i,700" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js_new/scrollbar/jquery.mCustomScrollbar.css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js_new/tabdrop/css/tabdrop.css">
+<link href="<%=request.getContextPath()%>/apps/css_new/thumbnail-slider.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/thumbs2.css" type="text/css">
+<link href="<%=request.getContextPath()%>/apps/css_new/thumbnail-slider2.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css_new/thumbs3.css" type="text/css">
+<link href="<%=request.getContextPath()%>/apps/js_new/chosen/chosen.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/ninja-slider.css">
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/thumbnail-slider.css">
+
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/landingPage.css">
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css_new/mypage.css">
+
+<script src="<%=request.getContextPath()%>/apps/js_new/scrollbar/js/minified/jquery-1.11.0.min.js"></script>
+<script src="<%=request.getContextPath()%>/apps/js_new/jquery.min.js"></script>
+
+
+
+<script src="<%=request.getContextPath()%>/apps/js_new/bootstrap.min.js"></script>
+
+<script src="<%=request.getContextPath()%>/apps/js_new/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="<%=request.getContextPath()%>/apps/js_new/chosen/chosen.jquery.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-hover-dropdown/2.2.1/bootstrap-hover-dropdown.min.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/tabdrop/js/bootstrap-tabdrop.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/jquery.bootpag.min.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js_new/thumbnail-slider.js" type="text/javascript"></script>
+    
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-hover-dropdown/2.2.1/bootstrap-hover-dropdown.min.js"></script>
+    <!--<script src="<%=request.getContextPath()%>/apps/js_new/bootstrap-tabdrop.js"></script>-->
+    <script src="<%=request.getContextPath()%>/apps/js_new/jquery.bootpag.min.js"></script>
+    <script src="<%=request.getContextPath()%>/apps/js/readmore/readmore.min.js" type="text/javascript"></script>
+
+    <!--<link rel="stylesheet" href="js/tabdrop/css/tabdrop.css">-->
+    <script type="text/javascript">
+      $(document).ready(function(){
+      //  $('.nav-pills, .nav-tabs').tabdrop()
+    }); 
+      </script>
+
+
+
+
+
+  <script src="<%=request.getContextPath()%>/apps/js_new/ninja-slider.js"></script>
+  <script src="<%=request.getContextPath()%>/apps/js_new/thumbnail-slider.js"></script>

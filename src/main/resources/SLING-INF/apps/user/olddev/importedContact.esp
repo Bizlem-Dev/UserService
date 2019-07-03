@@ -1,0 +1,357 @@
+<html>
+<head>
+    <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/user/css/contactList-tabing.css" />
+	<!--style>
+	.ui-tabs .ui-tabs-nav li a { float:none !important; }
+	.separate {border-bottom: 1px solid #FDFDFD;border-top: 1px solid #E4E4E4;float: left;margin: 5px 0;width: 100%;}
+	#tabs2 .ui-tabs-panel, #tabs3 .ui-tabs-panel, #ui-tab-common .ui-tabs-panel{width:370px !important}
+	
+	
+	</style-->
+	<%bundle = Packages.java.util.ResourceBundle.getBundle("server");%>
+	<script src="<%=request.getContextPath()%>/apps/user/js/jquery.js" type="text/javascript"></script>
+	<script>
+	   $(function(){
+	       $("#linkednId").click(function() {
+                $(".linkednClass").attr("checked", this.checked);
+           });
+           $("#gogleId").click(function() {
+                $(".gogleClass").attr("checked", this.checked);
+           });
+           $("#yhooId").click(function() {
+                $(".yhooClass").attr("checked", this.checked);
+           });
+           $("#otherId").click(function() {
+                $(".otherClass").attr("checked", this.checked);
+           });
+           $("#facebokId").click(function() {
+                $(".facebokClass").attr("checked", this.checked);
+           });
+           
+           if($("#tab1").length){
+                $("#tab1").attr("checked","checked");
+           }else if($("#tab2").length){
+                $("#tab2").attr("checked","checked");
+           }else if($("#tab3").length){
+                $("#tab3").attr("checked","checked");
+           }else if($("#tab4").length){
+                $("#tab4").attr("checked","checked");
+           }else if($("#tab5").length){
+                $("#tab5").attr("checked","checked");
+           }else{
+                $("#tab6").attr("checked","checked");
+           } 
+           
+           
+           
+	   });
+	   function setMessageBody(value){
+	       $("#providerId").val(value);
+	       $(".cred_bg-disable").show();
+	       $("#bodyDivId").show();
+	       $('#bodyId').each(function(){
+                this.contentEditable = true;
+            });
+	   }
+	   
+	   function closeMessage(){
+	       $("#providerId").val("");
+           $("#bodyDivId").hide();
+           $(".cred_bg-disable").hide();
+	   }
+	   function sendInvite(){
+	       var value = $("#providerId").val();
+	       $("#providerId").val("");
+    	   var userList ="";
+    	   if(value=='google'){
+    	       $(".gogleClass:checked").each(function(index){
+    	           if(index!=0){
+    	               userList +=",";
+    	           }
+    	           userList += $(this).val();
+    	       });
+    	   }else if(value=='yahoo'){
+        	   $(".yhooClass:checked").each(function(index){
+        	       if(index!=0){
+                       userList +=",";
+                   }
+                   userList += $(this).val();
+               });
+    	   }else if(value=='linkedin'){
+    	       $(".linkednClass:checked").each(function(index){
+                   if(index!=0){
+                       userList +=",";
+                   }
+                   userList += $(this).val();
+               });
+    	   }else if(value=='Others'){
+    	       $(".otherClass:checked").each(function(index){
+                   if(index!=0){
+                       userList +=",";
+                   }
+                   userList += $(this).val();
+               });
+    	   }
+    	   var body = $("#bodyId").html();
+    	   if(userList !=""){
+    	       $.ajax({
+    	           url:'<%=request.getContextPath()%>/servlet/friend/show.userInvite',
+    	           type:'POST',
+    	           data:'providerId='+value+'&body='+body+'&userId=<%=currentNode.getName()%>&userList='+userList,
+    	           success:function(){
+    	               window.location.reload(true);
+    	           }
+    	       });
+	       }else{
+	           alert("No User Selected !");
+	       }
+	   }
+	</script>
+</head>
+<body>
+<div class="tabing">
+  <ul class="tabs">
+    <%
+    var contactNode,serviceProviderNode,userNode;
+    if(currentNode.hasNode("ContactList")){
+        contactNode=currentNode.getNode("ContactList").getNodes();
+        for(i in contactNode){
+        %>
+        <%if(contactNode[i].getName()=='linkedin' || contactNode[i].getName()=='Linkedin'){%>
+                <li>
+                  <input type="radio" name="tabs" id="tab1">
+                  <label for="tab1">LinkedIn</label>
+                  <div id="tab-content1" class="tab-content animated fadeIn">
+                        <%if(contactNode[i].hasNodes()){%>
+                        <div class="select-all-tab">
+                              <span><input type="checkbox" id="linkednId"  />Select All</span>
+                              <a href="#" onclick="setMessageBody('linkedin')" >Invite</a>
+                          </div>
+                         <ul>
+                          <%serviceProviderNode=contactNode[i].getNodes();
+                            for(j in serviceProviderNode){%>
+                              <li>
+                                <input type="checkbox" class="linkednClass" value="<%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>" />
+                                <div class="user-info">
+                                     <div class="name-user">
+                                        <strong>Name</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedFirstName?serviceProviderNode[j].importedFirstName:""%>
+                                        </span>
+                                     </div>
+                                     <div class="email-user">
+                                        <strong>E-mail</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>
+                                        </span>
+                                     </div>
+                                </div>
+                              </li>  
+                            <%}%>
+                           </ul> 
+                          <%}%>
+                  </div>
+                </li>           
+        <%}else if(contactNode[i].getName()=='yahoo' || contactNode[i].getName()=='Yahoo'){%>           
+                <li>
+                  <input type="radio" name="tabs" id="tab2">
+                  <label for="tab2">Yahoo</label>
+                  <div id="tab-content2" class="tab-content animated fadeIn">
+                        <%if(contactNode[i].hasNodes()){%>
+                        <div class="select-all-tab">
+                              <span><input type="checkbox" id="yhooId" />Select All</span>
+                              <a href="#" onclick="setMessageBody('yahoo')">Invite</a>
+                          </div>
+                         <ul>
+                          <%serviceProviderNode=contactNode[i].getNodes();
+                            for(j in serviceProviderNode){%>
+                              <li>
+                                <input type="checkbox" class="yhooClass" value="<%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>" />
+                                <div class="user-info">
+                                     <div class="name-user">
+                                        <strong>Name</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedFirstName?serviceProviderNode[j].importedFirstName:""%>
+                                        </span>
+                                     </div>
+                                     <div class="email-user">
+                                        <strong>E-mail</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>
+                                        </span>
+                                     </div>
+                                </div>
+                              </li>  
+                            <%}%>
+                           </ul> 
+                          <%}%>
+                  </div>
+                </li>      
+        <%}else if(contactNode[i].getName()=='facebook' || contactNode[i].getName()=='Facebook'){%>         
+            <li>
+                  <input type="radio" name="tabs" id="tab3">
+                  <label for="tab3">Facebook</label>
+                  <div id="tab-content3" class="tab-content animated fadeIn">
+                        <%if(contactNode[i].hasNodes()){%>
+                         <div class="select-all-tab">
+                              <span><input type="checkbox" id="facebokId" />Select All</span>
+                              <a href="#" onclick="setMessageBody('facebook')">Invite</a>
+                          </div>
+                         <ul>
+                          <%serviceProviderNode=contactNode[i].getNodes();
+                            for(j in serviceProviderNode){%>
+                              <li>
+                                <input type="checkbox" class="facebokClass"  value="<%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>" />
+                                <div class="user-info">
+                                     <div class="name-user">
+                                        <strong>Name</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedFirstName?serviceProviderNode[j].importedFirstName:""%>
+                                        </span>
+                                     </div>
+                                     <div class="email-user">
+                                        <strong>E-mail</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>
+                                        </span>
+                                     </div>
+                                </div>
+                              </li>  
+                            <%}%>
+                           </ul> 
+                          <%}%>
+                  </div>
+                </li>      
+        <%}else if(contactNode[i].getName()=='google' || contactNode[i].getName()=='Google'){%>
+              <li>
+                  <input type="radio" name="tabs" id="tab4">
+                  <label for="tab4">Google</label>
+                  <div id="tab-content4" class="tab-content animated fadeIn">
+                        <%if(contactNode[i].hasNodes()){%>
+                         <div class="select-all-tab">
+                              <span><input type="checkbox" id="gogleId" />Select All</span>
+                              <a href="#" onclick="setMessageBody('google')">Invite</a>
+                          </div>
+                         <ul>
+                          <%serviceProviderNode=contactNode[i].getNodes();
+                            for(j in serviceProviderNode){%>
+                              <li>
+                                <input type="checkbox" class="gogleClass" value="<%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>" />
+                                <div class="user-info">
+                                     <div class="name-user">
+                                        <strong>Name</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedFirstName?serviceProviderNode[j].importedFirstName:""%>
+                                        </span>
+                                     </div>
+                                     <div class="email-user">
+                                        <strong>E-mail</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>
+                                        </span>
+                                     </div>
+                                </div>
+                              </li>  
+                            <%}%>
+                          </ul> 
+                        <%}%>
+                  </div>
+                </li>      
+        <%}else if(contactNode[i].getName()=='others' || contactNode[i].getName()=='Others'){%>         
+            <li>
+                  <input type="radio" name="tabs" id="tab5">
+                  <label for="tab5">Others</label>
+                  <div id="tab-content5" class="tab-content animated fadeIn">
+                        <%if(contactNode[i].hasNodes()){%>
+                          <div class="select-all-tab">
+                              <span><input type="checkbox" id="otherId" />Select All</span>
+                              <a href="#" onclick="setMessageBody('Others')">Invite</a>
+                          </div>
+                         <ul>
+                          <%serviceProviderNode=contactNode[i].getNodes();
+                            for(j in serviceProviderNode){%>
+                              <li>
+                                <input type="checkbox" class="otherClass" value="<%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>" />
+                                <div class="user-info">
+                                     <div class="name-user">
+                                        <strong>Name</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedFirstName?serviceProviderNode[j].importedFirstName:""%>
+                                        </span>
+                                     </div>
+                                     <div class="email-user">
+                                        <strong>E-mail</strong>
+                                        <span>
+                                            <%=serviceProviderNode[j].importedEmail?serviceProviderNode[j].importedEmail:""%>
+                                        </span>
+                                     </div>
+                                </div>
+                              </li>  
+                            <%}%>
+                           </ul> 
+                          <%}%>
+                  </div>
+                </li> 
+        <%}}}%>
+        <li>
+          <input type="radio" name="tabs" id="tab6">
+          <label for="tab6">Add Other</label>
+          <div id="tab-content6" class="tab-content animated fadeIn">
+                <form method="POST" action="<%=request.getContextPath()%>/servlet/friend/show.addOther" > 
+                    <table class="form">
+                        <tr>
+                            <td>First Name:</td><td><input type="text" name="firstName" /></td>
+                        </tr>
+                        <tr>
+                            <td>Last Name:</td><td><input type="text" name="lastName" /></td>
+                        </tr>
+                        <tr>
+                            <td>Email ID:</td><td><input type="text" name="emailId" /></td>
+                        </tr>
+                        
+                        <tr>
+                            <td><input type="hidden" name="userId" value="<%=currentNode.getName()%>" /></td>
+                            <td><input type="submit" value="ADD" class="btn btn-primary" /></td>
+                        </tr>
+                    </table>
+                </form>
+                <div style="float: none; padding-left: 111px; padding-bottom: 10px; color: rgb(0, 0, 0); font-weight: bold;">
+                      OR
+                </div>
+                <form method="POST" action="<%=request.getContextPath()%>/servlet/friend/show.up" enctype="multipart/form-data" > 
+                    <table class="form">
+                        <tr>
+                            <td>Import (.csv) file: </td>
+                            <td><input type="file" name="myFile" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">To Download Template <a target="_blank" style="float: none;  background-color: rgba(0, 0, 0, 0); background-image: none; width: auto; max-width: none; color: rgb(0, 0, 0); text-decoration: underline;" 
+                                   href="<%=request.getContextPath()%>/apps/user/includes/ImportContact.csv" >Click Here</a> .
+                            <input type="hidden" name="userId" value="<%=currentNode.getName()%>" /> 
+                                <input type="hidden" name="type" value="other" /></td>
+                        </tr>
+                    </table>
+                    <input type="submit"  value="Submit" />
+                </form>    
+          </div>
+        </li>
+ </ul>
+</div>
+<div id="bodyDivId" class="message-body" style="display:none;">
+    <span style="float: none; font-weight: bold; font-size: 14px; font-family: cursive;">Message Body: </span>
+    <div id="bodyId" style="height:117px;width:274px;overflow-y:scroll; padding:3px; border:1px solid #ccc;background:white;" >
+        Dear #{name}, <br/>
+            I would like to intvite you to join following site and you will be connected in my connection list automatically once you sign in.<br/>
+            Please click on the following link to sign In: <br/>
+        <a href="<%=bundle.getString("rave.portal")%>" >Click Here</a>
+    </div>
+    <span style="font-size: 11px; color: rgb(80, 88, 56);">
+        NOTE: " #{name} " represents the respective name of selected users.
+    </span>
+    <input type="hidden" id="providerId" /><br/> 
+    <input type="button"  value="Submit" onclick="sendInvite()"  /> 
+    <input type="button"  value="Cancel" onclick="closeMessage()"  />
+</div>
+<div style="display:none;" class="cred_bg-disable"></div>
+</body>
+</html>

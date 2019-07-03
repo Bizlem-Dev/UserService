@@ -1,0 +1,113 @@
+<script>
+      function join2(url,group,userId,gaccess,id,action){
+      	var data='userId='+userId+'&groupName='+group+'&accept=no';
+      	
+      	$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				 
+				  success: function(){
+			if(gaccess=="public"){	
+									  if(action==0){
+
+				  	document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("joined"+id).style.display='block';		
+					}else{
+					document.getElementById("joined"+id).style.display='none';
+				  	document.getElementById("request"+id).style.display='block';	
+					}
+				  }else{
+				  
+				  document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("pending"+id).style.display='block';
+					}
+				  }
+				
+			});
+      }  
+
+
+    </script>
+
+
+<%
+var	grpNode=request.getAttribute("grouplist");
+//out.print(grpNode.size());
+for(i=0;i<grpNode.size();i++){
+											var cmpNode=grpNode.get(i);
+										%>		
+							            <div class="col-md-6 col-xs-12 custom-width">
+							            	<div class="well well-sm company-list">
+							            		<div class="row">
+							            		<div class="col-sm-4 col-xs-4 image">
+							            			<% if(cmpNode.hasNode("picture")){%>
+								 		<img width="88.32" height="115.95" alt="Add Friend" src="<%=request.getContextPath()%><%=cmpNode.getNode("picture")%>">
+								 		
+								 <%}else{%>
+								 		<img alt="Add Friend" src="<%=request.getContextPath()%>/apps/user/css/images/photo.gif">
+								 <%}%>
+
+							            		</div>
+							            		<div class="col-sm-8 col-xs-8 text">
+							            			<h3><a href='<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=cmpNode.getName()?cmpNode.getName() :""%>'><%=cmpNode.groupName?cmpNode.groupName:""%></a></h3>
+							            			<p><a href="#"><%=cmpNode.groupWebsite?cmpNode.groupWebsite:""%></a></p>
+							            			<p><a href="#">Date: </a><%=cmpNode.groupDate?cmpNode.groupDate:""%></p>
+							            			<p><a href="#">Type: </a><%=cmpNode.groupType?cmpNode.groupType:""%></p>
+							            			<p><a href="#">Email: </a><%=cmpNode.groupOwnerEmail?cmpNode.groupOwnerEmail:""%></p>
+							            			<p><%if(request.getParameterMap().containsKey("userId")){
+				 		var userIdNode=grpNode.get(i).session.getNode("/content/user/"+request.getParameter("userId"));
+						var userIdNode1=grpNode.get(i).session.getNode("/content/group");
+				 		if(userIdNode.hasNode("Groups") && userIdNode.getNode("Groups").hasNode("GroupsAdded")
+				 		 && userIdNode.getNode("Groups").getNode("GroupsAdded").hasNode(grpNode.get(i).getName())){
+				 					if(userIdNode.getNode("Groups").getNode("GroupsAdded")
+				 							.getNode(grpNode.get(i).getName()).getProperty("groupRequest")=='pending')
+											{				 			
+				 			%>
+				 					<strong><span>Request Pending</span></strong>
+				 					<%}else if(userIdNode.getNode("Groups").getNode("GroupsAdded")
+				 							.getNode(grpNode.get(i).getName())
+				 							.getProperty("groupRequest").getString()=='accepted')
+											{
+											%>
+				 							<div id="request<%=i%>" style="display:none;">
+						 	<input type="button" value="  Join Group  " class="btn btn-info"
+						 		 onclick="join2('<%=request.getContextPath()%>/servlet/group/show.addMember',
+						 		 				'<%=grpNode.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(grpNode.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,0)"/>
+						 	</div>
+							
+						 	<div id="joined<%=i%>"  style="display:block;">
+								<strong><span>Added</span></strong>
+								<input type="button" value="  UnJoin Group  " class="btn btn-info"
+						 		 onclick="join2('<%=request.getContextPath()%>/servlet/group/show.unjoin',
+						 		 				'<%=grpNode.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(grpNode.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,1)"/>
+							</div>
+								<strong><span id="pending<%=i%>" style="display:none">Request Pending</span></strong>		
+				 						<%}%>
+				 			<%
+				 			}else{%>
+						<div id="request<%=i%>" style="display:block;">
+						 	<input type="button" value="  Join Group  " class="btn btn-info" "
+						 		 onclick="join2('<%=request.getContextPath()%>/servlet/group/show.addMember',
+						 		 				'<%=grpNode.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(grpNode.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,0)"/>
+						 	</div>
+							
+						 	<div id="joined<%=i%>" style="display:none;">
+								<strong><span>Added</span></strong>
+								<input type="button" value="  UnJoin Group  " class="btn btn-info"
+						 		 onclick="join2('<%=request.getContextPath()%>/servlet/group/show.unjoin',
+						 		 				'<%=grpNode.get(i).getName()%>',
+						 		 				'<%=request.getParameter("userId")%>','<%=userIdNode1.getNode(grpNode.get(i).getName()).getProperty("groupAccess")%>',<%=i%>,1)"/>
+							</div>
+								<strong><span id="pending<%=i%>" style="display:none">Request Pending</span></strong>							
+					<%}}%>
+				 
+													</p>
+							            		</div>
+							            		</div>
+							            	</div>
+							            </div>
+<%}%>

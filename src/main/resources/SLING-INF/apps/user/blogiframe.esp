@@ -1,0 +1,210 @@
+<%
+var currentNodeProvided = ((typeof currentNode != "undefined") );
+function getCurrentNodeValue(prop) {
+    var result = "";
+    if(currentNodeProvided && currentNode[prop]) {
+        result = currentNode[prop];
+        
+    }
+    return result;
+}
+%>
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <%load("../common/links.esp");%>
+           </head>
+<body>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+    <%load("../common/header.esp");%>
+
+
+<script src="<%=request.getContextPath()%>/apps/js/step-form.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/step-form.css">
+<script>
+
+    $(document).ready(function(e) {
+        
+        $(".stepsForm").stepsForm({
+            theme:'purple'
+        }); 
+        
+        $(".container .themes>span").click(function(e) {
+            $(".container .themes>span").removeClass("selectedx");
+            $(this).addClass("selectedx");
+            $(".stepsForm").removeClass().addClass("stepsForm");
+            $(".stepsForm").addClass("sf-theme-"+$(this).attr("data-value"));
+        });
+    });
+    
+  function resizeIframe(iframe) {
+  	//alert(iframe);
+    iframe.height = parseInt(iframe.contentWindow.document.body.scrollHeight+200) + "px";
+    //alert(iframe.height);
+  }
+</script>
+<script src="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.min.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.css"> 
+
+ <script src="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader-new.css"> 
+
+<style type="text/css">
+#dropzone { margin-bottom: 3rem; }
+.dropzone { border: 2px dashed #0087F7; border-radius: 5px; padding: 0px;}
+.dropzone .dz-message { font-weight: 400; }
+.dropzone .dz-message .note { font-size: 0.8em; font-weight: 200; display: block; margin-top: 1.4rem; }
+.dropzone .dz-message {
+    margin: 2em 0;
+    text-align: center;
+}
+.dropzone .dz-preview .dz-details, .dropzone-previews .dz-preview .dz-details {width: 100%; height: 30px;}
+</style>
+
+<section class="">
+<%if(request.getParameter("id") != null){%>		
+<iframe frameborder="0" id="bloggerId" style="width:100%;" onload="resizeIframe(this)" src="<%=request.getContextPath()%>/servlet/blogger/view.home?id=<%=request.getParameter("id")%>"></iframe>
+<%}else{%>
+<iframe frameborder="0" id="bloggerId" style="width:100%;" onload="resizeIframe(this)" src="<%=request.getContextPath()%>/servlet/blogger/view.home"></iframe>
+<%}%>
+</section>
+
+<%load("../common/footer.esp");%>
+
+
+<!-- Login Modal Start  -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Login Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Login Modal End  -->
+
+<!-- register Modal Start  -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Registration Form</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+
+
+<!-- contactsupplier Modal Start  -->
+<div class="modal fade contactsupplier" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Contact Supplier</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+    
+  
+        
+    </body>
+</html>
+

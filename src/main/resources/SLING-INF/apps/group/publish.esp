@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Home</title> 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+       <%load("../common/links.esp");%>
+           </head>
+<body>
+<div class="pace pace-active" style="display:none;">
+<div class="pace-progress">
+<div class="pace-progress-inner"></div>
+</div>
+<div class="pace-activity"></div>
+</div>
+    <%load("../common/header.esp");%>
+
+
+<script src="<%=request.getContextPath()%>/apps/js/step-form.js"></script>
+<link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/apps/css/step-form.css">
+<script>
+    $(document).ready(function(e) {
+    
+    	 var url = '<%=request.getContextPath()%>/service/servlet/publish.getcountry';
+		     $.ajax({
+		    	  type:'GET',
+		    	  url:url,
+		    	  data:{
+		    		},
+		    	  success: function(result){
+		    	       // $("#div1").html(result);
+		    	       //alert("sucess---"+result);
+		    	       var jsonRes = JSON.parse(result);
+		    	       var arrayRes = jsonRes.countrylist;
+		    	       //alert("arrayRes---"+arrayRes.length);
+		    	       
+		    	       var v1 = "";
+		    	       for(i=0;i<arrayRes.length;i++){
+		    	       		v1 = v1 + '<option value="'+arrayRes[i].country_code+'">'+arrayRes[i].country+'</option>'
+		    	       	//alert(arrayRes[i].country);
+		    	       	//alert(arrayRes[i].country_code);
+		    	       }
+		    	       document.getElementById("countryId").innerHTML = document.getElementById("countryId").innerHTML + v1;
+		    	    }
+		      })
+    	
+        
+        $(".stepsForm").stepsForm({
+            theme:'purple'
+        }); 
+        
+        $(".container .themes>span").click(function(e) {
+            $(".container .themes>span").removeClass("selectedx");
+            $(this).addClass("selectedx");
+            $(".stepsForm").removeClass().addClass("stepsForm");
+            $(".stepsForm").addClass("sf-theme-"+$(this).attr("data-value"));
+        });
+    });
+    
+    function validateGroupForm(){
+    	var strGroupName = document.getElementById("groupName").value;
+    	var strGroupSummary = document.getElementById("groupSummary").value;
+    	var strPubRadioCh = document.getElementById("publicradio").checked;
+    	var strPriRadioCh = document.getElementById("privateradio").checked;
+    	UserDWRService.getGroupAddEditMsg(strGroupName,strGroupSummary,strPubRadioCh,strPriRadioCh,function(data) {
+				//dwr.util.setValue("divResponse", data);
+				if(data != "true"){
+				alert(data);
+				}else if(data == "true"){
+				document.getElementById('grpForm').submit();
+				}
+				
+	  		});
+    }
+    
+    function getLang(){
+    var countryCode = document.getElementById("countryId").value;
+    var url = '<%=request.getContextPath()%>/service/servlet/publish.getlang';
+		     $.ajax({
+		    	  type:'GET',
+		    	  url:url,
+		    	  data:{
+		    	  countrycode : countryCode
+		    		},
+		    	  success: function(result){
+		    	       // $("#div1").html(result);
+		    	       //alert("sucess---"+result);
+		    	       var jsonRes = JSON.parse(result);
+		    	       var arrayRes = jsonRes.languagelist;
+		    	       //alert("arrayRes---"+arrayRes.length);
+		    	       
+		    	       var v1 = "";
+		    	       for(i=0;i<arrayRes.length;i++){
+		    	       		v1 = v1 + '<option value="'+arrayRes[i].lang_code+'">'+arrayRes[i].lang+'</option>'
+		    	       	//alert(arrayRes[i].country);
+		    	       	//alert(arrayRes[i].country_code);
+		    	       }
+		    	       document.getElementById("langId").innerHTML = '<option>select language</option>' + v1;
+		    	    }
+		      })
+    }
+    
+    function getData(){
+    var countryCode = document.getElementById("countryId").value;
+    var langCode = document.getElementById("langId").value;
+    var url = '<%=request.getContextPath()%>/service/servlet/publish.getdata';
+		     $.ajax({
+		    	  type:'GET',
+		    	  url:url,
+		    	  data:{
+		    	  countrycode : countryCode,
+		    	  langcode : langCode
+		    		},
+		    	  success: function(result){
+		    	       // $("#div1").html(result);
+		    	       //alert("sucess---"+result);
+		    	       var jsonRes = JSON.parse(result);
+		    	       var arrayRes = jsonRes.data;
+		    	       //alert("arrayRes---"+arrayRes.length);
+		    	       
+		    	       var v1 = "";
+		    	       for(i=0;i<arrayRes.length;i++){
+		    	       		v1 = v1 + '<option value="'+arrayRes[i].sling_url+','+arrayRes[i].dest_url+'">'+arrayRes[i].name+'</option>'
+		    	       	//alert(arrayRes[i].country);
+		    	       	//alert(arrayRes[i].country_code);
+		    	       }
+		    	       document.getElementById("pageId").innerHTML = '<option value="">select pages</option>' + v1;
+		    	    }
+		      })
+    }
+    
+    function setUrl(){
+    if(document.getElementById("pageId").value != ""){
+    var urlRes = document.getElementById("pageId").value.split(",");
+    document.getElementById("slingUrlId").innerHTML = urlRes[0];
+    document.getElementById("destUrlId").innerHTML = urlRes[1];
+    document.getElementById("slingurlId").value = urlRes[0];
+    document.getElementById("desturlId").value = urlRes[1];
+    }
+    }
+    
+    function setPreview(){
+    $("#resData").hide();
+    $("#ifmId").show();
+    document.getElementById("ifmId").src = document.getElementById("slingurlId").value;
+    }
+    
+    function getRes(res){
+    //alert(res);
+    $("#resData").show();
+    $("#ifmId").hide();
+    if(res){
+    document.getElementById("resData").innerHTML = "<h2>Published Successfully</h2>";
+    }else{
+    document.getElementById("resData").innerHTML = "<h2>Something went wrong, report a bug</h2>";
+    }
+    }
+    
+    function publishHtml(){
+    var dest = "/"+document.getElementById("desturlId").value;
+    while(dest.indexOf(" ") != -1){
+    dest = dest.replace(" ","%20");
+    }
+  //  alert(dest);
+  	//var page =  document.getElementById("pageId").innerHTML;
+  	var page = $('#pageId').find('option:selected').text();
+  	//alert(page);
+  	//return false;
+  	var filename = "";
+  	var subDir = "";
+  	if(page.indexOf("Home") != -1){
+  	filename = "home";
+  	subDir = "home_files";
+  	}else if(page.indexOf("About") != -1){
+  	filename = "aboutus";
+  	subDir = "aboutus_files";
+  	}else if(page.indexOf("Buyers") != -1){
+  	filename = "buyers";
+  	subDir = "buyers_files";
+  	}else if(page.indexOf("Key") != -1){
+  	filename = "keydifferentiator";
+  	subDir = "keydifferentiator_files";
+  	}else if(page.indexOf("Contact") != -1){
+  	filename = "contactus";
+  	subDir = "contactus_files";
+  	}else if(page.indexOf("Advertise") != -1){
+  	filename = "advertisewithus";
+  	subDir = "advertisewithus_files";
+  	}
+    var sling = document.getElementById("slingurlId").value;
+    var urlGet="http://prod.bizlem.io:3003/saveurl?URL="+sling+"&fileN="+filename+"&dir="+dest+"&subdir="+subDir+"&callback=?";
+    console.log(urlGet);
+	$.get(urlGet, function (data) {
+    console.log(data);
+	}, 'json');
+    
+    
+    }
+</script>
+<script src="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.min.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/dropzone/dropzone.css"> 
+
+ <script src="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader.js"></script>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/fine-uploader/fine-uploader-new.css"> 
+
+<style type="text/css">
+#dropzone { margin-bottom: 3rem; }
+.dropzone { border: 2px dashed #0087F7; border-radius: 5px; padding: 0px;}
+.dropzone .dz-message { font-weight: 400; }
+.dropzone .dz-message .note { font-size: 0.8em; font-weight: 200; display: block; margin-top: 1.4rem; }
+.dropzone .dz-message {
+    margin: 2em 0;
+    text-align: center;
+}
+.dropzone .dz-preview .dz-details, .dropzone-previews .dz-preview .dz-details {width: 100%; height: 30px;}
+</style>
+
+<section class="Profile_page">
+		
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-10 col-xs-12">
+						<div class="row">
+							<div class="col-xs-6">
+								<!--STEPS FORM START  -->
+        <div class="stepsForm">
+            <form method="post"  action="upload.php"  class="form-horizontal">
+                                
+                <div class="sf-steps-form sf-radius"> 
+                    
+                    <ul class="sf-content"> <!-- form step one --> 
+					<!--<li><div class="profile-user-thumb">
+		<img src="images/logo.png"  height="80px" width="125px" />
+		
+			
+			<div><a rel="facebox"  class="btn btn-primary">Change Picture</a></div>
+		</div></li>-->
+                         <li>
+                            <div class="sf_columns column_6">
+                            	<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Country</label>
+								    <div class="col-sm-10">
+								      <!input type="text" class="form-control" placeholder="Name" data-required="true">
+									  <select id="countryId" class='form-control' onclick="getLang()">
+									  <option>select country</option>
+									  </select>
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Language</label>
+								    <div class="col-sm-10">
+								      <!textarea class="form-control" placeholder="Description" data-required="true"></textarea>
+								      <select id="langId" class='form-control' onclick="getData()">
+									  <option>select language</option>
+									  </select>
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Page</label>
+								    <div class="col-sm-10">
+								      <!input type="text" class="form-control" placeholder="Website" data-required="true">
+								      <select id="pageId" onclick="setUrl()" class='form-control'>
+									  <option>select page</option>
+									  </select>
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Sling Url</label>
+								    <div class="col-sm-10">
+								      <!input type="text" class="form-control" placeholder="Insustry" data-required="true">
+								      <textarea disabled id="slingUrlId" class="form-control" placeholder="Sling Url" data-required="true"></textarea>
+								      <input type="hidden" id="slingurlId" name=""/>
+								    </div>
+								</div>
+								<div class="form-group">
+								    <label for="" class="col-sm-2 control-label">Destination Url</label>
+								    <div class="col-sm-10">
+								      <!input type="text" class="form-control" placeholder="Insustry" data-required="true">
+								      <textarea disabled id="destUrlId" class="form-control" placeholder="Destination Url" data-required="true"></textarea>
+								      <input type="hidden" id="desturlId" name="desturl"/>
+								    </div>
+								</div>
+                            </div>
+                         </li>
+                    </ul>
+                     
+                   
+                    
+                </div>
+
+
+                
+                <div class="sf-steps-navigation" style="margin-left:13%">
+                    <span id="sf-msg" class="sf-msg-error"></span>
+                    
+					<div class="col-xs-3">
+                    <button type="button" onclick="setPreview()" class="btn btn-primary">Preview</button>
+					</div>
+					<div class="col-xs-3">
+					<button id="sf-next" type="button" onclick="publishHtml()" class="btn btn-primary">Publish</button>
+					</div>
+					
+                </div>
+            </form>
+        </div>
+        <!--STEPS FORM END  -->
+		
+		
+							</div>
+							
+							<div class="col-xs-6">
+							
+							<iframe id="ifmId" style="display:none;height: 434px;width: 100%;margin-top: 7%;" src=""></iframe>
+							<div id="resData" style="display:none"></div>
+							</div>
+							
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+
+</section>
+
+<%load("../common/footer.esp");%>
+
+
+<!-- Login Modal Start  -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="loginModalLabel">Login Details</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Login</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Login Modal End  -->
+
+<!-- register Modal Start  -->
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Registration Form</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+
+
+<!-- contactsupplier Modal Start  -->
+<div class="modal fade contactsupplier" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <form class="form-horizontal">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="registerModalLabel">Contact Supplier</h4>
+      </div>
+      <div class="modal-body">
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Full Name</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-3 control-label">Confirm Password</label>
+            <div class="col-sm-9">
+              <input type="password" class="form-control">
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+<!-- register Modal End  -->
+    
+  
+        
+    </body>
+</html>
+

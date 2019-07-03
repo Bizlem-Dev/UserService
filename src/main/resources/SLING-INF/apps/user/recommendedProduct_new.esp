@@ -1,0 +1,71 @@
+
+<%
+ var arr1 = [];
+ var prdNode1 = currentNode.session.getRootNode().getNode("content").getNode("product").getNode("products");
+if(prdNode1.hasNodes()){
+var prdNode1s = prdNode1.getNodes();
+while(arr1.length < 15){
+    var randomnumber = Math.ceil(Math.random()*(prdNode1s.length - 1))
+    if(arr1.indexOf(randomnumber) > -1) continue;
+    if(prdNode1.hasNode(randomnumber)){
+    arr1[arr1.length] = randomnumber;
+    }
+  
+}
+//out.print(arr1);
+
+}
+%>
+
+  <div class="col-sm-12 col-xs-12">
+
+    <h4 class="hot-product-gallery">Recommended Products </h4>
+    <div class="flexslider login-hot-product" id="reccomended-product">
+
+      <ul class="slides">
+       					<%if(arr1.length > 0){
+                          for(var i = 0;i<arr1.length;i++){
+                          if(prdNode1.hasNode(arr1[i])){
+                          var userprdNode1 = prdNode1.getNode(arr1[i]);
+                          %>
+        <li>
+        <%if(userprdNode1.hasNode("media") && userprdNode1.getNode("media").hasNode("images") && userprdNode1.getNode("media").getNode("images").hasNodes()){
+        var prdImagesNode = userprdNode1.getNode("media").getNode("images").getNodes(); 
+        %>
+          <a target="_blank" href="<%=request.getContextPath()%>/servlet/service/productselection.brief?pid=<%=arr1[i]%>"><img src="<%=request.getContextPath()%><%=prdImagesNode[0].imgpath?prdImagesNode[0].imgpath:""%>" style="height:70px"/></a>
+          <%}else{%>
+          <a target="_blank" href="<%=request.getContextPath()%>/servlet/service/productselection.brief?pid=<%=arr1[i]%>"><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="height:70px"/></a>
+          <%}%>
+          <div class="text">
+            <%if(userprdNode1.hasProperty("name")){
+            var prdname = userprdNode1.name;
+            var prdNameRes = "";
+            if(prdname.indexOf(" ") != -1){
+            var prdName = prdname.split(" ");
+            prdNameRes = prdName[0] + " " + prdName[1]; 
+            }else{
+            prdNameRes = prdname;
+            }
+            %>
+            <a target="_blank" href="<%=request.getContextPath()%>/servlet/service/productselection.brief?pid=<%=arr1[i]%>"><p class="text-danger" title="<%=prdname%>"><%=prdNameRes%></p></a>
+            <%}%>
+            <!--<a href="#"><small>KX-01 New</small></a>-->
+            </div>
+        </li>
+        <%}
+		 }
+		 }%>
+        <!-- items mirrored twice, total of 12 -->
+      </ul>
+    </div>
+    <script type="text/javascript">
+      $(window).load(function() {
+          $('#reccomended-product').flexslider({
+            animation: "slide",
+            animationLoop: false,
+            itemWidth: 95,
+            itemMargin: 20
+          });
+        });
+  </script>
+</div><!--end of hot product slider-->

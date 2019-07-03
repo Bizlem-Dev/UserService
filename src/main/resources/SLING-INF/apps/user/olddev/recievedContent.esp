@@ -1,0 +1,143 @@
+<html>
+<head>
+<link href="<%=request.getContextPath()%>/wro/common.css" rel="stylesheet" type="text/css" />
+</head>
+<% var contentNode=currentNode.session.getRootNode().getNode("content").getNode("user");%>
+<script>
+    function clickRecieved(){
+        document.getElementById("suggest2").style.display='none';
+        document.getElementById("suggest1").style.display='block';
+        var rec = document.getElementById("recieved");
+        var sugg = document.getElementById("suggest");
+        removeClass(sugg,"selected");
+        addClass(rec,"selected");
+    }
+    
+    function clickSuggest(){
+        document.getElementById("suggest1").style.display='none';
+        document.getElementById("suggest2").style.display='block';recieved
+        var rec = document.getElementById("recieved");
+        var sugg = document.getElementById("suggest");
+        removeClass(rec,"selected");
+        addClass(sugg,"selected");
+    }
+    
+    function hasClass(el, name) {
+       return new RegExp('(\\s|^)'+name+'(\\s|$)').test(el.className);
+    }
+    
+    function addClass(el, name)
+    {
+       if (!hasClass(el, name)) { el.className += (el.className ? ' ' : '') +name; }
+    }
+    
+    function removeClass(el, name)
+    {
+       if (hasClass(el, name)) {
+          el.className=el.className.replace(new RegExp('(\\s|^)'+name+'(\\s|$)'),' ').replace(/^\s+|\s+$/g, '');
+       }
+    }
+</script>
+<style>
+     .section-tab{margin:5px 0px 0px 10px; padding:0px; display:table;}
+    .section-tab li{background:#D2D2D2;float:left; margin:0px 5px; list-style:none; border:1px solid #ccc; border-bottom:none; -webkit-border-radius: 10px 10px 0px 0px; -moz-border-radius: 10px 10px 0px 0px; border-radius: 10px 10px 0px 0px;}
+    .section-tab li.selected, .section-tab li:hover{background:#FFFFFF;}
+    .section-tab li a{text-decoration:none; color:#333; padding:5px; display:block;}    
+    .request-tab{background: none repeat scroll 0 0 white;border-radius: 3px 3px 3px 3px;float: none;height: 100%; position: absolute;width: 100%;} 
+</style>
+</head>
+<body>
+<ul class="section-tab">
+  <li class="selected tab" id="recieved"><a onclick="clickRecieved()" href="javascript:void(0);"  >Recieved Content</a></li>
+  <li class="tab" id="suggest"><a  onclick="clickSuggest()" href="javascript:void(0);">Suggested Content</a></li>
+</ul>
+<div class="request-tab" >
+<div id="suggest1" class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big" style="width:100% !important;" >
+                <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" style="width:90% !important;" >               
+<%
+ var contentNode=currentNode.session.getRootNode().getNode("content").getNode("user");
+ var userNode;
+ var groupNode;
+ var group;
+ if(currentNode.hasNode("Suggest") && currentNode.getNode("Suggest").hasNode("RecievedInfo") 
+        && currentNode.getNode("Suggest").getNode("RecievedInfo").hasNodes()){
+        sharedNode=currentNode.getNode("Suggest").getNode("RecievedInfo").getNodes();
+            for(i in sharedNode){
+                var nodes=sharedNode[i].getNodes();
+                var userName=contentNode.session.getNode("/content/user/"+sharedNode[i].getName()).name;
+                %>
+                <%=userName%> has suggested you : <br />
+                <%
+                for(k in nodes){
+                    share=currentNode.session.getNode(nodes[k].suggestedPath);
+                %>
+                    <li class="ui-state-default ui-corner-top" style="height:70px;width: 100% !important;">
+                       <div class="profile-user-thumb">                       
+                          <a target="_blank" href="<%=share.suggestURL?share.suggestURL:""%>"  
+                           ><%if(share.hasNode("image")){%>
+                             <img src="<%=request.getContextPath()+share.getNode("image")%>" width="41" height="60"  />
+                         <%}else{%>
+                               <img src="<%=request.getContextPath()+"/apps/user/css/images/photo.gif"%>" width="41" height="60"  />
+                         <%}%></div>
+                      <div  class="content_5"> 
+                            <strong><%=share.suggestMessage?share.suggestMessage:""%></strong> <br />
+                            <span>Shared By:</span><%=userName%> <br/>
+                            <span>Suggested On :</span><%=share.suggestDate?share.suggestDate:""%></br>                           
+                      </div>
+                      </li>
+        <%
+        }}
+ }else{
+    out.println("No Content Present");
+ }
+%>
+</ul>
+</div>
+
+<div style="display:none;" id="suggest2" class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big" >
+    <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+<%if(currentNode.hasNode("Suggest") && currentNode.getNode("Suggest").hasNode("SharedInfo") 
+        && currentNode.getNode("Suggest").getNode("SharedInfo").hasNodes()){
+        sharedNode=currentNode.getNode("Suggest").getNode("SharedInfo").getNodes();
+            for(i in sharedNode){
+                   
+                %>
+                    <li class="ui-state-default ui-corner-top" style="height:70px">
+                       <div class="profile-user-thumb">                       
+                         <a href="<%=sharedNode[i].suggestURL?sharedNode[i].suggestURL:""%>">
+                         <%if(sharedNode[i].hasNode("image")){%>
+                             <img src="<%=request.getContextPath()+sharedNode[i].getNode("image")%>" width="41" height="60"  />
+                         <%}else{%>
+                               <img src="<%=request.getContextPath()+"/apps/user/css/images/photo.gif"%>" width="41" height="60"  />
+                         <%}%>
+                                
+                      </div>
+                      <div  class="content_5"> 
+                            <strong><%=sharedNode[i].suggestMessage?sharedNode[i].suggestMessage:""%></strong> <br />
+                            <span>Shared To:</span>
+                            <%
+                                var users=sharedNode[i].invities;
+                                for(k in users){
+                                   userName=contentNode.getNode(users[k]).name;
+                                   out.println(userName);
+                                   if(k<users.length-1){
+                                    out.print(",");
+                                   }
+                                }
+                             %>   
+                             <br/>
+                            <span>Suggested On :</span><%=sharedNode[i].suggestDate?sharedNode[i].suggestDate:""%></br>                           
+                      </div>
+                      </li>
+        <%
+        }
+ }else{
+    out.println("No Content Present");
+ }
+%>
+                       
+    </ul>
+</div>
+</div>
+</body>
+</html>

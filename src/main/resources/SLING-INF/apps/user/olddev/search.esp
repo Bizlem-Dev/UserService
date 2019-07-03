@@ -1,0 +1,384 @@
+<html>
+<head>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/wro/profileSearch.css" type="text/css" />
+<script type="text/javascript" src="<%=request.getContextPath()%>/wro/profileSearch.js"></script>
+<%
+//load("includes/header.esp");
+%>
+
+ <script>
+    <%if(request.getParameterMap().containsKey("chart")){%>
+ 	  function setDiv(){
+ 	        var arry = [];
+ 	        var allVals = "{";
+             $('#c_b :checked').each(function() {
+               var result = "\""+$(this).val()+"\":";
+               result+="{\"name\":\""+$(this).prev('a').text()+"\",";
+               result+="\"image\":\""+$(this).parent().parent().prev('div').children('img').attr('src')+"\",";
+               result+="\"email\":\""+$(this).next().next().next("#emailId").val()+"\",";
+               result+="\"phone\":\""+$(this).next().next("#phoneNumberId").val()+"\"}"; 
+               arry.push(result);
+               
+             });
+             allVals +=arry.toString()+"}";
+            window.returnValue = allVals;
+            window.close();
+            return false;
+       }
+ 	<%}else{%>
+ 	  function setDiv(){
+            /*var value=document.getElementById("t").value;
+            document.getElementById('selectedPerson').value=value; */
+            window.returnValue = document.getElementById("t").value;
+            window.close();
+            window.opener.location.reload(true);
+            return false;
+       }
+ 	<%}%>
+  
+     
+ </script>
+ <script>
+  $(function() {
+    
+  loadContent2("",10);
+    $.fn.delayKeyup = function(callback, ms){
+         var timer = 0;
+         var el = $(this);
+         $(this).keyup(function(){                   
+             clearTimeout (timer);
+             timer = setTimeout(function(){
+                 callback(el)
+                     }, ms);
+         });
+         return $(this);
+     };
+    
+    $('#searchPeople').delayKeyup(function(el){         
+           loadContent2(el.val().trim(),'10');
+    });
+    
+  });
+ 
+ </script>
+ 
+ 
+<script>
+	function next(v,id){
+
+	          var searchKeyword=document.getElementById("searchPeople").value;
+               loadContent2(searchKeyword,v);
+	}
+	function previous(){
+	   var searchKeyword=document.getElementById("searchPeople").value;
+	   var page=document.getElementById("pagignation");
+	   if(page.value!=0){
+	       page.value=parseInt(page.value)-10;
+	       loadContent2(searchKeyword,page.value);
+	   }else{
+	       alert("This is the first Page");
+	   }
+	}
+	
+     function updateTextArea() {
+         
+         var allVals = [];
+         $('#c_b :checked').each(function() {
+           allVals.push($(this).val());
+         });
+         $('#t').val(allVals);
+      }
+     $(function() {
+       $('#c_b input').click(updateTextArea);
+       updateTextArea();
+     });
+	
+	function searchPeopleIn(userId){
+        
+       // window.location="<%=request.getContextPath()%>/servlet/common/search.profile?keywords="+document.getElementById("searchPeople").value+"&userId="+userId;
+        
+    }	
+    
+    function searchPeopleMap(userId,compN){
+        
+        window.location="<%=request.getContextPath()%>/servlet/common/search.profile?"+
+        					"keywords="+document.getElementById("searchPeople").value+"&userId="
+        					+userId+"&companyName="+compN;
+        
+    }	
+</script>
+<script>
+	function connect(url,id){
+	
+		var userId=document.getElementById("userId").value;
+		var friendValue=document.getElementById("friendGet"+id).value;
+		var friendPathValue=document.getElementById("friendPath"+id).value;
+		var friendMessage=document.getElementById("friendMessage"+id).value;
+		var friendType=document.getElementById("friendType"+id).value;
+		//alert(friendMessage);
+		var data='userId='+userId+'&friend='+friendValue+'&friendPath='+friendPathValue+
+		'&friendMessage='+friendMessage+'&friendType='+friendType;
+		
+       
+		$.ajax({
+				  type: 'POST',
+				  url: url,
+				  data: data,
+				  success: function(){
+				  	document.getElementById("request"+id).style.display='none';
+				  	document.getElementById("acceptRequest"+id).style.display='block';
+				  	 $(".close").click();
+				  }
+				
+			});
+	
+	}
+    function followFriend(path,userId,followingId,id){
+        var data="following="+followingId+"&follower="+userId;
+        var url=path+"/servlet/social/messages.follow";
+        $.ajax({
+                  type: 'POST',
+                  url: url,
+                  data: data,
+                  success: function(){
+                    document.getElementById("follow"+id).style.display='none';
+                    document.getElementById("unfollow"+id).style.display='block';
+                  }
+                
+            });
+    }
+    function unFollowFriend(path,userId,followingId,id){
+        var data="following="+followingId+"&follower="+userId;
+        var url=path+"/servlet/social/messages.unfollow";
+        $.ajax({
+                  type: 'POST',
+                  url: url,
+                  data: data,
+                  success: function(){
+                    document.getElementById("follow"+id).style.display='block';
+                    document.getElementById("unfollow"+id).style.display='none';
+                  }
+                
+            });
+    }
+    function loadContent1(elementSelector) {
+        var searchKeyword=document.getElementById("searchPeople").value;
+        loadContent2(searchKeyword,'10');
+        var userId="<%=request.getParameter("userId")%>";
+       //     $(""+elementSelector+"").load("<%=request.getContextPath()%>/servlet/common/search.profileDiv?keywords="+searchKeyword+"&userId="+userId+"");
+        }
+        
+ 	function loadContent2(searchKeyword,page) {
+ 	          $("a.bold").removeClass("bold");
+            //$(this).addClass("bold");
+ 	     var page1=parseInt(page)-10;
+ 	     var page2=page;
+ 		var userId="<%=request.getParameter("userId")%>";
+ 		<%if(request.getParameterMap().containsKey("flag")){%>
+     		$("#searchDiv").load("<%=request.getContextPath()%>/servlet/common/"+
+     		"search.profileDiv?keywords="+searchKeyword+"&userId="+userId+
+     		"&flag=<%=request.getParameter("flag")%>&fromPage="+page1+"&toPage="+page2+"", function() {
+                    var keySize=document.getElementById("keySize").value;
+                    var length=Math.ceil(parseInt(keySize)/10);
+                    
+                    var content="";
+                    for(var i=1;i<=length;i++){
+                        if(page==i*10){
+                            content+="<a href='javascript:void(0);' class='bold' onclick=\"next(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                            
+                         }else{
+                            content+="<a href='javascript:void(0);'  onclick=\"next(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                         }
+                    }
+                    document.getElementById("pageID").innerHTML=content;
+                   
+            });
+        <%}else{%>
+            $("#searchDiv").load("<%=request.getContextPath()%>/servlet/common/search.profileDiv?keywords="
+                                        +searchKeyword+"&userId="+userId+"&fromPage="+page1+"&toPage="+page2+"", function() {
+                    var keySize=document.getElementById("keySize").value;
+                    var length=Math.ceil(parseInt(keySize)/10);
+                    
+                    var content="";
+                    for(var i=1;i<=length;i++){
+                        if(page==i*10){
+                            content+="<a href='javascript:void(0);' class='bold' onclick=\"next(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                            
+                         }else{
+                            content+="<a href='javascript:void(0);'  onclick=\"next(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                         }
+                    }
+                    document.getElementById("pageID").innerHTML=content;
+                   
+            });
+           //  var url="<%=request.getContextPath()%>/servlet/common/search.profileDiv?keywords="+searchKeyword+"&userId="+userId+"&fromPage="+page1+"&toPage="+page2; 
+          /*  $.ajax({
+                    type: "GET",
+                    url: url,
+                    dataType: 'html',
+                    success: function(msg){                                          
+                            $("#searchDiv").html(msg);
+   
+                    }
+                });*/
+        <%}%>
+        }
+        
+        function openAdnvcDiv(){
+            $(".input-div").slideToggle();
+            $(".arrow-img-up").toggleClass("arrow-img-upV");
+           
+        }
+        
+        function advanceSearch(page){
+            $("#loadDivId").show();
+            var searchKeyword=document.getElementById("searchPeople").value;
+            var advUrl = "<%=request.getContextPath()%>/servlet/common/search.advProfileDiv" +
+                         "?type=adv&userId=<%=request.getParameter("userId")%>&keyword=" +
+                         searchKeyword;
+            if($("#skillId").attr("checked")){
+                if($("#skillIdVal").val()!=""){
+                    advUrl +="&skillTag=1&skillValue="+$("#skillIdVal").val();
+                }else{
+                    alert("Please Insert Some Value !");
+                    return false;
+                }
+            }else{
+                advUrl +="&skillTag=0&skillValue=0";
+            }
+            if($("#companyId").attr("checked")){
+                if($("#companyIdVal").val()!="" || $("#companyIdDur").val()!=""){
+                    advUrl +="&companyTag=1&companyValue="+$("#companyIdVal").val()+"&companyDur="+$("#companyIdDur").val();
+                }else{
+                    alert("Please Insert Some Value !");
+                    return false;
+                }
+            }else{
+                advUrl +="&companyTag=0&companyValue=&companyDur=";
+            }
+            if($("#educId").attr("checked")){
+                if($("#educIdVal").val()!="" || $("#educIdDur").val()!=""){
+                    advUrl +="&educationTag=1&educationValue="+$("#educIdVal").val()+"&educationDur="+$("#educIdDur").val();
+                }else{
+                    alert("Please Insert Some Value !");
+                    return false;
+                }
+            }else{
+                advUrl +="&educationTag=0&educationValue=&educationDur=";
+            }
+            if($("#addrId").attr("checked")){
+                if($("#addrIdVal").val()!=""){
+                    advUrl +="&addressTag=1&addressValue="+$("#addrIdVal").val();
+                }else{
+                    alert("Please Insert Some Value !");
+                    return false;
+                }
+            }else{
+                advUrl +="&addressTag=0&addressValue=0";
+            }
+            var page1=parseInt(page)-10;
+            var page2=page;
+            advUrl +="&fromPage="+page1+"&toPage="+page2;
+            var userId="<%=request.getParameter("userId")%>";
+             $("#searchDiv").load(advUrl, function() {
+                var keySize=document.getElementById("keySize").value;
+                var length=Math.ceil(parseInt(keySize)/10);
+                
+                var content="";
+                for(var i=1;i<=length;i++){
+                    if(page==i*10){
+                        content+="<a href='javascript:void(0);' class='bold' onclick=\"nextAdv(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                        
+                     }else{
+                        content+="<a href='javascript:void(0);'  onclick=\"nextAdv(\'"+(i*10)+"\',this)\" >"+i+"</a>&nbsp;";
+                     }
+                }
+                document.getElementById("pageID").innerHTML=content;
+                $("#loadDivId").hide();
+            });
+        }
+      function nextAdv(v,id){
+          var searchKeyword=document.getElementById("searchPeople").value;
+          advanceSearch(v);
+      }
+</script>
+
+</head>
+<body>
+<div class="container-fluid navbar-spacer">
+
+<div class="section-left">
+	<div class="search-internal-top">
+	  <input type="text" tabindex="0" id="searchPeople" value="<%=request.getParameter("keywords")%>" 
+	  				name="textfield"  />
+	<!-- onkeyup="loadContent2('#searchDiv','<%=request.getParameter("userId")%>')"  --> 
+	  	<a href="javascript:loadContent1('#searchDiv');"  ></a>
+	  	
+	  	<%if(request.getParameterMap().containsKey("back")){%>
+	  	<a style="margin-top: 17px !important;" class="btn btn-info"  href="javascript:void(0);" onclick="history.go(-1);return true;" >Back</a>
+        <%}%>
+        <a href="#" class="search_btn" onclick="openAdnvcDiv()" ><p>Advance<br />
+                    Search</p> <span class="arrow-img-up arrow-img-down"></span></a>
+        <div class="input-div">
+                <div class="skill">
+                    <label class="mylable">
+                        Skill
+                        <span>
+                            <input type="checkbox" name="skill" id="skillId" value="1" />
+                        </span>
+                     </label>
+                     <input type="text" id="skillIdVal" name="skillValue" style="width: 60%;" placeholder="Skill Name" />
+                 </div>
+                 <div class="skill skillR">
+                    <label class="mylable">
+                        Experience
+                        <span>
+                            <input type="checkbox" name="company" id="companyId" value="1" />
+                        </span>
+                     </label>
+                     <input type="text" id="companyIdDur" name="companyDurValue" placeholder="Duration(in years) " />
+                     <input type="text" id="companyIdVal" name="companyValue" placeholder="Company Name " />
+                 </div>
+                 <div class="skill">
+                    <label class="mylable">
+                        Address
+                        <span>
+                            <input type="checkbox" name="address" id="addrId"  value="1" />
+                        </span>
+                     </label>
+                     <input type="text" id="addrIdVal" name="addressValue" style="width: 60%;" placeholder="Address" />
+                 </div>
+                 <div class="skill skillR">
+                    <label class="mylable">
+                        Education
+                        <span>
+                            <input type="checkbox" name="education" id="educId" value="1" />
+                        </span>
+                     </label>
+                     <input type="text" id="educIdDur" name="educationDurValue" placeholder="Duration (in years) " />
+                     <input type="text" id="educIdVal" name="educationValue" placeholder="School/College Name " />
+                 </div>
+                 <input type="button" value="Submit" onclick="advanceSearch('10')" class="btn btn-primary" />
+                 <div style="display:none;" id="loadDivId">Loading... 
+                 <img src="<%=request.getContextPath()%>/apps/user/css/images/loading.gif" height="20px" /></div> 
+           </div>          
+                
+                
+                
+        </div>
+	</div>
+	<div align="center" id="pageID" ></div>
+	 <br/>
+	<%if(request.getParameter("userId")=='newUserId'){%>
+		<table>
+		<tr><td align="right"><a rel="facebox" class="btn btn-info" href="#div1" onclick="setDiv()" >Click Selected</a></td></tr>
+		</table>
+	<%}%>
+			 <div id="" class="friendList search-result ui-tabs ui-widget ui-widget-content ui-corner-all tab-big">
+				<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+ <!-- <a rel="facebox" href="#div1" onclick="setDiv()" >Click Selected</a> --> 
+ <div id="searchDiv">
+ </div>
+
+<input type="hidden" id="pagignation" value="0" />
+</ul>

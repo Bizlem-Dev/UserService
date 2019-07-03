@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+    <%resource = Packages.java.util.ResourceBundle.getBundle("server");%>
+	<%var online = request.getAttribute("online");
+
+currentNode = currentNode.getNode(request.getRemoteUser().replace("@","_"));
+
+if(request.getRemoteUser()==null){
+ response.sendRedirect(request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()); 
+}else{
+%>
+
+        <title>Social Page</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <meta name="description" content="Demo project with jQuery">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!--<link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/css/bootstrap.css"> 
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/css/bootstrap.css"> 
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/css/font-awesome.min.css"> 
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/css/bootstrap-social.css"> 
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/FlexSlider/flexslider.css" type="text/css" media="screen" /> 
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/css/color.css">
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/css/loader.css">
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/css/custom.css">
+
+        <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/jquery.min.js"></script>
+        <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/bootstrap.min.js"></script>
+        <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/FlexSlider/jquery.flexslider.js"></script>
+        <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/hover-dropdown/bootstrap-hover-dropdown.min.js"></script>
+        <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/tabdrop/js/bootstrap-tabdrop.js"></script>
+        <script src="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/jquery.bootpag.min.js"></script>
+        <link rel="stylesheet" href="<%=request.getScheme()+"://"+request.getServerName()+":"+ request.getServerPort()+request.getContextPath()%>/apps/js/tabdrop/css/tabdrop.css">-->
+        	<%load("../common_new/links_new.esp");%>       
+ <script>       
+          $(document).ready(function(){
+          
+            document.getElementById("clickedTwitter").click();
+            $('.nav-pills, .nav-tabs').tabdrop()
+        }); 
+          </script>
+<script>
+    $(function(){
+    
+    <%if(currentNode.hasNode("NetworkProvider")){%>
+    
+        <%if(currentNode.getNode("NetworkProvider").hasNode("Linkedin")){%>
+            $.ajax({
+                type: 'POST',
+                url : '<%=request.getContextPath()%>/servlet/social/service.getLinkedinData',
+                data : 'userId=<%=request.getRemoteUser().replace("@","_")%>',
+                success: function(data){
+                     var obj = jQuery.parseJSON(data);
+                     $("#linkedinConnectId").attr('href','http://www.linkedin.com/profile/view?id='+obj.linkedinId);
+                    $("#linkedinId").html("<strong>"+obj.count+"</strong> friends");
+                } 
+            });
+        <%}%>
+        <%if(currentNode.getNode("NetworkProvider").hasNode("Twitter")){%>
+     
+        
+        <%}%>
+        <%if(currentNode.getNode("NetworkProvider").hasNode("Facebook")){%>
+     
+      <%}%>  
+      <%}%>
+    
+    });
+    
+    function addFollow(followingId,userId){
+        var data="following="+followingId+"&follower="+userId;
+        $.ajax({
+            type: 'POST',
+            url : '<%=request.getContextPath()%>/servlet/social/messages.follow',
+            data: data,
+            success: function(){
+               $("#followerId").text(parseInt($("#followerId").text())+1);
+               $("#socialMessageId").remove();
+            } 
+        });
+    }
+    
+    function socialConnect(value,a){
+  		//alert(value+" and "+a);
+        if(value=='twitter'){
+         $.ajax({
+        	    type: 'GET',
+                url : '<%=request.getContextPath()%>/servlet/social/mesg.getTweets',
+                data : 'userId=<%=request.getRemoteUser().replace("@","_")%>',
+                success: function(data){
+          //     	alert("successs data ---"+data);
+                if(data=='false' && a=='true'){
+            	var w = window.open('<%=request.getContextPath()%>/servlet/social/mesg.oauthSet', 'Twitter Connect', 'dialogHeight=600px;dialogWidth=600px');
+            	//alert("window res ---"+w);
+            	 var timer = setInterval(function() {
+        				if (w.closed) {
+            				clearInterval(timer);
+            //				alert("after window open ---"+data);
+           					$("#showTweets").load('<%=request.getContextPath()%>/servlet/social/mesg.getTweets?userId=<%=request.getRemoteUser().replace("@","_")%>');
+                			//alert("after window close ---"+data);
+        								}
+    			}, 500);
+            
+                }else{
+                if(data=='false'){
+               // alert("else if ---"+data);
+                $("#showTweets").html("Not associated with any account !,<a href='javascript:void(0)' onclick='socialConnect('twitter','true')'>Click here to associate.</a>");
+               // $("#showTweets").load('<%=request.getContextPath()%>/servlet/social/mesg.getTweets?userId=<%=request.getRemoteUser().replace("@","_")%>');
+                }else{
+                //alert("else if else ---"+data);
+    			$("#showTweets").load('<%=request.getContextPath()%>/servlet/social/mesg.getTweets?userId=<%=request.getRemoteUser().replace("@","_")%>');
+                 }
+                 }
+                } 
+        });         
+    }else if(value=='linkedin'){
+    $.ajax({
+            	type: 'GET',
+                url : '<%=request.getContextPath()%>/servlet/social/mesg.getLinkedinCodes',
+                data : 'userId=<%=request.getRemoteUser().replace("@","_")%>',
+                success: function(data){
+               
+                if(data=='false'){
+              	window.open('<%=request.getContextPath()%>/servlet/social/mesg.Linkedin', 'Linkedin Connect', 'dialogHeight=600px;dialogWidth=600px');
+           		$("#showlinkedTweets").load('<%=request.getContextPath()%>/servlet/social/mesg.getLinkedinCodes?userId=<%=request.getRemoteUser().replace("@","_")%>');
+                }else{
+                 $("#showlinkedTweets").load('<%=request.getContextPath()%>/servlet/social/mesg.getLinkedinCodes?userId=<%=request.getRemoteUser().replace("@","_")%>');
+                 }
+     			} 
+        	    
+        	});         
+     
+        }else if(value=='facebook'){
+    $.ajax({
+           type: 'GET',
+            url : '<%=request.getContextPath()%>/servlet/social/mesg.getFacebookCodes',
+            data : 'userId=<%=request.getRemoteUser().replace("@","_")%>',
+            success: function(data){
+        
+               if(data=='false'){
+              	window.open('<%=request.getContextPath()%>/servlet/social/mesg.facebook', 'Facebook Connect', 'dialogHeight=600px;dialogWidth=600px');
+           		$("#showFB").load('<%=request.getContextPath()%>/servlet/social/mesg.getFacebookCodes?userId=<%=request.getRemoteUser().replace("@","_")%>');
+                }else{
+                 $("#showFB").load('<%=request.getContextPath()%>/servlet/social/mesg.getFacebookCodes?userId=<%=request.getRemoteUser().replace("@","_")%>');
+                 }   
+            } 
+        });         
+        }else if(value=='blog'){
+        
+        //$("#iframeBlogs").src('<%=request.getContextPath()%>/servlet/blogger/view.blogPost');
+        $("#iframeBlogs").attr('src','<%=request.getContextPath()%>/servlet/blogger/view.blogpost?id=<%=request.getRemoteUser().replace("@","_")%>');       
+        
+        }
+    }
+    function setOAuth(value){
+        if(value=='twitter'){
+        
+            var selectedValues= window.open('<%=request.getContextPath()%>/servlet/social/mesg.oauthSet', 'Twitter Connect', 'dialogHeight=600px;dialogWidth=600px');
+            window.location.reload();            
+        }else if(value=='linkedin'){
+        alert(value);
+            var selectedValues= window.open('<%=request.getContextPath()%>/servlet/social/service.getLinkedinToken', 'Linkedin Connect', 'dialogHeight=600px;dialogWidth=600px');
+            window.location.reload(); 
+        }else if(value=='facebook'){
+            var selectedValues= window.open('<%=request.getContextPath()%>/servlet/social/service.getFacebookToken', 'Facebook Connect', 'dialogHeight=600px;dialogWidth=600px');
+            window.location.reload(); 
+        
+        }
+    }
+    
+</script>
+
+      <!-- Google CDN jQuery with fallback to local -->
+        <script src="<%=request.getContextPath()%>/apps/js/scrollbar/minified/jquery-1.11.0.min.js"></script>
+        <!-- custom scrollbar plugin -->
+        <script src="<%=request.getContextPath()%>/apps/js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+        <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/js/scrollbar/jquery.mCustomScrollbar.css">
+  <script>
+        (function($){
+            $(window).load(function(){
+                
+                $("a[rel='load-content']").click(function(e){
+                    e.preventDefault();
+                    var url=$(this).attr("href");
+                    $.get(url,function(data){
+                        $(".content .mCSB_container").append(data); //load new content inside .mCSB_container
+                        //scroll-to appended content 
+                        $(".content").mCustomScrollbar("scrollTo","h2:last");
+                    });
+                });
+                
+                $(".content").delegate("a[href='top']","click",function(e){
+                    e.preventDefault();
+                    $(".content").mCustomScrollbar("scrollTo",$(this).attr("href"));
+                });
+                
+            });
+        })(jQuery);
+    </script>
+  
+
+  <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css/color.css">
+  <link rel="stylesheet" href="<%=request.getContextPath()%>/apps/css/custom.css">
+    <style type="text/css">
+    
+</style>
+
+ <script>
+function statusSubmit(){
+	var data="userStatus="+$("#userStatusId").val()+"&userid=<%=request.getRemoteUser().replace("@","_")%>";
+	if($("#userStatusId").val().trim()==""){
+	alert("Please fill some status !");
+	}else{
+
+    $.ajax({
+        type:'POST',
+        url:'<%=request.getContextPath()%>/content/user/save.setUserStatus',
+        data:data,
+        dataType: 'html',
+         success: function(msg){
+         
+         document.getElementById("curretStatus").innerHTML=$("#userStatusId").val();
+         document.getElementById("userStatusId").value="";
+        $('#resposegallery').modal('toggle');
+          }
+    });
+    }
+}
+
+</script>
+   <%--load("../common/header.esp");--%>
+	<%load("../common_new/header_new.esp");%>
+ 
+    <!--response success msg botstrpa code-->
+    <div class="modal fade" id="resposegallery" role="dialog">
+    <div class="modal-dialog">
+    
+      <div class="alert alert-success">
+    <strong>Your status updated susseccfully !!</strong> .
+  </div>
+      
+    </div>
+  </div>
+  
+   
+
+
+
+<%
+//out.print(request.getRemoteUser().replace("@","_"));
+currentNode=currentNode.session.getRootNode().getNode("content").getNode("user").getNode(request.getRemoteUser().replace("@","_"));%>
+
+<section class="section after-login">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-9 col-xs-12">
+        <div class="row">
+          <div class="col-sm-5 col-xs-12 colon-left">
+            <div class="update-status">
+              <div class="profile-img">
+                <%if(currentNode.hasProperty("profileImage")){%>
+                 <img src="<%=currentNode.profileImage%>" alt="Profile" style="width:100px;height:100px"/>
+             
+              <%}else{%>
+              <img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" alt="Profile" style="width:100px;height:100px"/>
+              <%}%>
+              </div>
+              <div class="status-text">
+                <h4><%=currentNode.name%></h4>
+                <p><%=currentNode.headline%></p>
+                <p id="curretStatus"><%=currentNode.userStatus%></p>
+              </div>
+              <div class="status"  style="width:100%; margin-top:12px; margin-left:0px;">
+                <p class="link">
+                  <small><a href="javascript:void(0)" onclick="statusSubmit()"><i class="fa fa-pencil-square"></i> Update Status</a>
+                   <!--<a href="<%=request.getContextPath()%>/servlet/gallery/show.createalbum" ><i class="fa fa-video-camera"></i> Add Video</a>-->
+                 <a href="<%=request.getContextPath()%>/servlet/gallery/show.createalbum" ><i class="fa fa-photo"></i> Create Album</a></small>
+                </p>
+              <textarea name="userStatus" id="userStatusId" placeholder="What are you doing today?"></textarea>
+                <a href="javascript:void(0)" class="btn btn-primary btn-xs" onclick="statusSubmit()">Post</a>
+                <p class="link">
+                  <small>
+                  		<a href="<%=request.getContextPath()%>/servlet/social/mesg.blog?id=1"><i class="glyphicon glyphicon-edit"></i> Publish a text</a>
+                  		<a href="<%=request.getContextPath()%>/servlet/social/mesg.blog?id=2"><i class="fa fa-photo"></i> Publish a image</a>
+  						<a href="<%=request.getContextPath()%>/servlet/social/mesg.blog?id=3"><i class="glyphicon glyphicon-facetime-video"></i> Publish a video</a>
+                    	<a href="<%=request.getContextPath()%>/servlet/social/mesg.blog"><i class="	glyphicon glyphicon-home"></i> View blog</a>
+  					</small>
+                </p>
+              </div>
+            </div>
+
+
+            
+
+           <%load("visitor.esp");%>
+
+            <div class="tab-three">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">My Connection</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="content-tab2 mCustomScrollbar">
+                    <div>
+                      <div class="people-visited">
+                         <%var countFriend=0;	  
+	if(currentNode.hasNode("connection")){
+                var connectionNode=currentNode.getNode("connection").getNode("friend").getNodes();
+              	
+			  	
+				  
+				  	for(i in connectionNode){
+				  		if(connectionNode[i].request=='accept' ){
+				  			countFriend++;
+				  		}
+				  	}
+			}	 
+			var gcount=0;
+	if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded") 
+ 		&& currentNode.getNode("Groups").getNode("GroupsAdded").hasNodes()){
+                       		var gcount=currentNode.getNode("Groups").getNode("GroupsAdded").getNodes(); }	
+%>
+                      <%if(currentNode.hasNode("connection")){	 
+    var size=countFriend;   
+        for(i in connectionNode){
+           if(connectionNode[i].request=='accept'){     
+                var userNode=currentNode.session.getRootNode()
+                                .getNode("content/user/")
+                                .getNode(connectionNode[i].getName());
+                %>  
+                      <div class="tumbnail-login">
+                        <div class="thumbnail">
+                         
+                          <% if(userNode.hasProperty("profileImage")){
+                       %>
+                     <a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" >  <img src="<%=userNode.profileImage%>"  style="width:121px;height:130px" /></a>
+                       <%}
+                       else{  %>
+                     <a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" ><img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" style="width:121px;height:130px"/></a> 
+                     <%}%> <%var check=userNode.serviceCheck?userNode.serviceCheck:"false";%>
+                          <div class="caption">
+                            <h3 style="text-align: center"><a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" > <%=userNode.name%> <%=userNode.lastName?userNode.lastName:""%></a></h3>
+                            <p style="width: 100%;float: left;overflow: hidden;display: block;white-space: nowrap;text-overflow: ellipsis;"> <%=userNode.headline%> </p>
+                            
+                            <!--<p><a href="<%=request.getContextPath()%>/content/user/info?id=<%=userNode.getName()%>" class="btn btn-outline">view</a></p>-->
+                          </div>
+                        </div>
+                      </div>
+                      <% } }}%>
+                      
+                    </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-three">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Groups</h3>
+                </div>
+                <div class="panel-body">
+                  <div class="content-tab2 mCustomScrollbar">
+                    <div>
+                      <div class="people-visited">
+                       <% if(currentNode.hasNode("Groups") && currentNode.getNode("Groups").hasNode("GroupsAdded") 
+ 		&& currentNode.getNode("Groups").getNode("GroupsAdded").hasNodes()){
+                       		var groups=currentNode.getNode("Groups").getNode("GroupsAdded").getNodes();
+                       		
+                       		for(i=0;i<groups.length;i++){
+                       		
+                       		
+                       		if(currentNode.session.getRootNode().getNode("content").getNode("group").hasNode(groups[i].getName())){
+                       		
+                       		var groupNode=currentNode.session.getRootNode().getNode("content").getNode("group").getNode(groups[i].getName());
+                       		%>
+                        <div class="tumbnail-login">
+                        <div class="thumbnail">
+                        <% if(groupNode.hasNode("picture")){%>
+                       <img src="<%=request.getContextPath()%>/content/group/<%=groupNode.getName()%>/<%=groupNode.getNode("picture").getName()%>" alt="Groups" style="width:121px;height:130px">
+                         <%}else{%>
+                      	 <img src="<%=request.getContextPath()%>/apps/images/nmg.jpg" alt="Groups" style="width:121px;height:130px">
+                         <%}%>
+                          <div class="caption">
+                            <h3 style="text-align: center"><a href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=groups[i].getName()%>&userId=<%=request.getRemoteUser().replace("@","_")%>" class="btn btn-outline"><%=groupNode.groupName?groupNode.groupName:""%></a></h3>
+                          <% if(groups[i].getProperty("groupRequest").getString()=='accepted'){%>
+                           <p style="margin-bottom: 0px;  width: 100%;float: left;  overflow: hidden;  display: block;  white-space: nowrap;  text-overflow: ellipsis;">Added</p>
+                          <% }else{%>
+                           <p style="margin-bottom: 0px;  width: 100%;float: left;  overflow: hidden;  display: block;  white-space: nowrap;  text-overflow: ellipsis;">Request Pending</p>
+                           
+                          <% }
+                            %>                          
+                           
+                           <!-- <p><a href="<%=request.getContextPath()%>/servlet/group/show.viewGroup?id=<%=groups[i].getName()%>&userId=<%=request.getRemoteUser().replace("@","_")%>" class="btn btn-outline">View</a></p>-->
+                          </div>
+                        </div>
+                      </div>
+                     <% }}}%>
+                      
+                    </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+          <div class="col-sm-6 col-xs-12 colon-center">
+            <div class="row">
+
+      <div class="col-sm-12 col-xs-12">
+      <h4>Whats happen on your social networks</h4>
+        <div class="tab-two" style="width: 100%; float: left; margin-bottom: 20px;">
+              <ul class="nav nav-tabs" id="myTab">
+               
+                <li><a data-toggle="tab" href="#twitter" id="clickedTwitter" onclick="socialConnect('twitter','true');">Twitter</a></li>
+                <li><a data-toggle="tab" href="#blogV" id="clickedBlog" onclick="socialConnect('blog','true');">Post</a></li>
+               
+              </ul>
+
+              <div class="tab-content" id="myTabContent">
+                
+                <div ar id="twitter" class="tab-pane fade" >
+                 <div class="demo content4" id="showTweets" style="">
+                 </div>
+                 <div id="loginTwitter" style="display:none">
+                 <input type="button" value="Login with Twitter" onclick="setOAuth('twitter')">
+                 </div>
+                </div>
+                
+                <div ar id="blogV" class="tab-pane fade" >
+                 
+                 <div class="demo content4" id="showBlogs" style="">
+                 <iframe frameborder="0" id="iframeBlogs" style="width:100%;height:450px"  src=""></iframe>
+                 </div>
+                 
+                </div>
+               
+              
+                
+              </div>
+
+            </div>
+      </div>
+        
+
+
+
+
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+      <div class="col-sm-3 col-xs-12 colon-right">
+        <div class="row">
+
+          <!--<div class="col-sm-12">
+            <div class="tab-three">
+              <div class="recommeded-conection">
+                <div class="panel panel-default">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Recommended Connection</h3>
+                </div>
+                <div class="panel-body">
+                  <div>
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/facebook2.png" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/facebook2.png" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/facebook2.png" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/facebook2.png" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                    <div class="recommended-body">
+                      <div class="recommended-img">
+                        <img src="images/facebook2.png" alt="Add Friend" />
+                      </div>
+                      <div class="recommended-text">
+                        <h5>Testing Name</h5>
+                        <p><a href="#" class="btn btn-default btn-xs"><i class="fa fa-user"></i> Add Friend</a></p>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+              </div>
+              </div>
+          </div>-->
+          
+          <%load("recommendedConnection_new.esp");%>
+
+         <div class="col-sm-12">
+                 <iframe id="mypagenews" src="http://prod.bizlem.io:8082/portal/content/newsfeed/widget/69/69" frameborder="0" scrolling="no" width="285" height="400"></iframe>
+                 </div>
+
+
+        </div>
+      </div>    
+    </div>
+  </div>
+</section>
+
+<%load("../common/footer.esp");%>
+        
+    </body>
+</html><%}%>
